@@ -1,0 +1,49 @@
+mosquito_tigre:
+  name: Mosquito tigre
+  role: recurring_nemesis
+  invariants:
+    - very_small
+    - readable_as_mosquito
+    - summer_context
+
+gaviota:
+  name: Gaviota
+  role: recurring_support
+  invariants:
+    - readable_as_seagull
+
+cotorra:
+  name: Cotorra
+  role: recurring_support
+  invariants:
+    - readable_as_parakeet
+
+cabra:
+  name: Cabra
+  role: recurring_support
+  invariants:
+    - readable_as_goat
+
+lagartija:
+  name: Lagartija
+  role: recurring_support
+  invariants:
+    - readable_as_lizard
+
+tiburon:
+  name: Tiburón
+  role: tension_device
+  invariants:
+    - fin_only_when_needed
+
+oveja:
+  name: Oveja
+  role: background_support
+  invariants:
+    - readable_as_sheep
+
+paloma:
+  name: Paloma
+  role: background_support
+  invariants:
+    - readable_as_pigeon
