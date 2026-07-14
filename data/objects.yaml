@@ -1,0 +1,76 @@
+jamon:
+  name: Jamón
+  role: comedic_prop
+  invariants:
+    - simplified_iconic_form
+    - readable_as_jamon
+    - supports_boxing_gag
+
+chorizo:
+  name: Chorizo
+  role: comedic_prop
+  invariants:
+    - simplified_iconic_form
+    - readable_as_chorizo
+    - can_work_as_bait
+
+espeto:
+  name: Espeto
+  role: comedic_prop
+  invariants:
+    - simplified_iconic_form
+    - readable_as_espeto
+
+caña:
+  name: Caña
+  role: everyday_prop
+  invariants:
+    - simplified_iconic_form
+
+botijo:
+  name: Botijo
+  role: everyday_prop
+  invariants:
+    - simplified_iconic_form
+
+silla_terraza:
+  name: Silla de terraza
+  role: everyday_prop
+  invariants:
+    - simplified_iconic_form
+
+barandilla:
+  name: Barandilla
+  role: scene_support
+  invariants:
+    - simple_metal_or_wood_reading
+
+cubo:
+  name: Cubo
+  role: scene_support
+  invariants:
+    - simple_readable_form
+
+guindilla:
+  name: Guindilla
+  role: secondary_detail
+  invariants:
+    - small_loco_detail
+
+gafas_redondas:
+  name: Gafas redondas
+  role: parodic_accessory
+  invariants:
+    - round_eyewear_reading
+
+varita_reinterpretada:
+  name: Varita reinterpretada
+  role: fantasy_accessory
+  invariants:
+    - fantasy_reference_reading
+
+telesilla:
+  name: Telesilla
+  role: scene_support
+  invariants:
+    - chairlift_reading
