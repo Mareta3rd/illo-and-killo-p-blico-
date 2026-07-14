@@ -1,0 +1,32 @@
+decisions:
+  - id: DECISION_0001
+    topic: illo_hands_and_hooves
+    problem: Illo needed consistent anatomy across all pieces.
+    decision: Keep Illo's hands black and hooves black as canonical invariants.
+    reason: They improve silhouette recognition and keep the character stable.
+    impact: High
+    status: Canon
+
+  - id: DECISION_0002
+    topic: killo_spots_and_clavel
+    problem: Killo needed stable identifying marks.
+    decision: Keep Killo's black spots and clavel as canonical invariants.
+    reason: They distinguish Killo immediately and support merchandising consistency.
+    impact: High
+    status: Canon
+
+  - id: DECISION_0003
+    topic: parody_language
+    problem: Cultural parody needed to feel complete rather than partial.
+    decision: Parodies must adapt titles, typography, credits and names when relevant.
+    reason: A parody should be recognizable as the original structure while becoming Illo & Killo.
+    impact: High
+    status: Canon
+
+  - id: DECISION_0004
+    topic: cultural_recognition
+    problem: References could become too vague if over-filtered.
+    decision: Cultural references must remain recognizable while living in the Illo & Killo universe.
+    reason: Recognition is part of the gag and part of the collection value.
+    impact: High
+    status: Canon
