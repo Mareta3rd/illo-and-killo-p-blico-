@@ -1,0 +1,69 @@
+illo:
+  name: Illo
+  role: impulsive_side
+  species_hint: horse_like_but_not_horse
+  body:
+    color: white
+    shape: teardrop
+    head_dominance: high
+    muzzle: integrated
+    legs:
+      count: 4
+      thickness: medium
+      separation: tight
+    hands:
+      color: black
+      gloves: false
+    feet:
+      type: hoof
+      color: black
+    tail:
+      type: flame
+      length: short
+    tuft:
+      color: yellow
+      shape: flame
+    scarf:
+      color: green
+      knot: front
+  invariants:
+    - green_scarf
+    - yellow_tuft
+    - black_hands
+    - black_hooves
+    - short_flame_tail
+
+killo:
+  name: Killo
+  role: reactive_side
+  species_hint: bull_like_but_not_bull
+  body:
+    color: red
+    shape: compact_round
+    head_dominance: medium
+    muzzle: simple
+    legs:
+      count: 4
+      thickness: medium
+      separation: tight
+    hands:
+      color: black
+      gloves: false
+    feet:
+      type: hoof
+      color: black
+    tail:
+      type: short_simple
+    spots:
+      color: black
+      count: variable
+    flower:
+      type: clavel
+      color: adaptable
+      ear_position: fixed
+  invariants:
+    - black_spots
+    - clavel
+    - compact_shape
+    - black_hands
+    - black_hooves
