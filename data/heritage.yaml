@@ -1,0 +1,45 @@
+alhambra:
+  name: Alhambra
+  role: heritage_icon
+  invariants:
+    - recognizable_silhouette
+    - simplified_nasrid_reading
+
+farola_malaga:
+  name: La Farola de Málaga
+  role: heritage_icon
+  invariants:
+    - recognizable_silhouette
+    - simplified_lighthouse_reading
+
+giralda:
+  name: Giralda
+  role: heritage_icon
+  invariants:
+    - recognizable_silhouette
+    - simplified_tower_reading
+
+puente_nuevo:
+  name: Puente Nuevo de Ronda
+  role: heritage_icon
+  invariants:
+    - recognizable_silhouette
+    - simplified_bridge_reading
+
+catedral_simplificada:
+  name: Catedral simplificada
+  role: heritage_icon
+  invariants:
+    - recognizable_mass
+
+tele_silla:
+  name: Telesilla
+  role: scenario_icon
+  invariants:
+    - chairlift_reading
+
+plaza_pueblo:
+  name: Plaza de pueblo andaluza
+  role: scenario_icon
+  invariants:
+    - village_square_reading
