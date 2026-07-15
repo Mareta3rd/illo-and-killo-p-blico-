@@ -1,0 +1,31 @@
+metrics:
+  time_idea_to_brief:
+    unit: minutes
+    status: active
+  time_brief_to_prompt:
+    unit: minutes
+    status: active
+  time_prompt_to_validated_piece:
+    unit: minutes
+    status: active
+  revisions_per_piece:
+    unit: count
+    status: active
+  validation_pass_rate:
+    unit: percent
+    status: active
+  canon_break_rate:
+    unit: percent
+    status: active
+  merchandising_suitability_rate:
+    unit: percent
+    status: active
+  3d_suitability_rate:
+    unit: percent
+    status: active
+  parody_recognizability_rate:
+    unit: percent
+    status: active
+  archived_reference_rate:
+    unit: percent
+    status: active
