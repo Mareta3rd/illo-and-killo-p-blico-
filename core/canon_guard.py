@@ -1,0 +1,111 @@
+"""Validate proposed pieces against canon and intention rules.
+
+The guard is deliberately deterministic. It validates proposals but never
+rewrites them, invents intentions, or mutates repository knowledge.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any
+
+
+@dataclass(frozen=True)
+class ValidationIssue:
+    code: str
+    message: str
+    severity: str = "error"
+
+
+@dataclass(frozen=True)
+class ValidationResult:
+    valid: bool
+    requires_human_review: bool
+    issues: tuple[ValidationIssue, ...]
+
+
+RECURRING_ASSETS = {"mosquito", "shark", "ham", "espeto"}
+
+
+def _character_present(proposal: dict[str, Any], character: str) -> bool:
+    characters = proposal.get("characters", ())
+    return character in characters
+
+
+def _has_intention(element: dict[str, Any]) -> bool:
+    intention = element.get("intention")
+    return isinstance(intention, str) and bool(intention.strip())
+
+
+def validate_piece(
+    proposal: dict[str, Any],
+    knowledge: dict[str, Any],
+) -> ValidationResult:
+    """Validate a proposed piece against loaded repository knowledge.
+
+    ``proposal`` is treated as read-only. ``knowledge`` is also treated as
+    read-only. No missing intention is inferred by this function.
+    """
+
+    issues: list[ValidationIssue] = []
+    characters = knowledge.get("characters", {})
+
+    # Level-A Killo invariant: clavel in the ear.
+    if _character_present(proposal, "killo"):
+        killo = characters.get("killo", {})
+        invariants = set(killo.get("invariants", ()))
+        elements = proposal.get("elements", ())
+        has_clavel = any(
+            isinstance(element, dict) and element.get("id") == "clavel"
+            for element in elements
+        )
+        exception = proposal.get("documented_exceptions", ())
+
+        if "clavel" in invariants and not has_clavel and "killo_clavel" not in exception:
+            issues.append(
+                ValidationIssue(
+                    code="CANON_KILLO_CLAVEL_MISSING",
+                    message="Killo está presente pero falta su clavel canónico.",
+                )
+            )
+
+    # Every explicit element needs an explainable intention.
+    for element in proposal.get("elements", ()):
+        if not isinstance(element, dict):
+            issues.append(
+                ValidationIssue(
+                    code="ELEMENT_INVALID",
+                    message="Cada elemento debe representarse como un objeto.",
+                )
+            )
+            continue
+        if not _has_intention(element):
+            issues.append(
+                ValidationIssue(
+                    code="INTENTION_MISSING",
+                    message=f"El elemento '{element.get('id', 'unknown')}' no tiene intención explícita.",
+                )
+            )
+
+        element_id = str(element.get("id", "")).lower()
+        if element_id in RECURRING_ASSETS and not _has_intention(element):
+            issues.append(
+                ValidationIssue(
+                    code="REUSE_WITHOUT_INTENTION",
+                    message=f"El recurso recurrente '{element_id}' no puede reutilizarse sin intención narrativa o cómica explícita.",
+                )
+            )
+
+    requires_human_review = any(
+        issue.code in {
+            "CANON_KILLO_CLAVEL_MISSING",
+            "REUSE_WITHOUT_INTENTION",
+        }
+        for issue in issues
+    )
+
+    return ValidationResult(
+        valid=not issues,
+        requires_human_review=requires_human_review,
+        issues=tuple(issues),
+    )
