@@ -27,6 +27,9 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result.context.route, "gag")
         self.assertFalse(result.stopped)
         self.assertTrue(result.validation.valid)
+        self.assertIsNotNone(result.compiled_prompt)
+        self.assertEqual(result.compiled_prompt.route, "gag")
+        self.assertIn("ROUTE: gag", result.compiled_prompt.render())
         self.assertIn("characters", result.context.knowledge.data)
 
     def test_clear_parody_completes_pipeline(self):
@@ -39,6 +42,8 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result.context.route, "parody")
         self.assertFalse(result.stopped)
         self.assertTrue(result.validation.valid)
+        self.assertIsNotNone(result.compiled_prompt)
+        self.assertEqual(result.compiled_prompt.route, "parody")
 
     def test_killo_without_clavel_stops_pipeline(self):
         proposal = {
@@ -55,6 +60,7 @@ class PipelineTests(unittest.TestCase):
         self.assertTrue(result.stopped)
         self.assertEqual(result.stop_reason, "canon_requires_human_review")
         self.assertFalse(result.context.requires_human_review)
+        self.assertIsNone(result.compiled_prompt)
         self.assertIn(
             "CANON_KILLO_CLAVEL_MISSING",
             {issue.code for issue in result.validation.issues},
@@ -77,6 +83,7 @@ class PipelineTests(unittest.TestCase):
 
         self.assertTrue(result.stopped)
         self.assertEqual(result.stop_reason, "canon_requires_human_review")
+        self.assertIsNone(result.compiled_prompt)
         self.assertIn(
             "REUSE_WITHOUT_INTENTION",
             {issue.code for issue in result.validation.issues},
@@ -88,6 +95,7 @@ class PipelineTests(unittest.TestCase):
         self.assertTrue(result.stopped)
         self.assertEqual(result.stop_reason, "missing_idea")
         self.assertTrue(result.context.requires_human_review)
+        self.assertIsNone(result.compiled_prompt)
 
     def test_pipeline_does_not_mutate_proposal_or_loaded_knowledge(self):
         proposal = copy.deepcopy(self.VALID_GAG_PROPOSAL)
@@ -100,6 +108,7 @@ class PipelineTests(unittest.TestCase):
         )
 
         self.assertEqual(proposal, before)
+        self.assertIsNotNone(result.compiled_prompt)
         self.assertIn("characters", result.context.knowledge.data)
 
 
