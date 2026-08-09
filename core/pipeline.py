@@ -1,4 +1,4 @@
-"""Deterministic v0.1 pipeline joining loader, router, context and guard."""
+"""Deterministic v0.1 pipeline joining loader, router, guard and compiler."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from typing import Any
 
 from core.canon_guard import ValidationResult, validate_piece
 from core.context import CoreContext, build_context
+from core.prompt_compiler import CompiledPrompt, compile_prompt
 
 
 @dataclass(frozen=True)
@@ -16,6 +17,7 @@ class PipelineResult:
     validation: ValidationResult
     stopped: bool
     stop_reason: str | None
+    compiled_prompt: CompiledPrompt | None = None
 
 
 def run_pipeline(
@@ -23,12 +25,13 @@ def run_pipeline(
     root: str | Path,
     proposal: dict[str, Any] | None = None,
 ) -> PipelineResult:
-    """Run the non-generative Core v0.1 pipeline.
+    """Run the deterministic Core v0.1 pipeline through compilation.
 
     The repository is loaded through the canonical loader and passed into the
-    immutable CoreContext. The optional structured proposal is then checked
-    by the Canon Guard. The pipeline never generates, rewrites, or mutates
-    creative content or repository knowledge.
+    immutable CoreContext. The optional structured proposal is checked by the
+    Canon Guard. Valid results are then compiled into an auditable prompt
+    package. The pipeline never generates, rewrites, or mutates creative
+    content or repository knowledge.
     """
     context = build_context(idea, root)
     proposal = proposal or {}
@@ -61,9 +64,17 @@ def run_pipeline(
             stop_reason="canon_requires_human_review",
         )
 
-    return PipelineResult(
+    result = PipelineResult(
         context=context,
         validation=validation,
         stopped=False,
         stop_reason=None,
+    )
+
+    return PipelineResult(
+        context=result.context,
+        validation=result.validation,
+        stopped=result.stopped,
+        stop_reason=result.stop_reason,
+        compiled_prompt=compile_prompt(result),
     )
