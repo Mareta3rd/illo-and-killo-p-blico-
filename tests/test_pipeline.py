@@ -101,7 +101,6 @@ class PipelineTests(unittest.TestCase):
 
         self.assertEqual(proposal, before)
         self.assertIn("characters", result.context.knowledge.data)
-        self.assertIn("characters", result.context.knowledge.data)
 
 
 if __name__ == "__main__":
