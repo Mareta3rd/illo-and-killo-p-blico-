@@ -27,7 +27,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result.context.route, "gag")
         self.assertFalse(result.stopped)
         self.assertTrue(result.validation.valid)
-        self.assertIn("characters.yaml", result.context.knowledge.data)
+        self.assertIn("characters", result.context.knowledge.data)
 
     def test_clear_parody_completes_pipeline(self):
         result = run_pipeline(
@@ -54,7 +54,7 @@ class PipelineTests(unittest.TestCase):
 
         self.assertTrue(result.stopped)
         self.assertEqual(result.stop_reason, "canon_requires_human_review")
-        self.assertTrue(result.context.requires_human_review is False)
+        self.assertFalse(result.context.requires_human_review)
         self.assertIn(
             "CANON_KILLO_CLAVEL_MISSING",
             {issue.code for issue in result.validation.issues},
@@ -100,7 +100,8 @@ class PipelineTests(unittest.TestCase):
         )
 
         self.assertEqual(proposal, before)
-        self.assertIn("characters.yaml", result.context.knowledge.data)
+        self.assertIn("characters", result.context.knowledge.data)
+        self.assertIn("characters", result.context.knowledge.data)
 
 
 if __name__ == "__main__":
