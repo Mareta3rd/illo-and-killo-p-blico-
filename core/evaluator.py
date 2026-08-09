@@ -105,16 +105,25 @@ def evaluate_candidate(
 
     unknown = [name for name in REQUIRED_CHECKS if by_name[name].decision == "unknown"]
     if unknown:
-        return Evaluation(
-            "human_review",
-            f"required checks are ambiguous: {', '.join(unknown)}",
-        ), checks
+        return EvaluationReport(
+            Evaluation(
+                "human_review",
+                f"required checks are ambiguous: {', '.join(unknown)}",
+            ),
+            checks,
+        )
 
     failed = [name for name in REQUIRED_CHECKS if by_name[name].decision == "fail"]
     if failed:
-        return Evaluation(
-            "continue",
-            f"required checks failed: {', '.join(failed)}",
-        ), checks
+        return EvaluationReport(
+            Evaluation(
+                "continue",
+                f"required checks failed: {', '.join(failed)}",
+            ),
+            checks,
+        )
 
-    return Evaluation("accept", "all required quality checks passed"), checks
+    return EvaluationReport(
+        Evaluation("accept", "all required quality checks passed"),
+        checks,
+    )
