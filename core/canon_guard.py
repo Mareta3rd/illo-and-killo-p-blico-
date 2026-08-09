@@ -9,6 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .loader import RepositoryKnowledge
+
 
 @dataclass(frozen=True)
 class ValidationIssue:
@@ -37,18 +39,26 @@ def _has_intention(element: dict[str, Any]) -> bool:
     return isinstance(intention, str) and bool(intention.strip())
 
 
+def _data_from_knowledge(knowledge: RepositoryKnowledge | dict[str, Any]) -> dict[str, Any]:
+    """Accept the canonical loader object while keeping the helper testable."""
+    if isinstance(knowledge, RepositoryKnowledge):
+        return knowledge.data
+    return knowledge
+
+
 def validate_piece(
     proposal: dict[str, Any],
-    knowledge: dict[str, Any],
+    knowledge: RepositoryKnowledge | dict[str, Any],
 ) -> ValidationResult:
     """Validate a proposed piece against loaded repository knowledge.
 
-    ``proposal`` is treated as read-only. ``knowledge`` is also treated as
-    read-only. No missing intention is inferred by this function.
+    ``proposal`` and ``knowledge`` are treated as read-only. No missing
+    intention is inferred by this function.
     """
 
     issues: list[ValidationIssue] = []
-    characters = knowledge.get("characters", {})
+    data = _data_from_knowledge(knowledge)
+    characters = data.get("characters", {})
 
     # Level-A Killo invariant: clavel in the ear.
     if _character_present(proposal, "killo"):
@@ -79,6 +89,7 @@ def validate_piece(
                 )
             )
             continue
+
         if not _has_intention(element):
             issues.append(
                 ValidationIssue(
