@@ -9,8 +9,7 @@ layers. Every iteration is recorded and the loop has explicit terminal states.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Literal
-from typing import Callable, Generic, TypeVar
+from typing import Callable, Generic, Literal, TypeVar
 
 
 CandidateT = TypeVar("CandidateT")
