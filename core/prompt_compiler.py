@@ -8,8 +8,10 @@ into an explicit, auditable task for a later execution layer.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from .pipeline import PipelineResult
+if TYPE_CHECKING:
+    from .pipeline import PipelineResult
 
 
 @dataclass(frozen=True)
