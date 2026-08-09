@@ -28,10 +28,15 @@ class PromptCompilerTests(unittest.TestCase):
 
         self.assertEqual(compiled.route, "parody")
         self.assertIn("parody", compiled.render())
-        self.assertIn("No inventes", compiled.render()) if False else None
         self.assertIn("Do not invent or silently alter canon.", compiled.constraints)
-        self.assertIn("Confirm that all introduced elements have an explicit intention.", compiled.checks)
-        self.assertIn("idea=Crear una parodia de Peaky Blinders con Illo y Killo", compiled.context_summary)
+        self.assertIn(
+            "Confirm that all introduced elements have an explicit intention.",
+            compiled.checks,
+        )
+        self.assertIn(
+            "idea=Crear una parodia de Peaky Blinders con Illo y Killo",
+            compiled.context_summary,
+        )
 
     def test_compiler_does_not_repair_stopped_result(self):
         result = run_pipeline(
