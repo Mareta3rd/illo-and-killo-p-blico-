@@ -23,7 +23,7 @@ espeto:
     - simplified_iconic_form
     - readable_as_espeto
 
-aña:
+caña:
   name: Caña
   role: everyday_prop
   invariants:
