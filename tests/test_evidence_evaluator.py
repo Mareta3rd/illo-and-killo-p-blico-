@@ -74,22 +74,22 @@ class EvidenceEvaluatorTests(unittest.TestCase):
 
         self.assertEqual(candidate, before)
 
-    def test_evidence_check_replaces_same_named_candidate_check(self):
+    def test_conflicting_candidate_and_evidence_requests_human_review(self):
         candidate = {
             "checks": {
                 "intention": False,
             }
         }
-        claims = self.complete_claims()
 
         report = evaluate_candidate_with_evidence(
             candidate,
             self.valid_validation(),
-            claims,
+            self.complete_claims(),
         )
 
-        self.assertEqual(report.evaluation.decision, "accept")
-        self.assertTrue(candidate["checks"]["intention"] is False)
+        self.assertEqual(report.evaluation.decision, "human_review")
+        self.assertIn("intention", report.evaluation.reason)
+        self.assertEqual(candidate["checks"]["intention"], False)
 
 
 if __name__ == "__main__":
