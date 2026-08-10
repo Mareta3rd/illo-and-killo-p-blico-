@@ -9,9 +9,17 @@ class CanonGuardTests(unittest.TestCase):
     KNOWLEDGE = {
         "characters": {
             "killo": {
-                "invariants": ["black_spots", "clavel"]
-            }
-        }
+                "invariants": ["black_spots", "clavel"],
+                "spots": {
+                    "color": "black",
+                    "count": {
+                        "type": "variable",
+                        "min": 2,
+                        "max": 8,
+                    },
+                },
+            },
+        },
     }
 
     def test_killo_requires_clavel(self):
@@ -92,6 +100,82 @@ class CanonGuardTests(unittest.TestCase):
         self.assertEqual(proposal, proposal_before)
         self.assertEqual(knowledge, knowledge_before)
 
+    def test_killo_spots_minimum_is_valid(self):
+        proposal = {
+            "characters": ["killo"],
+            "elements": [
+                {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 2,
+                    "intention": "character_identity",
+                },
+            ],
+        }
 
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertTrue(result.valid)
+        self.assertFalse(result.requires_human_review)
+
+    def test_killo_spots_maximum_is_valid(self):
+        proposal = {
+            "characters": ["killo"],
+            "elements": [
+                {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 8,
+                    "intention": "character_identity",
+                },
+            ],
+        }
+
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertTrue(result.valid)
+        self.assertFalse(result.requires_human_review)
+
+    def test_killo_spots_below_range_is_violation(self):
+        proposal = {
+            "characters": ["killo"],
+            "elements": [
+                {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 1,
+                    "intention": "character_identity",
+                },
+            ],
+        }
+
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertFalse(result.valid)
+        self.assertIn(
+            "CANON_KILLO_SPOTS_OUT_OF_RANGE",
+            {issue.code for issue in result.issues},
+        )
+
+    def test_killo_spots_above_range_is_violation(self):
+        proposal = {
+            "characters": ["killo"],
+            "elements": [
+                {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 9,
+                    "intention": "character_identity",
+                },
+            ],
+        }
+
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertFalse(result.valid)
+        self.assertIn(
+            "CANON_KILLO_SPOTS_OUT_OF_RANGE",
+            {issue.code for issue in result.issues},
+        )
 if __name__ == "__main__":
     unittest.main()

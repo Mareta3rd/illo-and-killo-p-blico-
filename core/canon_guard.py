@@ -79,6 +79,42 @@ def validate_piece(
                 )
             )
 
+    spots_rule = killo.get("spots", {})
+    count_rule = spots_rule.get("count", {})
+    black_spots = next(
+        (
+            element
+            for element in elements
+            if isinstance(element, dict) and element.get("id") == "black_spots"
+        ),
+        None,
+    )
+
+    if (
+        isinstance(black_spots, dict)
+        and isinstance(black_spots.get("count"), int)
+        and isinstance(count_rule, dict)
+    ):
+        spot_count = black_spots["count"]
+        min_count = count_rule.get("min")
+        max_count = count_rule.get("max")
+
+        if (
+            isinstance(min_count, int)
+            and spot_count < min_count
+            or isinstance(max_count, int)
+            and spot_count > max_count
+        ):
+            issues.append(
+                ValidationIssue(
+                    code="CANON_KILLO_SPOTS_OUT_OF_RANGE",
+                    message=(
+                        f"Killo tiene {spot_count} manchas negras; "
+                        f"el rango canónico permitido es {min_count}-{max_count}."
+                    ),
+                )
+            )
+
     # Every explicit element needs an explainable intention.
     for element in proposal.get("elements", ()):
         if not isinstance(element, dict):
