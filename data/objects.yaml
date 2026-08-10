@@ -4,6 +4,7 @@ jamon:
   invariants:
     - simplified_iconic_form
     - readable_as_jamon
+  affordances:
     - supports_boxing_gag
 
 chorizo:
@@ -12,6 +13,7 @@ chorizo:
   invariants:
     - simplified_iconic_form
     - readable_as_chorizo
+  affordances:
     - can_work_as_bait
 
 espeto:
@@ -21,7 +23,7 @@ espeto:
     - simplified_iconic_form
     - readable_as_espeto
 
-caña:
+aña:
   name: Caña
   role: everyday_prop
   invariants:
