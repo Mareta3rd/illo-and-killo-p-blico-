@@ -60,7 +60,12 @@ class CanonGuardTests(unittest.TestCase):
         proposal = {
             "characters": ["killo"],
             "elements": [
-                {"id": "clavel", "intention": "character_identity"}
+                {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 4,
+                    "intention": "character_identity",
+                },
             ],
         }
 
@@ -74,6 +79,11 @@ class CanonGuardTests(unittest.TestCase):
             "characters": ["illo", "killo"],
             "elements": [
                 {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 4,
+                    "intention": "character_identity",
+                },
                 {"id": "mosquito"},
             ],
         }
@@ -92,6 +102,11 @@ class CanonGuardTests(unittest.TestCase):
             "characters": ["illo", "killo"],
             "elements": [
                 {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 4,
+                    "intention": "character_identity",
+                },
                 {"id": "mosquito", "intention": "main_gag"},
             ],
         }
@@ -105,7 +120,12 @@ class CanonGuardTests(unittest.TestCase):
         proposal = {
             "characters": ["killo"],
             "elements": [
-                {"id": "clavel", "intention": "character_identity"}
+                {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "count": 4,
+                    "intention": "character_identity",
+                },
             ],
         }
         knowledge = copy.deepcopy(self.KNOWLEDGE)
