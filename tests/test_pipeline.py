@@ -2,6 +2,8 @@ from pathlib import Path
 import copy
 import unittest
 
+from core.canon_guard import ValidationResult
+from core.evidence_state import EvidenceClaim, EvidenceState
 from core.pipeline import run_pipeline
 
 
@@ -15,6 +17,13 @@ class PipelineTests(unittest.TestCase):
         "elements": [
             {"id": "clavel", "intention": "character_identity"},
         ],
+    }
+
+    COMPLETE_EVIDENCE = {
+        "intention": EvidenceClaim("intention", EvidenceState.CONFIRMED),
+        "canon": EvidenceClaim("canon", EvidenceState.CONFIRMED),
+        "coherence": EvidenceClaim("coherence", EvidenceState.CONFIRMED),
+        "reuse_intention": EvidenceClaim("reuse", EvidenceState.CONFIRMED),
     }
 
     def test_clear_gag_completes_pipeline(self):
@@ -110,6 +119,55 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(proposal, before)
         self.assertIsNotNone(result.compiled_prompt)
         self.assertIn("characters", result.context.knowledge.data)
+
+    def test_evidence_can_complete_real_pipeline(self):
+        result = run_pipeline(
+            "Crear un gag nuevo de Illo y Killo",
+            ROOT,
+            self.VALID_GAG_PROPOSAL,
+            self.COMPLETE_EVIDENCE,
+        )
+
+        self.assertFalse(result.stopped)
+        self.assertIsNotNone(result.evaluation)
+        self.assertEqual(result.evaluation.evaluation.decision, "accept")
+        self.assertIsNotNone(result.compiled_prompt)
+
+    def test_unknown_evidence_stops_real_pipeline_for_review(self):
+        claims = dict(self.COMPLETE_EVIDENCE)
+        claims["coherence"] = EvidenceClaim("coherence", EvidenceState.UNKNOWN)
+
+        result = run_pipeline(
+            "Crear un gag nuevo de Illo y Killo",
+            ROOT,
+            self.VALID_GAG_PROPOSAL,
+            claims,
+        )
+
+        self.assertTrue(result.stopped)
+        self.assertEqual(result.stop_reason, "evaluation_requires_human_review")
+        self.assertIsNotNone(result.evaluation)
+        self.assertIsNone(result.compiled_prompt)
+
+    def test_contradicted_evidence_stops_real_pipeline_for_continuation(self):
+        claims = dict(self.COMPLETE_EVIDENCE)
+        claims["reuse_intention"] = EvidenceClaim(
+            "reuse",
+            EvidenceState.CONTRADICTED,
+            contradicting_sources=("canon/example.md",),
+        )
+
+        result = run_pipeline(
+            "Crear un gag nuevo de Illo y Killo",
+            ROOT,
+            self.VALID_GAG_PROPOSAL,
+            claims,
+        )
+
+        self.assertTrue(result.stopped)
+        self.assertEqual(result.stop_reason, "evaluation_requires_continuation")
+        self.assertIsNotNone(result.evaluation)
+        self.assertIsNone(result.compiled_prompt)
 
 
 if __name__ == "__main__":
