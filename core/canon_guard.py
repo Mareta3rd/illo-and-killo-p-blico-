@@ -114,6 +114,23 @@ def validate_piece(
                     ),
                 )
             )
+        expected_color = spots_rule.get("color")
+        actual_color = black_spots.get("color")
+
+        if (
+            isinstance(expected_color, str)
+            and isinstance(actual_color, str)
+            and actual_color != expected_color
+        ):
+            issues.append(
+                ValidationIssue(
+                    code="CANON_KILLO_SPOTS_COLOR_INVALID",
+                    message=(
+                        f"Killo tiene manchas negras de color {actual_color}; "
+                        f"el color canónico permitido es {expected_color}."
+                    ),
+                )
+            )
 
     # Every explicit element needs an explainable intention.
     for element in proposal.get("elements", ()):

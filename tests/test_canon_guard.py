@@ -177,5 +177,27 @@ class CanonGuardTests(unittest.TestCase):
             "CANON_KILLO_SPOTS_OUT_OF_RANGE",
             {issue.code for issue in result.issues},
         )
+
+    def test_killo_spots_wrong_color_is_violation(self):
+        proposal = {
+            "characters": ["killo"],
+            "elements": [
+                {"id": "clavel", "intention": "character_identity"},
+                {
+                    "id": "black_spots",
+                    "color": "red",
+                    "count": 4,
+                    "intention": "character_identity",
+                },
+            ],
+        }
+
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertFalse(result.valid)
+        self.assertIn(
+            "CANON_KILLO_SPOTS_COLOR_INVALID",
+            {issue.code for issue in result.issues},
+        )
 if __name__ == "__main__":
     unittest.main()
