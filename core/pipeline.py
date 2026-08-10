@@ -36,6 +36,9 @@ def run_pipeline(
     when explicit Evidence claims are supplied, they are translated into
     evaluator checks without mutating the proposal. The evaluator then decides
     whether the pipeline may compile, must continue, or requires human review.
+
+    If no Evidence claims are supplied, the existing v0.1 pipeline behaviour is
+    preserved: a canon-valid proposal may compile without evaluator checks.
     """
     context = build_context(idea, root)
     proposal = proposal or {}
@@ -68,29 +71,31 @@ def run_pipeline(
             stop_reason="canon_requires_human_review",
         )
 
-    evaluation = evaluate_candidate_with_evidence(
-        proposal,
-        validation,
-        evidence_claims or {},
-    )
-
-    if evaluation.evaluation.decision == "human_review":
-        return PipelineResult(
-            context=context,
-            validation=validation,
-            stopped=True,
-            stop_reason="evaluation_requires_human_review",
-            evaluation=evaluation,
+    evaluation: EvaluationReport | None = None
+    if evidence_claims is not None:
+        evaluation = evaluate_candidate_with_evidence(
+            proposal,
+            validation,
+            evidence_claims,
         )
 
-    if evaluation.evaluation.decision == "continue":
-        return PipelineResult(
-            context=context,
-            validation=validation,
-            stopped=True,
-            stop_reason="evaluation_requires_continuation",
-            evaluation=evaluation,
-        )
+        if evaluation.evaluation.decision == "human_review":
+            return PipelineResult(
+                context=context,
+                validation=validation,
+                stopped=True,
+                stop_reason="evaluation_requires_human_review",
+                evaluation=evaluation,
+            )
+
+        if evaluation.evaluation.decision == "continue":
+            return PipelineResult(
+                context=context,
+                validation=validation,
+                stopped=True,
+                stop_reason="evaluation_requires_continuation",
+                evaluation=evaluation,
+            )
 
     result = PipelineResult(
         context=context,
