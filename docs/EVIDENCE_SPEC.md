@@ -57,6 +57,43 @@ el resultado de la consulta puede ser UNKNOWN.
 
 ---
 
+## Estados de una afirmación
+
+Para evaluar una afirmación concreta, Evidence utiliza tres estados:
+
+- CONFIRMED
+- CONTRADICTED
+- UNKNOWN
+
+`CONFIRMED` requiere evidencia explícita que apoye la afirmación.
+
+`CONTRADICTED` requiere evidencia explícita que establezca lo contrario.
+
+`UNKNOWN` significa que la evidencia disponible no permite establecer ni
+la afirmación ni su negación.
+
+La regla fundamental es:
+
+    ausencia de evidencia
+        !=
+    contradicción
+
+Por tanto, una búsqueda sin resultados produce `UNKNOWN`, nunca
+`CONTRADICTED` por sí sola.
+
+Si existen simultáneamente fuentes explícitamente favorables y contrarias,
+Evidence no debe escoger una silenciosamente. El caso se considera un
+conflicto y debe escalar al nivel que corresponda, normalmente
+`HUMAN_REVIEW`.
+
+La implementación de esta semántica se encuentra en
+`core/evidence_state.py`.
+
+Los estados de afirmación no sustituyen a los estados históricos
+`mentioned`, `used` y `uncertain`: describen cosas distintas.
+
+---
+
 ## Canon
 
 Los invariantes canónicos son restricciones autorizadas por el repositorio.
