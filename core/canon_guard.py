@@ -46,38 +46,26 @@ def _data_from_knowledge(knowledge: RepositoryKnowledge | dict[str, Any]) -> dic
     return knowledge
 
 
-def validate_piece(
+def _validate_killo(
     proposal: dict[str, Any],
-    knowledge: RepositoryKnowledge | dict[str, Any],
-) -> ValidationResult:
-    """Validate a proposed piece against loaded repository knowledge.
+    killo: dict[str, Any],
+    issues: list[ValidationIssue],
+) -> None:
+    invariants = set(killo.get("invariants", ()))
+    elements = proposal.get("elements", ())
+    has_clavel = any(
+        isinstance(element, dict) and element.get("id") == "clavel"
+        for element in elements
+    )
+    exception = proposal.get("documented_exceptions", ())
 
-    ``proposal`` and ``knowledge`` are treated as read-only. No missing
-    intention is inferred by this function.
-    """
-
-    issues: list[ValidationIssue] = []
-    data = _data_from_knowledge(knowledge)
-    characters = data.get("characters", {})
-
-    # Level-A Killo invariant: clavel in the ear.
-    if _character_present(proposal, "killo"):
-        killo = characters.get("killo", {})
-        invariants = set(killo.get("invariants", ()))
-        elements = proposal.get("elements", ())
-        has_clavel = any(
-            isinstance(element, dict) and element.get("id") == "clavel"
-            for element in elements
-        )
-        exception = proposal.get("documented_exceptions", ())
-
-        if "clavel" in invariants and not has_clavel and "killo_clavel" not in exception:
-            issues.append(
-                ValidationIssue(
-                    code="CANON_KILLO_CLAVEL_MISSING",
-                    message="Killo está presente pero falta su clavel canónico.",
-                )
+    if "clavel" in invariants and not has_clavel and "killo_clavel" not in exception:
+        issues.append(
+            ValidationIssue(
+                code="CANON_KILLO_CLAVEL_MISSING",
+                message="Killo está presente pero falta su clavel canónico.",
             )
+        )
 
     spots_rule = killo.get("spots", {})
     count_rule = spots_rule.get("count", {})
@@ -89,6 +77,14 @@ def validate_piece(
         ),
         None,
     )
+
+    if "black_spots" in invariants and black_spots is None:
+        issues.append(
+            ValidationIssue(
+                code="CANON_KILLO_SPOTS_MISSING",
+                message="Killo está presente pero faltan sus manchas negras canónicas.",
+            )
+        )
 
     if (
         isinstance(black_spots, dict)
@@ -114,9 +110,9 @@ def validate_piece(
                     ),
                 )
             )
+
         expected_color = spots_rule.get("color")
         actual_color = black_spots.get("color")
-
         if (
             isinstance(expected_color, str)
             and isinstance(actual_color, str)
@@ -131,6 +127,25 @@ def validate_piece(
                     ),
                 )
             )
+
+
+def validate_piece(
+    proposal: dict[str, Any],
+    knowledge: RepositoryKnowledge | dict[str, Any],
+) -> ValidationResult:
+    """Validate a proposed piece against loaded repository knowledge.
+
+    ``proposal`` and ``knowledge`` are treated as read-only. No missing
+    intention is inferred by this function.
+    """
+
+    issues: list[ValidationIssue] = []
+    data = _data_from_knowledge(knowledge)
+    characters = data.get("characters", {})
+
+    if _character_present(proposal, "killo"):
+        killo = characters.get("killo", {})
+        _validate_killo(proposal, killo, issues)
 
     # Every explicit element needs an explainable intention.
     for element in proposal.get("elements", ()):
@@ -163,6 +178,7 @@ def validate_piece(
     requires_human_review = any(
         issue.code in {
             "CANON_KILLO_CLAVEL_MISSING",
+            "CANON_KILLO_SPOTS_MISSING",
             "REUSE_WITHOUT_INTENTION",
         }
         for issue in issues
