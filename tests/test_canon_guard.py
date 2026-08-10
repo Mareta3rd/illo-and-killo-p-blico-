@@ -39,6 +39,23 @@ class CanonGuardTests(unittest.TestCase):
             {issue.code for issue in result.issues},
         )
 
+    def test_killo_requires_black_spots(self):
+        proposal = {
+            "characters": ["killo"],
+            "elements": [
+                {"id": "clavel", "intention": "character_identity"},
+            ],
+        }
+
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertFalse(result.valid)
+        self.assertTrue(result.requires_human_review)
+        self.assertIn(
+            "CANON_KILLO_SPOTS_MISSING",
+            {issue.code for issue in result.issues},
+        )
+
     def test_killo_with_clavel_is_valid(self):
         proposal = {
             "characters": ["killo"],
@@ -199,5 +216,7 @@ class CanonGuardTests(unittest.TestCase):
             "CANON_KILLO_SPOTS_COLOR_INVALID",
             {issue.code for issue in result.issues},
         )
+
+
 if __name__ == "__main__":
     unittest.main()
