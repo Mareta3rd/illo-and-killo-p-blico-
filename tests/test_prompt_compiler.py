@@ -14,6 +14,11 @@ class PromptCompilerTests(unittest.TestCase):
         "characters": ["illo", "killo"],
         "elements": [
             {"id": "clavel", "intention": "character_identity"},
+            {
+                "id": "black_spots",
+                "count": 2,
+                "intention": "character_identity",
+            },
         ],
     }
 
