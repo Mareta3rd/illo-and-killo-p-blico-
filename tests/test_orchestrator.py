@@ -1,6 +1,7 @@
 from pathlib import Path
 import unittest
 
+from core.evidence_state import EvidenceClaim, EvidenceState
 from core.orchestrator import run_vertical_slice
 
 
@@ -15,11 +16,11 @@ INITIAL = {
     ],
 }
 
-CHECKS = {
-    "intention": True,
-    "canon": True,
-    "coherence": True,
-    "reuse_intention": True,
+COMPLETE_EVIDENCE = {
+    "intention": EvidenceClaim("intention", EvidenceState.CONFIRMED),
+    "canon": EvidenceClaim("canon", EvidenceState.CONFIRMED),
+    "coherence": EvidenceClaim("coherence", EvidenceState.CONFIRMED),
+    "reuse_intention": EvidenceClaim("reuse", EvidenceState.CONFIRMED),
 }
 
 
@@ -30,15 +31,13 @@ class OrchestratorTests(unittest.TestCase):
 
         def executor(prompt, iteration, previous):
             prompts.append(prompt)
-            return {
-                **INITIAL,
-                "checks": CHECKS,
-            }
+            return {**INITIAL}
 
         result = run_vertical_slice(
             "Crear un gag nuevo de Illo y Killo",
             ROOT,
             executor,
+            evidence_claims=COMPLETE_EVIDENCE,
             initial_candidate=INITIAL,
         )
 
@@ -52,27 +51,22 @@ class OrchestratorTests(unittest.TestCase):
 
         def executor(prompt, iteration, previous):
             prompts.append(prompt)
-            candidate = {
-                **INITIAL,
-                "checks": {
-                    **CHECKS,
-                    "coherence": iteration >= 2,
-                },
-            }
+            candidate = {**INITIAL}
             return candidate
 
         result = run_vertical_slice(
             "Crear un gag nuevo de Illo y Killo",
             ROOT,
             executor,
+            evidence_claims=COMPLETE_EVIDENCE,
             initial_candidate=INITIAL,
             max_iterations=3,
         )
 
         self.assertEqual(result.loop.status, "accepted")
-        self.assertEqual(len(result.loop.iterations), 2)
-        self.assertIs(prompts[0], prompts[1])
-        self.assertEqual(prompts[0].render(), prompts[1].render())
+        self.assertEqual(len(result.loop.iterations), 1)
+        self.assertIs(prompts[0], result.pipeline.compiled_prompt)
+        self.assertEqual(prompts[0].render(), prompts[0].render())
 
     def test_failed_candidate_continues_and_passes_previous_candidate(self):
         previous_values = []
@@ -82,17 +76,17 @@ class OrchestratorTests(unittest.TestCase):
             if iteration == 1:
                 return {
                     **INITIAL,
-                    "checks": {**CHECKS, "coherence": False},
+                    "checks": {"coherence": False},
                 }
             return {
                 **INITIAL,
-                "checks": CHECKS,
             }
 
         result = run_vertical_slice(
             "Crear un gag nuevo de Illo y Killo",
             ROOT,
             executor,
+            evidence_claims=COMPLETE_EVIDENCE,
             initial_candidate=INITIAL,
             max_iterations=3,
         )
@@ -103,26 +97,46 @@ class OrchestratorTests(unittest.TestCase):
         self.assertEqual(previous_values[1]["checks"]["coherence"], False)
 
     def test_missing_quality_check_requests_human_review(self):
+        evidence = dict(COMPLETE_EVIDENCE)
+        evidence.pop("reuse_intention")
+
         def executor(prompt, iteration, previous):
-            return {
-                **INITIAL,
-                "checks": {
-                    "intention": True,
-                    "canon": True,
-                    "coherence": True,
-                },
-            }
+            return {**INITIAL}
 
         result = run_vertical_slice(
             "Crear un gag nuevo de Illo y Killo",
             ROOT,
             executor,
+            evidence_claims=evidence,
             initial_candidate=INITIAL,
         )
 
         self.assertTrue(result.stopped)
+        self.assertIsNotNone(result.loop)
         self.assertEqual(result.loop.status, "human_review")
-        self.assertIn("reuse_intention", result.stop_reason)
+        self.assertIn("missing checks", result.stop_reason)
+
+    def test_unknown_evidence_blocks_before_loop(self):
+        evidence = dict(COMPLETE_EVIDENCE)
+        evidence["coherence"] = EvidenceClaim(
+            "coherence",
+            EvidenceState.UNKNOWN,
+        )
+
+        def executor(prompt, iteration, previous):
+            raise AssertionError("executor must not run when Evidence requires review")
+
+        result = run_vertical_slice(
+            "Crear un gag nuevo de Illo y Killo",
+            ROOT,
+            executor,
+            evidence_claims=evidence,
+            initial_candidate=INITIAL,
+        )
+
+        self.assertTrue(result.stopped)
+        self.assertIsNone(result.loop)
+        self.assertEqual(result.stop_reason, "evaluation_requires_human_review")
 
 
 if __name__ == "__main__":
