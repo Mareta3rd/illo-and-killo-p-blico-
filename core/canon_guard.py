@@ -67,8 +67,9 @@ def _validate_killo(
             )
         )
 
-    spots_rule = killo.get("spots", {})
-    count_rule = spots_rule.get("count", {})
+    body = killo.get("body", {})
+    spots_rule = body.get("spots", {}) if isinstance(body, dict) else {}
+    count_rule = spots_rule.get("count", {}) if isinstance(spots_rule, dict) else {}
     black_spots = next(
         (
             element
