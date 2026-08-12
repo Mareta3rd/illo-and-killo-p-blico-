@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .library_guard import validate_library_elements
 from .loader import RepositoryKnowledge
 
 
@@ -148,6 +149,16 @@ def validate_piece(
         killo = characters.get("killo", {})
         _validate_killo(proposal, killo, issues)
 
+    library_issues = validate_library_elements(proposal.get("elements", ()), knowledge)
+    issues.extend(
+        ValidationIssue(
+            code=issue.code,
+            message=issue.message,
+            severity=issue.severity,
+        )
+        for issue in library_issues
+    )
+
     # Every explicit element needs an explainable intention.
     for element in proposal.get("elements", ()):
         if not isinstance(element, dict):
@@ -181,6 +192,10 @@ def validate_piece(
             "CANON_KILLO_CLAVEL_MISSING",
             "CANON_KILLO_SPOTS_MISSING",
             "REUSE_WITHOUT_INTENTION",
+            "LIBRARY_INVALID",
+            "LIBRARY_ID_MISSING",
+            "LIBRARY_ENTRY_NOT_FOUND",
+            "LIBRARY_INTENTION_MISSING",
         }
         for issue in issues
     )
