@@ -56,7 +56,10 @@ killo:
       type: short_simple
     spots:
       color: black
-      count: variable
+      count:
+        type: variable
+        min: 2
+        max: 8
     flower:
       type: clavel
       color: adaptable
