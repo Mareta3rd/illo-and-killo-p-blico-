@@ -22,6 +22,13 @@ class CanonGuardTests(unittest.TestCase):
                 },
             },
         },
+        "objects": {
+            "botijo": {
+                "name": "Botijo",
+                "role": "everyday_prop",
+                "invariants": ["simplified_iconic_form"],
+            },
+        },
     }
 
     def test_killo_requires_clavel(self):
@@ -236,6 +243,41 @@ class CanonGuardTests(unittest.TestCase):
         self.assertFalse(result.valid)
         self.assertIn(
             "CANON_KILLO_SPOTS_COLOR_INVALID",
+            {issue.code for issue in result.issues},
+        )
+
+    def test_known_library_reference_is_valid(self):
+        proposal = {
+            "elements": [
+                {
+                    "library": "objects",
+                    "id": "botijo",
+                    "intention": "scene_support",
+                },
+            ],
+        }
+
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertTrue(result.valid)
+
+    def test_unknown_library_reference_requires_human_review(self):
+        proposal = {
+            "elements": [
+                {
+                    "library": "objects",
+                    "id": "unknown_object",
+                    "intention": "scene_support",
+                },
+            ],
+        }
+
+        result = validate_piece(proposal, self.KNOWLEDGE)
+
+        self.assertFalse(result.valid)
+        self.assertTrue(result.requires_human_review)
+        self.assertIn(
+            "LIBRARY_ENTRY_NOT_FOUND",
             {issue.code for issue in result.issues},
         )
 
