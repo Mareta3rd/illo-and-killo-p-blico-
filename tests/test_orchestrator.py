@@ -44,15 +44,22 @@ class OrchestratorTests(unittest.TestCase):
         self.assertFalse(result.stopped)
         self.assertEqual(result.loop.status, "accepted")
         self.assertEqual(len(result.loop.iterations), 1)
-        self.assertEqual(prompts[0], result.pipeline.compiled_prompt)
+        self.assertIs(prompts[0], result.pipeline.compiled_prompt)
 
     def test_compiled_prompt_is_stable_across_iterations(self):
         prompts = []
 
         def executor(prompt, iteration, previous):
             prompts.append(prompt)
-            candidate = {**INITIAL}
-            return candidate
+            if iteration == 1:
+                return {
+                    "characters": ["illo", "killo"],
+                    "elements": [
+                        {"id": "clavel", "intention": "character_identity"},
+                        {"id": "black_spots", "count": 1, "intention": "character_identity"},
+                    ],
+                }
+            return {**INITIAL}
 
         result = run_vertical_slice(
             "Crear un gag nuevo de Illo y Killo",
@@ -64,9 +71,9 @@ class OrchestratorTests(unittest.TestCase):
         )
 
         self.assertEqual(result.loop.status, "accepted")
-        self.assertEqual(len(result.loop.iterations), 1)
-        self.assertIs(prompts[0], result.pipeline.compiled_prompt)
-        self.assertEqual(prompts[0].render(), prompts[0].render())
+        self.assertEqual(len(result.loop.iterations), 2)
+        self.assertIs(prompts[0], prompts[1])
+        self.assertEqual(prompts[0].render(), prompts[1].render())
 
     def test_failed_candidate_continues_and_passes_previous_candidate(self):
         previous_values = []
@@ -75,12 +82,13 @@ class OrchestratorTests(unittest.TestCase):
             previous_values.append(previous)
             if iteration == 1:
                 return {
-                    **INITIAL,
-                    "checks": {"coherence": False},
+                    "characters": ["illo", "killo"],
+                    "elements": [
+                        {"id": "clavel", "intention": "character_identity"},
+                        {"id": "black_spots", "count": 1, "intention": "character_identity"},
+                    ],
                 }
-            return {
-                **INITIAL,
-            }
+            return {**INITIAL}
 
         result = run_vertical_slice(
             "Crear un gag nuevo de Illo y Killo",
@@ -94,14 +102,14 @@ class OrchestratorTests(unittest.TestCase):
         self.assertEqual(result.loop.status, "accepted")
         self.assertEqual(len(result.loop.iterations), 2)
         self.assertEqual(previous_values[0], INITIAL)
-        self.assertEqual(previous_values[1]["checks"]["coherence"], False)
+        self.assertEqual(previous_values[1]["elements"][1]["count"], 1)
 
-    def test_missing_quality_check_requests_human_review(self):
+    def test_missing_evidence_blocks_before_loop(self):
         evidence = dict(COMPLETE_EVIDENCE)
         evidence.pop("reuse_intention")
 
         def executor(prompt, iteration, previous):
-            return {**INITIAL}
+            raise AssertionError("executor must not run when Evidence is incomplete")
 
         result = run_vertical_slice(
             "Crear un gag nuevo de Illo y Killo",
@@ -112,9 +120,9 @@ class OrchestratorTests(unittest.TestCase):
         )
 
         self.assertTrue(result.stopped)
-        self.assertIsNotNone(result.loop)
-        self.assertEqual(result.loop.status, "human_review")
-        self.assertIn("missing checks", result.stop_reason)
+        self.assertIsNone(result.loop)
+        self.assertEqual(result.stop_reason, "evaluation_requires_human_review")
+        self.assertIsNotNone(result.pipeline.evaluation)
 
     def test_unknown_evidence_blocks_before_loop(self):
         evidence = dict(COMPLETE_EVIDENCE)
@@ -137,7 +145,3 @@ class OrchestratorTests(unittest.TestCase):
         self.assertTrue(result.stopped)
         self.assertIsNone(result.loop)
         self.assertEqual(result.stop_reason, "evaluation_requires_human_review")
-
-
-if __name__ == "__main__":
-    unittest.main()
