@@ -10,12 +10,14 @@ class CanonGuardTests(unittest.TestCase):
         "characters": {
             "killo": {
                 "invariants": ["black_spots", "clavel"],
-                "spots": {
-                    "color": "black",
-                    "count": {
-                        "type": "variable",
-                        "min": 2,
-                        "max": 8,
+                "body": {
+                    "spots": {
+                        "color": "black",
+                        "count": {
+                            "type": "variable",
+                            "min": 2,
+                            "max": 8,
+                        },
                     },
                 },
             },
