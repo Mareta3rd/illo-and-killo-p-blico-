@@ -1,4 +1,4 @@
-"""Validate explicit references to the canonical content libraries."""
+"""Validate explicit references and structural integrity of canonical libraries."""
 
 from __future__ import annotations
 
@@ -94,4 +94,76 @@ def validate_library_elements(
     for element in elements or ():
         if isinstance(element, dict) and "library" in element:
             issues.extend(validate_library_element(element, knowledge))
+    return tuple(issues)
+
+
+def validate_library_catalog(
+    knowledge: RepositoryKnowledge | dict[str, Any],
+) -> tuple[LibraryIssue, ...]:
+    """Validate the structural contract of every canonical library entry.
+
+    This intentionally validates structure, not the semantic meaning of an
+    invariant. Invariant semantics need a separate explicit contract rather
+    than being inferred from their names.
+    """
+
+    data = _data_from_knowledge(knowledge)
+    issues: list[LibraryIssue] = []
+
+    for library_name in LIBRARY_NAMES:
+        library = data.get(library_name, {})
+        if not isinstance(library, dict):
+            issues.append(
+                LibraryIssue(
+                    code="LIBRARY_CATALOG_INVALID",
+                    message=f"La biblioteca canónica '{library_name}' debe ser un mapa de recursos.",
+                )
+            )
+            continue
+
+        for entry_id, entry in library.items():
+            prefix = f"{library_name}.{entry_id}"
+            if not isinstance(entry, dict):
+                issues.append(
+                    LibraryIssue(
+                        code="LIBRARY_ENTRY_INVALID",
+                        message=f"La entrada '{prefix}' debe ser un objeto.",
+                    )
+                )
+                continue
+
+            name = entry.get("name")
+            if not isinstance(name, str) or not name.strip():
+                issues.append(
+                    LibraryIssue(
+                        code="LIBRARY_NAME_MISSING",
+                        message=f"La entrada '{prefix}' necesita un nombre canónico.",
+                    )
+                )
+
+            role = entry.get("role")
+            if not isinstance(role, str) or not role.strip():
+                issues.append(
+                    LibraryIssue(
+                        code="LIBRARY_ROLE_MISSING",
+                        message=f"La entrada '{prefix}' necesita un rol canónico.",
+                    )
+                )
+
+            invariants = entry.get("invariants")
+            if not isinstance(invariants, list) or not invariants:
+                issues.append(
+                    LibraryIssue(
+                        code="LIBRARY_INVARIANTS_MISSING",
+                        message=f"La entrada '{prefix}' necesita al menos un invariante canónico.",
+                    )
+                )
+            elif any(not isinstance(item, str) or not item.strip() for item in invariants):
+                issues.append(
+                    LibraryIssue(
+                        code="LIBRARY_INVARIANT_INVALID",
+                        message=f"La entrada '{prefix}' contiene invariantes no válidos.",
+                    )
+                )
+
     return tuple(issues)
