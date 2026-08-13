@@ -1,0 +1,94 @@
+version: "0.1"
+
+# Canonical classification of every invariant currently present in the
+# character, object, fauna, and heritage catalogs.
+# One invariant has exactly one primary family and mechanism.
+
+classification:
+  characters:
+    illo:
+      green_scarf: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      yellow_tuft: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      black_hands: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      black_hooves: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      short_flame_tail: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+    killo:
+      black_spots: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      clavel: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      compact_shape: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      black_hands: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      black_hooves: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+
+  fauna:
+    mosquito_tigre:
+      very_small: {family: categorical, mechanism: deterministic_value, evidence_required: false}
+      readable_as_mosquito: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+      summer_context: {family: contextual_conditional, mechanism: evidence_context, evidence_required: true}
+    gaviota:
+      readable_as_seagull: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    cotorra:
+      readable_as_parakeet: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    cabra:
+      readable_as_goat: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    lagartija:
+      readable_as_lizard: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    tiburon:
+      fin_only_when_needed: {family: contextual_conditional, mechanism: evidence_context, evidence_required: true}
+    oveja:
+      readable_as_sheep: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    paloma:
+      readable_as_pigeon: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+
+  objects:
+    jamon:
+      simplified_iconic_form: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+      readable_as_jamon: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    chorizo:
+      simplified_iconic_form: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+      readable_as_chorizo: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    espeto:
+      simplified_iconic_form: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+      readable_as_espeto: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    caña:
+      simplified_iconic_form: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+    botijo:
+      simplified_iconic_form: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+    silla_terraza:
+      simplified_iconic_form: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+    barandilla:
+      simple_metal_or_wood_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    cubo:
+      simple_readable_form: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    guindilla:
+      small_loco_detail: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+    gafas_redondas:
+      round_eyewear_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    varita_reinterpretada:
+      fantasy_reference_reading: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+    telesilla:
+      chairlift_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+
+  heritage:
+    alhambra:
+      recognizable_silhouette: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+      simplified_nasrid_reading: {family: stylistic_interpretive, mechanism: evidence_style, evidence_required: true}
+    farola_malaga:
+      recognizable_silhouette: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+      simplified_lighthouse_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    giralda:
+      recognizable_silhouette: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+      simplified_tower_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    puente_nuevo:
+      recognizable_silhouette: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+      simplified_bridge_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    catedral_simplificada:
+      recognizable_mass: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    tele_silla:
+      chairlift_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+    plaza_pueblo:
+      village_square_reading: {family: perceptual_semantic, mechanism: evidence_perceptual, evidence_required: true}
+
+status:
+  classification: provisional-but-explicit
+  unresolved: []
+  review_policy: "Any new invariant or family assignment that is not covered by the taxonomy must stop for human review rather than being inferred."
