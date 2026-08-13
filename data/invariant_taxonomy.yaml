@@ -1,0 +1,131 @@
+version: "0.1"
+
+principles:
+  - invariants describe canon properties, not catalog metadata
+  - role, name, affordances, and usage policy remain separate from invariants
+  - every invariant belongs to exactly one primary family
+  - deterministic checks are preferred when the property is objectively testable
+  - ambiguous semantic or perceptual checks use the Evidence tri-state boundary
+  - UNKNOWN never becomes ACCEPT implicitly
+
+families:
+  quantitative:
+    description: "Valores medibles o acotables: cantidades, rangos y límites."
+    mechanism: deterministic_range
+    examples:
+      - count
+    acceptance: "CONFIRMED when the observed value is within the canonical range."
+    contradiction: "Observed value outside the canonical range."
+    unknown: "The value cannot be established reliably."
+
+  categorical:
+    description: "Propiedades discretas con un conjunto o valor canónico explícito."
+    mechanism: deterministic_value
+    examples:
+      - color
+      - type
+      - fixed_position
+    acceptance: "CONFIRMED when the observed value matches canon."
+    contradiction: "Observed value differs from canon."
+    unknown: "The property is required but the observed value is unavailable."
+
+  structural:
+    description: "Partes, presencia/ausencia y relaciones internas necesarias para la construcción."
+    mechanism: deterministic_structure
+    examples:
+      - green_scarf
+      - black_hands
+      - black_hooves
+      - short_flame_tail
+      - simplified_iconic_form
+    acceptance: "CONFIRMED when required structure is present and coherent."
+    contradiction: "Required structure is missing or structurally incompatible."
+    unknown: "The structure cannot be established from the available representation."
+
+  relational:
+    description: "Relaciones entre elementos, partes o referencias que deben mantenerse simultáneamente."
+    mechanism: deterministic_relation
+    examples:
+      - ear_position
+      - recognizable_silhouette
+    acceptance: "CONFIRMED when the required relation holds."
+    contradiction: "The relation is explicitly violated."
+    unknown: "The participating elements or relation cannot be established."
+
+  perceptual_semantic:
+    description: "Propiedades cuya validez depende del reconocimiento visual o semántico, no de una medida directa."
+    mechanism: evidence_perceptual
+    examples:
+      - readable_as_mosquito
+      - readable_as_seagull
+      - recognizable_mass
+      - simplified_lighthouse_reading
+      - simplified_bridge_reading
+    acceptance: "CONFIRMED only when explicit evidence supports the intended reading."
+    contradiction: "Evidence indicates the intended reading is not met."
+    unknown: "Evidence is insufficient or ambiguous; escalate to human review."
+
+  stylistic_interpretive:
+    description: "Propiedades de interpretación estética o de traducción de estilo que no admiten un único test objetivo."
+    mechanism: evidence_style
+    examples:
+      - simplified_nasrid_reading
+      - fantasy_reference_reading
+      - round_eyewear_reading
+    acceptance: "CONFIRMED when explicit stylistic evidence supports the intended interpretation."
+    contradiction: "Evidence explicitly conflicts with the canonical interpretation."
+    unknown: "Interpretation remains ambiguous; escalate to human review."
+
+  contextual_conditional:
+    description: "Propiedades que solo aplican bajo determinadas condiciones de escena, uso o narrativa."
+    mechanism: evidence_context
+    examples:
+      - summer_context
+      - fin_only_when_needed
+    acceptance: "CONFIRMED when the condition and its required behavior are both satisfied."
+    contradiction: "The conditional rule is active and explicitly violated."
+    unknown: "The activating condition or compliance cannot be established."
+
+mechanisms:
+  deterministic_range:
+    mode: automatic
+    requires_evidence: false
+    unknown_action: human_review
+
+  deterministic_value:
+    mode: automatic
+    requires_evidence: false
+    unknown_action: human_review
+
+  deterministic_structure:
+    mode: automatic
+    requires_evidence: false
+    unknown_action: human_review
+
+  deterministic_relation:
+    mode: automatic
+    requires_evidence: false
+    unknown_action: human_review
+
+  evidence_perceptual:
+    mode: evidence_boundary
+    requires_evidence: true
+    unknown_action: human_review
+
+  evidence_style:
+    mode: evidence_boundary
+    requires_evidence: true
+    unknown_action: human_review
+
+  evidence_context:
+    mode: evidence_boundary
+    requires_evidence: true
+    unknown_action: human_review
+
+validation_policy:
+  invariant_missing_from_catalog: human_review
+  unsupported_family: human_review
+  contradictory_evidence: continue
+  unknown_evidence: human_review
+  conflicting_candidate_and_evidence: human_review
+  no_evidence_shortcut: forbidden
