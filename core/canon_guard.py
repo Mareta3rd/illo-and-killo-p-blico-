@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .invariant_evaluator import evaluate_quantitative
 from .library_guard import validate_library_elements
 from .loader import RepositoryKnowledge
 
@@ -88,28 +89,19 @@ def _validate_killo(
             )
         )
 
-    if (
-        isinstance(black_spots, dict)
-        and isinstance(black_spots.get("count"), int)
-        and isinstance(count_rule, dict)
-    ):
+    if isinstance(black_spots, dict) and "count" in black_spots and isinstance(count_rule, dict):
         spot_count = black_spots["count"]
-        min_count = count_rule.get("min")
-        max_count = count_rule.get("max")
-
-        if (
-            isinstance(min_count, int)
-            and spot_count < min_count
-            or isinstance(max_count, int)
-            and spot_count > max_count
-        ):
+        evaluation = evaluate_quantitative(
+            "count",
+            spot_count,
+            minimum=count_rule.get("min"),
+            maximum=count_rule.get("max"),
+        )
+        if evaluation.decision == "fail":
             issues.append(
                 ValidationIssue(
                     code="CANON_KILLO_SPOTS_OUT_OF_RANGE",
-                    message=(
-                        f"Killo tiene {spot_count} manchas negras; "
-                        f"el rango canónico permitido es {min_count}-{max_count}."
-                    ),
+                    message=f"Killo tiene {spot_count} manchas negras; {evaluation.reason}.",
                 )
             )
 
