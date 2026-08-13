@@ -1,0 +1,14 @@
+version: "0.1"
+
+# Canonical verification constraints for invariants that require a
+# deterministic value comparison. This registry does not replace the
+# classification matrix; it supplies the constraint consumed by evaluators.
+
+categorical:
+  fauna:
+    mosquito_tigre:
+      very_small:
+        expected: true
+
+status:
+  policy: "Missing constraints must remain unknown and require explicit human resolution; they are never inferred."
