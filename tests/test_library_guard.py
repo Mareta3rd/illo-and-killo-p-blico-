@@ -1,7 +1,17 @@
 import copy
 import unittest
+from pathlib import Path
 
-from core.library_guard import validate_library_element, validate_library_elements
+from core.canon_guard import validate_piece
+from core.library_guard import (
+    validate_library_catalog,
+    validate_library_element,
+    validate_library_elements,
+)
+from core.loader import load_repository
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class LibraryGuardTests(unittest.TestCase):
@@ -95,6 +105,34 @@ class LibraryGuardTests(unittest.TestCase):
 
         self.assertEqual(element, element_before)
         self.assertEqual(knowledge, knowledge_before)
+
+    def test_catalog_rejects_missing_name(self):
+        knowledge = copy.deepcopy(self.KNOWLEDGE)
+        del knowledge["objects"]["botijo"]["name"]
+        issues = validate_library_catalog(knowledge)
+        self.assertIn("LIBRARY_NAME_MISSING", {issue.code for issue in issues})
+
+    def test_catalog_rejects_missing_role(self):
+        knowledge = copy.deepcopy(self.KNOWLEDGE)
+        del knowledge["fauna"]["gaviota"]["role"]
+        issues = validate_library_catalog(knowledge)
+        self.assertIn("LIBRARY_ROLE_MISSING", {issue.code for issue in issues})
+
+    def test_catalog_rejects_missing_invariants(self):
+        knowledge = copy.deepcopy(self.KNOWLEDGE)
+        knowledge["heritage"]["alhambra"]["invariants"] = []
+        issues = validate_library_catalog(knowledge)
+        self.assertIn("LIBRARY_INVARIANTS_MISSING", {issue.code for issue in issues})
+
+    def test_catalog_rejects_invalid_invariant(self):
+        knowledge = copy.deepcopy(self.KNOWLEDGE)
+        knowledge["objects"]["botijo"]["invariants"] = ["", 3]
+        issues = validate_library_catalog(knowledge)
+        self.assertIn("LIBRARY_INVARIANT_INVALID", {issue.code for issue in issues})
+
+    def test_real_repository_catalog_is_structurally_valid(self):
+        knowledge = load_repository(ROOT)
+        self.assertEqual(validate_library_catalog(knowledge), ())
 
 
 if __name__ == "__main__":
