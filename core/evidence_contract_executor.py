@@ -53,12 +53,17 @@ def evaluate_evidence_contract(
             f"{catalog}/{entry}/{invariant}"
         )
 
-    if contract.policy.explicit_support_required and not (
+    has_explicit_sources = bool(
         claim.supporting_sources or claim.contradicting_sources
-    ):
-        raise ValueError(
-            f"Evidence claim has no explicit sources: {catalog}/{entry}/{invariant}"
-        )
+    )
+    if contract.policy.explicit_support_required and not has_explicit_sources:
+        # UNKNOWN is a legitimate evidence state when the claim has been
+        # explicitly assessed as unresolved. The contract must not manufacture
+        # certainty, but it also must not turn absence of sources into FAIL.
+        if claim.state.value != "UNKNOWN":
+            raise ValueError(
+                f"Evidence claim has no explicit sources: {catalog}/{entry}/{invariant}"
+            )
 
     if contract.policy.contradiction_allowed is False and claim.contradicting_sources:
         raise ValueError(
