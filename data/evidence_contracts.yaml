@@ -1,0 +1,327 @@
+version: "0.1"
+
+# Declarative contracts for every invariant classified as evidence-backed.
+# Contracts describe what the evidence boundary is allowed to establish;
+# they do not invent evidence or set claim state themselves.
+
+contracts:
+  characters: {}
+
+  fauna:
+    mosquito_tigre:
+      readable_as_mosquito:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as mosquito"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      summer_context:
+        family: contextual_conditional
+        mechanism: evidence_context
+        claim: "summer context activates the mosquito-tigre appearance rule"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    gaviota:
+      readable_as_seagull:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as seagull"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    cotorra:
+      readable_as_parakeet:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as parakeet"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    cabra:
+      readable_as_goat:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as goat"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    lagartija:
+      readable_as_lizard:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as lizard"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    tiburon:
+      fin_only_when_needed:
+        family: contextual_conditional
+        mechanism: evidence_context
+        claim: "the dorsal fin is shown only when the contextual rule requires it"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    oveja:
+      readable_as_sheep:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as sheep"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    paloma:
+      readable_as_pigeon:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as pigeon"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+
+  objects:
+    jamon:
+      simplified_iconic_form:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves a simplified iconic reading of jamon"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      readable_as_jamon:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as jamon"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    chorizo:
+      simplified_iconic_form:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves a simplified iconic reading of chorizo"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      readable_as_chorizo:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as chorizo"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    espeto:
+      simplified_iconic_form:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves a simplified iconic reading of espeto"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      readable_as_espeto:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as espeto"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    caña:
+      simplified_iconic_form:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves a simplified iconic reading of caña"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    botijo:
+      simplified_iconic_form:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves a simplified iconic reading of botijo"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    silla_terraza:
+      simplified_iconic_form:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves a simplified iconic reading of terraza chair"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    barandilla:
+      simple_metal_or_wood_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is simply readable as a metal or wooden railing"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    cubo:
+      simple_readable_form:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate has a simple readable bucket form"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    guindilla:
+      small_loco_detail:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves the intended small playful detail reading"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    gafas_redondas:
+      round_eyewear_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as round eyewear"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    varita_reinterpretada:
+      fantasy_reference_reading:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves the intended fantasy reference reading"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    telesilla:
+      chairlift_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as a chairlift"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+
+  heritage:
+    alhambra:
+      recognizable_silhouette:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate retains the recognizable Alhambra silhouette"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      simplified_nasrid_reading:
+        family: stylistic_interpretive
+        mechanism: evidence_style
+        claim: "candidate preserves the intended simplified Nasrid reading"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    farola_malaga:
+      recognizable_silhouette:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate retains the recognizable Malaga lamp silhouette"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      simplified_lighthouse_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate remains readable as the intended lighthouse-like form"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    giralda:
+      recognizable_silhouette:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate retains the recognizable Giralda silhouette"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      simplified_tower_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate remains readable as a simplified tower"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    puente_nuevo:
+      recognizable_silhouette:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate retains the recognizable Puente Nuevo silhouette"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+      simplified_bridge_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate remains readable as a simplified bridge"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    catedral_simplificada:
+      recognizable_mass:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate retains the recognizable massing of the cathedral"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    tele_silla:
+      chairlift_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as a chairlift"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+    plaza_pueblo:
+      village_square_reading:
+        family: perceptual_semantic
+        mechanism: evidence_perceptual
+        claim: "candidate is visually readable as a village square"
+        evidence_policy:
+          explicit_support_required: true
+          contradiction_allowed: true
+          unknown_action: human_review
+
+policy:
+  explicit_support_required: true
+  no_state_inference: true
+  conflicting_sources_require_human_review: true
+  unknown_action: human_review
