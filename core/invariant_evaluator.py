@@ -2,18 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
-
-InvariantDecision = Literal["pass", "fail", "unknown"]
-
-
-@dataclass(frozen=True)
-class InvariantEvaluation:
-    invariant: str
-    decision: InvariantDecision
-    reason: str
+from .invariant_result import InvariantDecision, InvariantEvaluation
 
 
 def evaluate_quantitative(
