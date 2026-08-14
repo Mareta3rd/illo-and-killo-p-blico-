@@ -2,18 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
+from .invariant_result import InvariantDecision, InvariantEvaluation
 
-CategoricalDecision = Literal["pass", "fail", "unknown"]
-
-
-@dataclass(frozen=True)
-class CategoricalEvaluation:
-    invariant: str
-    decision: CategoricalDecision
-    reason: str
+CategoricalDecision = InvariantDecision
+CategoricalEvaluation = InvariantEvaluation
 
 
 def evaluate_categorical(
