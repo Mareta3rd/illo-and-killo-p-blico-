@@ -7,9 +7,13 @@ rewrites them, invents intentions, or mutates repository knowledge.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
+from .categorical_evaluator import evaluate_categorical
+from .invariant_constraints import load_categorical_constraint
 from .invariant_evaluator import evaluate_quantitative
+from .invariant_taxonomy import load_invariant_classification
 from .library_guard import validate_library_elements
 from .loader import RepositoryKnowledge
 
@@ -123,6 +127,65 @@ def _validate_killo(
             )
 
 
+def _validate_categorical_library_invariants(
+    proposal: dict[str, Any],
+    issues: list[ValidationIssue],
+) -> None:
+    """Apply only explicitly classified categorical constraints to library elements."""
+    root = Path(__file__).resolve().parents[1]
+    classifications = load_invariant_classification(root)
+    categorical = {
+        (item.catalog, item.entry): item.invariant
+        for item in classifications
+        if item.family == "categorical"
+    }
+
+    for element in proposal.get("elements", ()):
+        if not isinstance(element, dict):
+            continue
+        catalog = element.get("library")
+        entry = element.get("id")
+        if not isinstance(catalog, str) or not isinstance(entry, str):
+            continue
+
+        for invariant in [
+            name for (item_catalog, item_entry), name in categorical.items()
+            if item_catalog == catalog and item_entry == entry
+        ]:
+            expected = load_categorical_constraint(root, catalog, entry, invariant)
+            if expected is None:
+                issues.append(
+                    ValidationIssue(
+                        code="CANON_CATEGORICAL_INVARIANT_UNKNOWN",
+                        message=(
+                            f"El invariant categórico '{invariant}' de "
+                            f"'{catalog}/{entry}' no tiene restricción canónica explícita."
+                        ),
+                    )
+                )
+                continue
+
+            evaluation = evaluate_categorical(
+                invariant,
+                element.get(invariant),
+                expected=expected,
+            )
+            if evaluation.decision == "fail":
+                issues.append(
+                    ValidationIssue(
+                        code="CANON_CATEGORICAL_INVARIANT_FAILED",
+                        message=evaluation.reason,
+                    )
+                )
+            elif evaluation.decision == "unknown":
+                issues.append(
+                    ValidationIssue(
+                        code="CANON_CATEGORICAL_INVARIANT_UNKNOWN",
+                        message=evaluation.reason,
+                    )
+                )
+
+
 def validate_piece(
     proposal: dict[str, Any],
     knowledge: RepositoryKnowledge | dict[str, Any],
@@ -150,6 +213,8 @@ def validate_piece(
         )
         for issue in library_issues
     )
+
+    _validate_categorical_library_invariants(proposal, issues)
 
     # Every explicit element needs an explainable intention.
     for element in proposal.get("elements", ()):
@@ -188,6 +253,7 @@ def validate_piece(
             "LIBRARY_ID_MISSING",
             "LIBRARY_ENTRY_NOT_FOUND",
             "LIBRARY_INTENTION_MISSING",
+            "CANON_CATEGORICAL_INVARIANT_UNKNOWN",
         }
         for issue in issues
     )
