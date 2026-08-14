@@ -1,9 +1,16 @@
 import unittest
+from pathlib import Path
 
 from core.canon_guard import validate_piece
+from core.loader import load_repository
 
 
 class CanonGuardCategoricalTests(unittest.TestCase):
+    ROOT = Path(__file__).resolve().parents[1]
+
+    def setUp(self):
+        self.knowledge = load_repository(self.ROOT)
+
     def test_known_fauna_categorical_invariant_passes(self):
         proposal = {
             "elements": [
@@ -16,7 +23,7 @@ class CanonGuardCategoricalTests(unittest.TestCase):
             ]
         }
 
-        result = validate_piece(proposal, {"characters": {}, "fauna": {}})
+        result = validate_piece(proposal, self.knowledge)
 
         self.assertTrue(result.valid)
 
@@ -32,7 +39,7 @@ class CanonGuardCategoricalTests(unittest.TestCase):
             ]
         }
 
-        result = validate_piece(proposal, {"characters": {}, "fauna": {}})
+        result = validate_piece(proposal, self.knowledge)
 
         self.assertFalse(result.valid)
         self.assertIn(
@@ -51,7 +58,7 @@ class CanonGuardCategoricalTests(unittest.TestCase):
             ]
         }
 
-        result = validate_piece(proposal, {"characters": {}, "fauna": {}})
+        result = validate_piece(proposal, self.knowledge)
 
         self.assertFalse(result.valid)
         self.assertTrue(result.requires_human_review)
@@ -72,7 +79,7 @@ class CanonGuardCategoricalTests(unittest.TestCase):
             ]
         }
 
-        result = validate_piece(proposal, {"characters": {}, "fauna": {}})
+        result = validate_piece(proposal, self.knowledge)
 
         self.assertTrue(result.valid)
 
