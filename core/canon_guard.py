@@ -16,6 +16,8 @@ from .invariant_evaluator import evaluate_quantitative
 from .invariant_taxonomy import load_invariant_classification
 from .library_guard import validate_library_elements
 from .loader import RepositoryKnowledge
+from .structural_constraints import load_structural_constraint
+from .structural_evaluator import evaluate_structural
 
 
 @dataclass(frozen=True)
@@ -186,6 +188,57 @@ def _validate_categorical_library_invariants(
                 )
 
 
+def _validate_structural_library_invariants(
+    proposal: dict[str, Any],
+    issues: list[ValidationIssue],
+) -> None:
+    """Apply only explicitly classified structural constraints to library elements."""
+    root = Path(__file__).resolve().parents[1]
+    classifications = load_invariant_classification(root)
+    structural = {
+        (item.catalog, item.entry): item.invariant
+        for item in classifications
+        if item.family == "structural"
+    }
+
+    for element in proposal.get("elements", ()):
+        if not isinstance(element, dict):
+            continue
+        catalog = element.get("library")
+        entry = element.get("id")
+        if not isinstance(catalog, str) or not isinstance(entry, str):
+            continue
+
+        for invariant in [
+            name for (item_catalog, item_entry), name in structural.items()
+            if item_catalog == catalog and item_entry == entry
+        ]:
+            constraint = load_structural_constraint(root, catalog, entry, invariant)
+            if constraint is None:
+                continue
+            required_paths, expected = constraint
+            evaluation = evaluate_structural(
+                invariant,
+                element,
+                required_paths=required_paths,
+                expected=expected,
+            )
+            if evaluation.decision == "fail":
+                issues.append(
+                    ValidationIssue(
+                        code="CANON_STRUCTURAL_INVARIANT_FAILED",
+                        message=evaluation.reason,
+                    )
+                )
+            elif evaluation.decision == "unknown":
+                issues.append(
+                    ValidationIssue(
+                        code="CANON_STRUCTURAL_INVARIANT_UNKNOWN",
+                        message=evaluation.reason,
+                    )
+                )
+
+
 def validate_piece(
     proposal: dict[str, Any],
     knowledge: RepositoryKnowledge | dict[str, Any],
@@ -215,6 +268,7 @@ def validate_piece(
     )
 
     _validate_categorical_library_invariants(proposal, issues)
+    _validate_structural_library_invariants(proposal, issues)
 
     # Every explicit element needs an explainable intention.
     for element in proposal.get("elements", ()):
@@ -254,6 +308,7 @@ def validate_piece(
             "LIBRARY_ENTRY_NOT_FOUND",
             "LIBRARY_INTENTION_MISSING",
             "CANON_CATEGORICAL_INVARIANT_UNKNOWN",
+            "CANON_STRUCTURAL_INVARIANT_UNKNOWN",
         }
         for issue in issues
     )
