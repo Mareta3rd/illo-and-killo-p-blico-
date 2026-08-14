@@ -7,16 +7,10 @@ those checks. No repository knowledge is changed or inferred here.
 
 from __future__ import annotations
 
-from typing import Mapping, Any
+from typing import Any, Mapping
 
-from .evidence_state import EvidenceClaim, EvidenceState
-
-
-_DECISIONS = {
-    EvidenceState.CONFIRMED: "pass",
-    EvidenceState.CONTRADICTED: "fail",
-    EvidenceState.UNKNOWN: "unknown",
-}
+from .evidence_boundary import evaluate_evidence_claim
+from .evidence_state import EvidenceClaim
 
 
 def claims_to_checks(
@@ -24,8 +18,8 @@ def claims_to_checks(
 ) -> dict[str, dict[str, Any]]:
     """Convert explicit Evidence claims into evaluator-compatible checks.
 
-    The mapping is loss-minimising: the evaluator decision is derived from
-    the tri-state evidence, while the original claim state and sources remain
+    The mapping is loss-minimising: the shared evidence boundary determines
+    the evaluator decision, while the original claim state and sources remain
     available for audit.
     """
 
@@ -34,9 +28,10 @@ def claims_to_checks(
         if not isinstance(claim, EvidenceClaim):
             raise TypeError(f"Evidence claim for '{name}' is not an EvidenceClaim")
 
+        evaluation = evaluate_evidence_claim(claim)
         checks[str(name)] = {
-            "decision": _DECISIONS[claim.state],
-            "reason": f"evidence state: {claim.state.value}",
+            "decision": evaluation.decision,
+            "reason": evaluation.reason,
             "claim": claim.claim,
             "supporting_sources": claim.supporting_sources,
             "contradicting_sources": claim.contradicting_sources,
