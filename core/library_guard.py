@@ -8,7 +8,7 @@ from typing import Any
 from .loader import RepositoryKnowledge
 
 
-LIBRARY_NAMES = ("objects", "fauna", "heritage")
+LIBRARY_NAMES = ("characters", "objects", "fauna", "heritage")
 
 
 @dataclass(frozen=True)
