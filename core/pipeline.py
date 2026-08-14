@@ -12,6 +12,7 @@ from core.evidence_claim_router import evaluate_canonical_evidence_claims
 from core.evidence_evaluator import evaluate_candidate_with_evidence
 from core.evidence_state import EvidenceClaim
 from core.evaluator import EvaluationReport
+from core.loop import Evaluation
 from core.prompt_compiler import CompiledPrompt, compile_prompt
 
 
@@ -99,11 +100,8 @@ def run_pipeline(
                 stopped=True,
                 stop_reason="evidence_contract_requires_human_review",
                 evaluation=EvaluationReport(
-                    evaluation=__import__("core.loop", fromlist=["Evaluation"]).Evaluation(
-                        "human_review",
-                        f"invalid canonical evidence claims: {exc}",
-                    ),
-                    checks=(),
+                    Evaluation("human_review", f"invalid canonical evidence claims: {exc}"),
+                    (),
                 ),
             )
 
