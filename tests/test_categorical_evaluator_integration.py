@@ -25,7 +25,7 @@ class CategoricalEvaluatorIntegrationTests(unittest.TestCase):
 
         result = evaluate_categorical(invariant, True, expected=expected)
 
-        self.assertEqual(result.status, "pass")
+        self.assertEqual(result.decision, "pass")
         self.assertEqual(result.invariant, "very_small")
 
     def test_very_small_false_value_fails_against_real_constraint(self):
@@ -34,7 +34,7 @@ class CategoricalEvaluatorIntegrationTests(unittest.TestCase):
 
         result = evaluate_categorical("very_small", False, expected=expected)
 
-        self.assertEqual(result.status, "fail")
+        self.assertEqual(result.decision, "fail")
 
     def test_missing_observation_remains_unknown_against_real_constraint(self):
         constraints = self._load_constraints()
@@ -42,7 +42,7 @@ class CategoricalEvaluatorIntegrationTests(unittest.TestCase):
 
         result = evaluate_categorical("very_small", None, expected=expected)
 
-        self.assertEqual(result.status, "unknown")
+        self.assertEqual(result.decision, "unknown")
 
     def test_missing_constraint_is_not_inferred(self):
         fauna = self._load_fauna()
