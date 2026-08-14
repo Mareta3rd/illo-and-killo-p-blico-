@@ -24,7 +24,6 @@ class CanonGuardCategoricalTests(unittest.TestCase):
         }
 
         result = validate_piece(proposal, self.knowledge)
-
         self.assertTrue(result.valid)
 
     def test_known_fauna_categorical_invariant_fails(self):
@@ -40,7 +39,6 @@ class CanonGuardCategoricalTests(unittest.TestCase):
         }
 
         result = validate_piece(proposal, self.knowledge)
-
         self.assertFalse(result.valid)
         self.assertIn(
             "CANON_CATEGORICAL_INVARIANT_FAILED",
@@ -59,7 +57,6 @@ class CanonGuardCategoricalTests(unittest.TestCase):
         }
 
         result = validate_piece(proposal, self.knowledge)
-
         self.assertFalse(result.valid)
         self.assertTrue(result.requires_human_review)
         self.assertIn(
@@ -73,6 +70,7 @@ class CanonGuardCategoricalTests(unittest.TestCase):
                 {
                     "library": "fauna",
                     "id": "mosquito_tigre",
+                    "very_small": True,
                     "invented_property": True,
                     "intention": "scene_support",
                 }
@@ -80,7 +78,6 @@ class CanonGuardCategoricalTests(unittest.TestCase):
         }
 
         result = validate_piece(proposal, self.knowledge)
-
         self.assertTrue(result.valid)
 
 
