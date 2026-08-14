@@ -35,10 +35,15 @@ def load_structural_constraint(
     if not isinstance(invariant_data, dict):
         return None
 
-    required_paths_raw = invariant_data.get("required_paths", ())
-    expected_raw = invariant_data.get("expected", ())
+    required_paths_raw = invariant_data.get("required_paths", [])
+    expected_raw = invariant_data.get("expected", [])
     required_paths: list[tuple[str, ...]] = []
     expected: list[tuple[tuple[str, ...], Any]] = []
+
+    if required_paths_raw is None:
+        required_paths_raw = []
+    if expected_raw is None:
+        expected_raw = []
 
     if not isinstance(required_paths_raw, list) or not isinstance(expected_raw, list):
         return None
@@ -57,5 +62,8 @@ def load_structural_constraint(
         if "value" not in item:
             return None
         expected.append((tuple(item_path), item["value"]))
+
+    if not required_paths and not expected:
+        return None
 
     return tuple(required_paths), tuple(expected)
