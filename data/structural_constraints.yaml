@@ -1,0 +1,58 @@
+version: "0.1"
+
+# Canonical structural constraints for deterministic invariants.
+# required_paths assert presence; expected asserts exact values at paths.
+
+structural:
+  characters:
+    illo:
+      green_scarf:
+        expected:
+          - path: [scarf, color]
+            value: green
+      yellow_tuft:
+        expected:
+          - path: [tuft, color]
+            value: yellow
+      black_hands:
+        expected:
+          - path: [hands, color]
+            value: black
+      black_hooves:
+        expected:
+          - path: [feet, type]
+            value: hoof
+          - path: [feet, color]
+            value: black
+      short_flame_tail:
+        expected:
+          - path: [tail, type]
+            value: flame
+          - path: [tail, length]
+            value: short
+    killo:
+      black_spots:
+        expected:
+          - path: [spots, color]
+            value: black
+      clavel:
+        expected:
+          - path: [flower, type]
+            value: clavel
+      compact_shape:
+        expected:
+          - path: [body, shape]
+            value: compact_round
+      black_hands:
+        expected:
+          - path: [hands, color]
+            value: black
+      black_hooves:
+        expected:
+          - path: [feet, type]
+            value: hoof
+          - path: [feet, color]
+            value: black
+
+status:
+  policy: "Missing structural constraints remain unknown and require explicit human resolution; they are never inferred."
