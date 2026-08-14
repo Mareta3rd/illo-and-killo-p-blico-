@@ -2,18 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
+from .invariant_result import InvariantDecision, InvariantEvaluation
 
-StructuralDecision = Literal["pass", "fail", "unknown"]
-
-
-@dataclass(frozen=True)
-class StructuralEvaluation:
-    invariant: str
-    decision: StructuralDecision
-    reason: str
+StructuralDecision = InvariantDecision
+StructuralEvaluation = InvariantEvaluation
 
 
 def _read_path(value: Any, path: tuple[str, ...]) -> tuple[bool, Any]:
