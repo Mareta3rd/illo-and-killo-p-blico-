@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
+
+if TYPE_CHECKING:
+    from .evidence_state import EvidenceClaim
 
 
 EvidenceDecision = Literal["pass", "fail", "unknown"]
@@ -37,3 +40,25 @@ def evaluate_evidence(
     if evidence_state == "unknown":
         return EvidenceEvaluation(invariant, "unknown", unknown_reason)
     raise ValueError(f"unsupported evidence state: {evidence_state!r}")
+
+
+def evaluate_evidence_claim(claim: EvidenceClaim) -> EvidenceEvaluation:
+    """Evaluate one auditable EvidenceClaim through the shared boundary."""
+    from .evidence_state import EvidenceClaim, EvidenceState
+
+    if not isinstance(claim, EvidenceClaim):
+        raise TypeError("claim must be an EvidenceClaim")
+
+    decision_by_state = {
+        EvidenceState.CONFIRMED: "pass",
+        EvidenceState.CONTRADICTED: "fail",
+        EvidenceState.UNKNOWN: "unknown",
+    }
+    decision = decision_by_state[claim.state]
+    return evaluate_evidence(
+        claim.claim,
+        decision,
+        confirmed_reason="evidence claim is confirmed",
+        contradicted_reason="evidence claim is contradicted",
+        unknown_reason="evidence claim remains unknown",
+    )
