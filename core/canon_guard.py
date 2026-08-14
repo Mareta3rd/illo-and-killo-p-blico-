@@ -136,11 +136,10 @@ def _validate_categorical_library_invariants(
     """Apply only explicitly classified categorical constraints to library elements."""
     root = Path(__file__).resolve().parents[1]
     classifications = load_invariant_classification(root)
-    categorical = {
-        (item.catalog, item.entry): item.invariant
-        for item in classifications
-        if item.family == "categorical"
-    }
+    categorical: dict[tuple[str, str], list[str]] = {}
+    for item in classifications:
+        if item.family == "categorical":
+            categorical.setdefault((item.catalog, item.entry), []).append(item.invariant)
 
     for element in proposal.get("elements", ()):
         if not isinstance(element, dict):
@@ -150,10 +149,7 @@ def _validate_categorical_library_invariants(
         if not isinstance(catalog, str) or not isinstance(entry, str):
             continue
 
-        for invariant in [
-            name for (item_catalog, item_entry), name in categorical.items()
-            if item_catalog == catalog and item_entry == entry
-        ]:
+        for invariant in categorical.get((catalog, entry), []):
             expected = load_categorical_constraint(root, catalog, entry, invariant)
             if expected is None:
                 issues.append(
@@ -195,11 +191,10 @@ def _validate_structural_library_invariants(
     """Apply only explicitly classified structural constraints to library elements."""
     root = Path(__file__).resolve().parents[1]
     classifications = load_invariant_classification(root)
-    structural = {
-        (item.catalog, item.entry): item.invariant
-        for item in classifications
-        if item.family == "structural"
-    }
+    structural: dict[tuple[str, str], list[str]] = {}
+    for item in classifications:
+        if item.family == "structural":
+            structural.setdefault((item.catalog, item.entry), []).append(item.invariant)
 
     for element in proposal.get("elements", ()):
         if not isinstance(element, dict):
@@ -209,10 +204,7 @@ def _validate_structural_library_invariants(
         if not isinstance(catalog, str) or not isinstance(entry, str):
             continue
 
-        for invariant in [
-            name for (item_catalog, item_entry), name in structural.items()
-            if item_catalog == catalog and item_entry == entry
-        ]:
+        for invariant in structural.get((catalog, entry), []):
             constraint = load_structural_constraint(root, catalog, entry, invariant)
             if constraint is None:
                 continue
