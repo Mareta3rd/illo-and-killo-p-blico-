@@ -23,7 +23,7 @@ class CategoricalEvaluatorIntegrationTests(unittest.TestCase):
         invariant = fauna["mosquito_tigre"]["invariants"][0]
         expected = constraints["categorical"]["fauna"]["mosquito_tigre"][invariant]["expected"]
 
-        result = evaluate_categorical(invariant, True, expected)
+        result = evaluate_categorical(invariant, True, expected=expected)
 
         self.assertEqual(result.status, "pass")
         self.assertEqual(result.invariant, "very_small")
@@ -32,7 +32,7 @@ class CategoricalEvaluatorIntegrationTests(unittest.TestCase):
         constraints = self._load_constraints()
         expected = constraints["categorical"]["fauna"]["mosquito_tigre"]["very_small"]["expected"]
 
-        result = evaluate_categorical("very_small", False, expected)
+        result = evaluate_categorical("very_small", False, expected=expected)
 
         self.assertEqual(result.status, "fail")
 
@@ -40,7 +40,7 @@ class CategoricalEvaluatorIntegrationTests(unittest.TestCase):
         constraints = self._load_constraints()
         expected = constraints["categorical"]["fauna"]["mosquito_tigre"]["very_small"]["expected"]
 
-        result = evaluate_categorical("very_small", None, expected)
+        result = evaluate_categorical("very_small", None, expected=expected)
 
         self.assertEqual(result.status, "unknown")
 
