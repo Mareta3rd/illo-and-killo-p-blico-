@@ -2,17 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
-RelationalDecision = Literal["pass", "fail", "unknown"]
+from .invariant_result import InvariantDecision, InvariantEvaluation
 
-
-@dataclass(frozen=True)
-class RelationalEvaluation:
-    invariant: str
-    decision: RelationalDecision
-    reason: str
+RelationalDecision = InvariantDecision
+RelationalEvaluation = InvariantEvaluation
 
 
 def _read_path(value: Any, path: tuple[str, ...]) -> tuple[bool, Any]:
