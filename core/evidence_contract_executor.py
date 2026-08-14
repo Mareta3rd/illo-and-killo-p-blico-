@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .evidence_boundary import EvidenceEvaluation, evaluate_evidence_claim
-from .evidence_contracts import EvidenceContract, load_evidence_contract
+from .evidence_contracts import EvidenceContract, load_evidence_contracts
 from .evidence_state import EvidenceClaim
 from .invariant_dispatcher import dispatch_invariant
 
@@ -34,20 +34,35 @@ def evaluate_evidence_contract(
             f"Invariant is not evidence-backed: {catalog}/{entry}/{invariant}"
         )
 
-    contract: EvidenceContract = load_evidence_contract(
-        root, catalog, entry, invariant
-    )
+    contracts = load_evidence_contracts(root)
+    matches = [
+        contract
+        for contract in contracts
+        if (contract.catalog, contract.entry, contract.invariant)
+        == (catalog, entry, invariant)
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"Expected exactly one evidence contract: {catalog}/{entry}/{invariant}"
+        )
+    contract: EvidenceContract = matches[0]
+
     if contract.family != route.family or contract.mechanism != route.mechanism:
         raise ValueError(
             f"Evidence contract disagrees with classification for "
             f"{catalog}/{entry}/{invariant}"
         )
 
-    if contract.explicit_support_required and not (
+    if contract.policy.explicit_support_required and not (
         claim.supporting_sources or claim.contradicting_sources
     ):
         raise ValueError(
             f"Evidence claim has no explicit sources: {catalog}/{entry}/{invariant}"
+        )
+
+    if contract.policy.contradiction_allowed is False and claim.contradicting_sources:
+        raise ValueError(
+            f"Contradicting evidence is not allowed by contract: {catalog}/{entry}/{invariant}"
         )
 
     evaluation = evaluate_evidence_claim(claim)
