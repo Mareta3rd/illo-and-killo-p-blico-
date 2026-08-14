@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 from core.canon_guard import ValidationResult, validate_piece
 from core.context import CoreContext, build_context
+from core.evidence_claim_router import evaluate_canonical_evidence_claims
 from core.evidence_evaluator import evaluate_candidate_with_evidence
 from core.evidence_state import EvidenceClaim
 from core.evaluator import EvaluationReport
@@ -24,6 +25,23 @@ class PipelineResult:
     evaluation: EvaluationReport | None = None
 
 
+def _validate_canonical_claims(
+    root: str | Path,
+    claims: Mapping[str, EvidenceClaim],
+) -> None:
+    """Validate canonical claim routing while preserving legacy claim keys."""
+    canonical_keys = [key for key in claims if "/" in str(key)]
+    if not canonical_keys:
+        return
+
+    if len(canonical_keys) != len(claims):
+        raise ValueError(
+            "Evidence claims must use either legacy names or canonical keys consistently"
+        )
+
+    evaluate_canonical_evidence_claims(str(root), claims)
+
+
 def run_pipeline(
     idea: str,
     root: str | Path,
@@ -34,11 +52,10 @@ def run_pipeline(
 
     Repository knowledge remains read-only. Canon validation happens first;
     when explicit Evidence claims are supplied, they are translated into
-    evaluator checks without mutating the proposal. The evaluator then decides
-    whether the pipeline may compile, must continue, or requires human review.
-
-    If no Evidence claims are supplied, the existing v0.1 pipeline behaviour is
-    preserved: a canon-valid proposal may compile without evaluator checks.
+    evaluator checks without mutating the proposal. Canonical Evidence keys
+    (``catalog/entry/invariant``) are validated against the taxonomy and its
+    Evidence contracts before evaluator execution. Legacy claim names remain
+    supported for backward compatibility during the v0.1 transition.
     """
     context = build_context(idea, root)
     proposal = proposal or {}
@@ -73,6 +90,23 @@ def run_pipeline(
 
     evaluation: EvaluationReport | None = None
     if evidence_claims is not None:
+        try:
+            _validate_canonical_claims(root, evidence_claims)
+        except (KeyError, TypeError, ValueError) as exc:
+            return PipelineResult(
+                context=context,
+                validation=validation,
+                stopped=True,
+                stop_reason="evidence_contract_requires_human_review",
+                evaluation=EvaluationReport(
+                    evaluation=__import__("core.loop", fromlist=["Evaluation"]).Evaluation(
+                        "human_review",
+                        f"invalid canonical evidence claims: {exc}",
+                    ),
+                    checks=(),
+                ),
+            )
+
         evaluation = evaluate_candidate_with_evidence(
             proposal,
             validation,
