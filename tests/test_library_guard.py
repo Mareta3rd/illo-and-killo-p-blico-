@@ -16,6 +16,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class LibraryGuardTests(unittest.TestCase):
     KNOWLEDGE = {
+        "characters": {
+            "killo": {
+                "name": "Killo",
+                "role": "reactive_side",
+                "invariants": ["black_spots", "clavel", "compact_shape"],
+            },
+        },
         "objects": {
             "botijo": {
                 "name": "Botijo",
@@ -38,6 +45,13 @@ class LibraryGuardTests(unittest.TestCase):
             },
         },
     }
+
+    def test_known_character_reference_is_valid(self):
+        issues = validate_library_element(
+            {"library": "characters", "id": "killo", "intention": "character_identity"},
+            self.KNOWLEDGE,
+        )
+        self.assertEqual(issues, ())
 
     def test_known_object_reference_is_valid(self):
         issues = validate_library_element(
@@ -69,7 +83,7 @@ class LibraryGuardTests(unittest.TestCase):
 
     def test_invalid_library_is_rejected(self):
         issues = validate_library_element(
-            {"library": "characters", "id": "killo", "intention": "character_identity"},
+            {"library": "invalid_library", "id": "killo", "intention": "character_identity"},
             self.KNOWLEDGE,
         )
         self.assertIn("LIBRARY_INVALID", {issue.code for issue in issues})
