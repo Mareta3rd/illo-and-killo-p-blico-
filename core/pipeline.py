@@ -30,17 +30,12 @@ def _validate_canonical_claims(
     root: str | Path,
     claims: Mapping[str, EvidenceClaim],
 ) -> None:
-    """Validate canonical claim routing while preserving legacy claim keys."""
+    """Validate any canonical claims while preserving legacy claim names."""
     canonical_keys = [key for key in claims if "/" in str(key)]
-    if not canonical_keys:
-        return
-
-    if len(canonical_keys) != len(claims):
-        raise ValueError(
-            "Evidence claims must use either legacy names or canonical keys consistently"
-        )
-
-    evaluate_canonical_evidence_claims(str(root), claims)
+    if canonical_keys:
+        evaluate_canonical_evidence_claims(str(root), {
+            key: claims[key] for key in canonical_keys
+        })
 
 
 def run_pipeline(
@@ -56,7 +51,7 @@ def run_pipeline(
     evaluator checks without mutating the proposal. Canonical Evidence keys
     (``catalog/entry/invariant``) are validated against the taxonomy and its
     Evidence contracts before evaluator execution. Legacy claim names remain
-    supported for backward compatibility during the v0.1 transition.
+    supported, and canonical claims may coexist with those existing checks.
     """
     context = build_context(idea, root)
     proposal = proposal or {}
