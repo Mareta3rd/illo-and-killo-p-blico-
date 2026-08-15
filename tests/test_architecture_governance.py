@@ -3,13 +3,9 @@ import unittest
 
 from core.evidence_contracts import load_evidence_contracts
 from core.evidence_snapshot import build_evidence_snapshot
-from core.invariant_taxonomy import (
-    load_invariant_classification,
-    load_invariant_taxonomy,
-    validate_invariant_classification,
-)
 from core.invariant_dispatcher import dispatch_invariant
-from core.invariant_execution import execute_invariant
+from core.invariant_execution import evaluate_classified_evidence
+from core.invariant_taxonomy import load_invariant_classification, validate_invariant_classification
 from core.evidence_state import EvidenceClaim, EvidenceState
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,22 +37,27 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertTrue(classified.evidence_required)
         self.assertEqual(classified.mechanism, contract.mechanism)
 
-    def test_evidence_execution_cannot_bypass_contract(self):
-        with self.assertRaises((KeyError, ValueError)):
-            execute_invariant(
-                str(ROOT),
-                "fauna/mosquito_tigre/readable_as_mosquito",
-                {"claim": "missing sources"},
-            )
+    def test_evidence_execution_uses_declared_route(self):
+        route, result = evaluate_classified_evidence(
+            str(ROOT),
+            "fauna",
+            "mosquito_tigre",
+            "readable_as_mosquito",
+            "unknown",
+        )
+        self.assertEqual(route.mode, "evidence")
+        self.assertEqual(result.decision, "unknown")
 
     def test_deterministic_invariant_cannot_cross_evidence_boundary(self):
         decision = dispatch_invariant(str(ROOT), "characters/killo/clavel")
         self.assertFalse(decision.evidence_required)
-        with self.assertRaises((ValueError, KeyError)):
-            execute_invariant(
+        with self.assertRaises(ValueError):
+            evaluate_classified_evidence(
                 str(ROOT),
-                "characters/killo/clavel",
-                {"claim": "should not route through evidence"},
+                "characters",
+                "killo",
+                "clavel",
+                "pass",
             )
 
     def test_canonical_evidence_is_frozen_before_execution(self):
