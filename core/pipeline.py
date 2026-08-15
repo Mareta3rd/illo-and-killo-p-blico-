@@ -8,8 +8,8 @@ from typing import Any, Mapping
 
 from core.canon_guard import ValidationResult, validate_piece
 from core.context import CoreContext, build_context
-from core.evidence_claim_router import evaluate_canonical_evidence_claims
 from core.evidence_evaluator import evaluate_candidate_with_evidence
+from core.evidence_snapshot import EvidenceSnapshot, build_evidence_snapshot
 from core.evidence_state import EvidenceClaim
 from core.evaluator import EvaluationReport
 from core.loop import Evaluation
@@ -24,18 +24,7 @@ class PipelineResult:
     stop_reason: str | None
     compiled_prompt: CompiledPrompt | None = None
     evaluation: EvaluationReport | None = None
-
-
-def _validate_canonical_claims(
-    root: str | Path,
-    claims: Mapping[str, EvidenceClaim],
-) -> None:
-    """Validate any canonical claims while preserving legacy claim names."""
-    canonical_keys = [key for key in claims if "/" in str(key)]
-    if canonical_keys:
-        evaluate_canonical_evidence_claims(str(root), {
-            key: claims[key] for key in canonical_keys
-        })
+    evidence_snapshot: EvidenceSnapshot | None = None
 
 
 def run_pipeline(
@@ -46,92 +35,70 @@ def run_pipeline(
 ) -> PipelineResult:
     """Run the deterministic Core v0.1 pipeline through evaluation and compilation.
 
-    Repository knowledge remains read-only. Canon validation happens first;
-    when explicit Evidence claims are supplied, they are translated into
-    evaluator checks without mutating the proposal. Canonical Evidence keys
-    (``catalog/entry/invariant``) are validated against the taxonomy and its
-    Evidence contracts before evaluator execution. Legacy claim names remain
-    supported, and canonical claims may coexist with those existing checks.
+    Evidence claims are validated once and frozen into an EvidenceSnapshot
+    before evaluator/compiler decisions. Legacy claim names remain supported.
     """
     context = build_context(idea, root)
     proposal = proposal or {}
+    snapshot: EvidenceSnapshot | None = None
 
     if not idea.strip():
         validation = validate_piece(proposal, context.knowledge)
-        return PipelineResult(
-            context=context,
-            validation=validation,
-            stopped=True,
-            stop_reason="missing_idea",
-        )
+        return PipelineResult(context, validation, True, "missing_idea")
 
     if context.requires_human_review:
         validation = validate_piece(proposal, context.knowledge)
-        return PipelineResult(
-            context=context,
-            validation=validation,
-            stopped=True,
-            stop_reason="router_requires_human_review",
-        )
+        return PipelineResult(context, validation, True, "router_requires_human_review")
 
     validation = validate_piece(proposal, context.knowledge)
-
     if validation.requires_human_review:
-        return PipelineResult(
-            context=context,
-            validation=validation,
-            stopped=True,
-            stop_reason="canon_requires_human_review",
-        )
+        return PipelineResult(context, validation, True, "canon_requires_human_review")
 
     evaluation: EvaluationReport | None = None
     if evidence_claims is not None:
         try:
-            _validate_canonical_claims(root, evidence_claims)
-        except (KeyError, TypeError, ValueError) as exc:
+            snapshot = build_evidence_snapshot(str(root), evidence_claims)
+        except (TypeError, ValueError, KeyError) as exc:
             return PipelineResult(
-                context=context,
-                validation=validation,
-                stopped=True,
-                stop_reason="evidence_contract_requires_human_review",
+                context,
+                validation,
+                True,
+                "evidence_contract_requires_human_review",
                 evaluation=EvaluationReport(
                     Evaluation("human_review", f"invalid canonical evidence claims: {exc}"),
                     (),
                 ),
             )
 
-        evaluation = evaluate_candidate_with_evidence(
-            proposal,
-            validation,
-            evidence_claims,
-        )
+        evaluation = evaluate_candidate_with_evidence(proposal, validation, snapshot.claims)
 
         if evaluation.evaluation.decision == "human_review":
             return PipelineResult(
-                context=context,
-                validation=validation,
-                stopped=True,
-                stop_reason="evaluation_requires_human_review",
+                context,
+                validation,
+                True,
+                "evaluation_requires_human_review",
                 evaluation=evaluation,
+                evidence_snapshot=snapshot,
             )
-
         if evaluation.evaluation.decision == "continue":
             return PipelineResult(
-                context=context,
-                validation=validation,
-                stopped=True,
-                stop_reason="evaluation_requires_continuation",
+                context,
+                validation,
+                True,
+                "evaluation_requires_continuation",
                 evaluation=evaluation,
+                evidence_snapshot=snapshot,
             )
 
     result = PipelineResult(
-        context=context,
-        validation=validation,
-        stopped=False,
-        stop_reason=None,
+        context,
+        validation,
+        False,
+        None,
         evaluation=evaluation,
+        evidence_snapshot=snapshot,
     )
-
     return PipelineResult(
         context=result.context,
         validation=result.validation,
@@ -139,4 +106,5 @@ def run_pipeline(
         stop_reason=result.stop_reason,
         compiled_prompt=compile_prompt(result),
         evaluation=result.evaluation,
+        evidence_snapshot=result.evidence_snapshot,
     )
