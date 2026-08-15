@@ -3,8 +3,7 @@
 This module joins the validated pipeline, the bounded loop, the evidence-aware
 evaluator, and the compiled prompt. It remains model-agnostic: an external
 execution layer is injected rather than called from Core. Every candidate is
-revalidated against repository knowledge and explicit Evidence before the
-evaluator decides whether to continue, accept, or request human review.
+revalidated against repository knowledge and the same frozen Evidence snapshot.
 """
 
 from __future__ import annotations
@@ -15,6 +14,7 @@ from typing import Any, Callable, Mapping
 
 from .canon_guard import ValidationResult, validate_piece
 from .evidence_evaluator import evaluate_candidate_with_evidence
+from .evidence_snapshot import EvidenceSnapshot
 from .evidence_state import EvidenceClaim
 from .evaluator import EvaluationReport
 from .loop import Evaluation, LoopResult, run_loop
@@ -47,10 +47,9 @@ def run_vertical_slice(
 ) -> VerticalSliceResult:
     """Run the Evidence-aware pipeline -> loop -> validation -> evaluator.
 
-    Explicit Evidence claims are required at the end-to-end boundary. The
-    compiled prompt is created only after pipeline validation and evaluation,
-    and the same Evidence claims are applied again to every loop candidate.
-    This prevents the loop from bypassing the semantic decision boundary.
+    Evidence is validated once by the pipeline and then reused through its
+    immutable snapshot for every loop candidate. The loop cannot reinterpret,
+    replace, or silently bypass the execution-boundary Evidence.
     """
     proposal = initial_candidate or {}
     pipeline = run_pipeline(
@@ -70,6 +69,14 @@ def run_vertical_slice(
 
     prompt = pipeline.compiled_prompt
     knowledge = pipeline.context.knowledge
+    snapshot: EvidenceSnapshot | None = pipeline.evidence_snapshot
+    if snapshot is None:
+        return VerticalSliceResult(
+            pipeline=pipeline,
+            loop=None,
+            stopped=True,
+            stop_reason="missing_evidence_snapshot",
+        )
 
     def execute(iteration: int, previous: Candidate | None) -> Candidate:
         candidate = executor(prompt, iteration, previous)
@@ -82,7 +89,7 @@ def run_vertical_slice(
         report: EvaluationReport = evaluate_candidate_with_evidence(
             candidate,
             validation,
-            evidence_claims,
+            snapshot.claims,
         )
         return report.evaluation
 
