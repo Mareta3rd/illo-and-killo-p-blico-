@@ -28,12 +28,16 @@ class ArchitectureGovernanceTests(unittest.TestCase):
 
     def test_evidence_required_invariant_has_matching_contract(self):
         contracts = load_evidence_contracts(ROOT)
+        contract = next(
+            item for item in contracts
+            if (item.catalog, item.entry, item.invariant)
+            == ("fauna", "mosquito_tigre", "readable_as_mosquito")
+        )
         classified = next(
             item for item in load_invariant_classification(ROOT)
             if (item.catalog, item.entry, item.invariant)
             == ("fauna", "mosquito_tigre", "readable_as_mosquito")
         )
-        contract = contracts["fauna/mosquito_tigre/readable_as_mosquito"]
         self.assertTrue(classified.evidence_required)
         self.assertEqual(classified.mechanism, contract.mechanism)
 
@@ -49,7 +53,7 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertEqual(result.decision, "unknown")
 
     def test_deterministic_invariant_cannot_cross_evidence_boundary(self):
-        decision = dispatch_invariant(str(ROOT), "characters/killo/clavel")
+        decision = dispatch_invariant(str(ROOT), "characters", "killo", "clavel")
         self.assertFalse(decision.evidence_required)
         with self.assertRaises(ValueError):
             evaluate_classified_evidence(
