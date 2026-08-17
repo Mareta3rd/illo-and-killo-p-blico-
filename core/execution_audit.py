@@ -8,7 +8,6 @@ from typing import Mapping, Sequence
 
 from .context import CoreContext
 from .evidence_snapshot import EvidenceSnapshot
-from .evidence_state import EvidenceClaim
 from .semantic_audit import SemanticAuditRecord
 
 
@@ -55,9 +54,10 @@ def build_execution_audit(
 ) -> ExecutionAudit:
     """Build an immutable execution summary without mutating inputs."""
     claims = snapshot.claims if snapshot is not None else {}
+    route = getattr(context.route, "value", context.route)
     return ExecutionAudit(
         idea=context.idea,
-        route=context.route.value,
+        route=str(route),
         confidence=context.confidence,
         route_reason=context.reason,
         evidence_keys=tuple(sorted(str(key) for key in claims)),
