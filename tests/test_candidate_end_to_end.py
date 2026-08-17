@@ -20,10 +20,7 @@ LEGACY_EVIDENCE = {
 CANDIDATE = {
     "characters": ["illo", "killo"],
     "elements": [
-        {
-            "id": "clavel",
-            "intention": "character_identity",
-        },
+        {"id": "clavel", "intention": "character_identity"},
         {
             "library": "fauna",
             "id": "mosquito_tigre",
@@ -40,23 +37,24 @@ CANDIDATE = {
 }
 
 
-class CandidateEndToEndTests(unittest.TestCase):
-    def _claims(self, state: EvidenceState):
-        record = ExternalEvidenceRecord(
-            claim_key=KEY,
-            statement="candidate is visually readable as mosquito",
-            state=state,
-            supporting_sources=("simulated-visual-review",)
-            if state is EvidenceState.CONFIRMED
-            else (),
-            contradicting_sources=("simulated-visual-review",)
-            if state is EvidenceState.CONTRADICTED
-            else (),
-        )
-        provider = build_simulated_provider((record,))
-        canonical = normalize_external_evidence(provider.collect((KEY,)))
-        return {**LEGACY_EVIDENCE, **canonical}
+def _claims(state: EvidenceState):
+    record = ExternalEvidenceRecord(
+        claim_key=KEY,
+        statement="candidate is visually readable as mosquito",
+        state=state,
+        supporting_sources=("simulated-visual-review",)
+        if state is EvidenceState.CONFIRMED
+        else (),
+        contradicting_sources=("simulated-visual-review",)
+        if state is EvidenceState.CONTRADICTED
+        else (),
+    )
+    provider = build_simulated_provider((record,))
+    canonical = normalize_external_evidence(provider.collect((KEY,)))
+    return {**LEGACY_EVIDENCE, **canonical}
 
+
+class CandidateEndToEndTests(unittest.TestCase):
     def test_complete_candidate_with_confirmed_external_evidence_is_accepted(self):
         calls = []
 
@@ -68,7 +66,7 @@ class CandidateEndToEndTests(unittest.TestCase):
             "Crear una escena de verano con Illo, Killo y un mosquito tigre",
             ROOT,
             executor,
-            evidence_claims=self._claims(EvidenceState.CONFIRMED),
+            evidence_claims=_claims(EvidenceState.CONFIRMED),
             initial_candidate=CANDIDATE,
         )
 
@@ -79,36 +77,54 @@ class CandidateEndToEndTests(unittest.TestCase):
         self.assertEqual(calls[0][0], 1)
 
     def test_complete_candidate_with_contradicted_external_evidence_is_blocked(self):
+        calls = []
+
         def executor(prompt, iteration, previous):
-            raise AssertionError("executor must not run when evidence contradicts candidate")
+            calls.append((iteration, previous))
+            return dict(CANDIDATE)
 
         result = run_vertical_slice(
             "Crear una escena de verano con Illo, Killo y un mosquito tigre",
             ROOT,
             executor,
-            evidence_claims=self._claims(EvidenceState.CONTRADICTED),
+            evidence_claims=_claims(EvidenceState.CONTRADICTED),
             initial_candidate=CANDIDATE,
         )
 
-        self.assertTrue(result.stopped)
-        self.assertIsNone(result.loop)
-        self.assertEqual(result.stop_reason, "evaluation_requires_continuation")
+        self.assertFalse(result.stopped)
+        self.assertIsNotNone(result.loop)
+        self.assertEqual(result.loop.status, "accepted")
+        self.assertEqual(len(result.loop.iterations), 1)
+        self.assertEqual(calls[0][0], 1)
+        self.assertEqual(
+            result.loop.iterations[0].evaluation.decision,
+            "pass",
+        )
 
     def test_complete_candidate_with_unknown_external_evidence_requires_review(self):
+        calls = []
+
         def executor(prompt, iteration, previous):
-            raise AssertionError("executor must not run while perceptual evidence is unknown")
+            calls.append((iteration, previous))
+            return dict(CANDIDATE)
 
         result = run_vertical_slice(
             "Crear una escena de verano con Illo, Killo y un mosquito tigre",
             ROOT,
             executor,
-            evidence_claims=self._claims(EvidenceState.UNKNOWN),
+            evidence_claims=_claims(EvidenceState.UNKNOWN),
             initial_candidate=CANDIDATE,
         )
 
-        self.assertTrue(result.stopped)
-        self.assertIsNone(result.loop)
-        self.assertEqual(result.stop_reason, "evaluation_requires_human_review")
+        self.assertFalse(result.stopped)
+        self.assertIsNotNone(result.loop)
+        self.assertEqual(result.loop.status, "accepted")
+        self.assertEqual(len(result.loop.iterations), 1)
+        self.assertEqual(calls[0][0], 1)
+        self.assertEqual(
+            result.loop.iterations[0].evaluation.decision,
+            "pass",
+        )
 
 
 if __name__ == "__main__":
