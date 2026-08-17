@@ -59,6 +59,39 @@ class EvidenceEvaluatorTests(unittest.TestCase):
         self.assertEqual(report.evaluation.decision, "continue")
         self.assertIn("reuse_intention", report.evaluation.reason)
 
+    def test_perceptual_unknown_claim_requests_human_review(self):
+        claims = self.complete_claims()
+        claims["fauna/mosquito_tigre/readable_as_mosquito"] = EvidenceClaim(
+            "fauna/mosquito_tigre/readable_as_mosquito",
+            EvidenceState.UNKNOWN,
+        )
+
+        report = evaluate_candidate_with_evidence(
+            {"name": "candidate"},
+            self.valid_validation(),
+            claims,
+        )
+
+        self.assertEqual(report.evaluation.decision, "human_review")
+        self.assertIn("fauna/mosquito_tigre/readable_as_mosquito", report.evaluation.reason)
+
+    def test_perceptual_contradiction_requests_continuation(self):
+        claims = self.complete_claims()
+        claims["fauna/mosquito_tigre/readable_as_mosquito"] = EvidenceClaim(
+            "fauna/mosquito_tigre/readable_as_mosquito",
+            EvidenceState.CONTRADICTED,
+            contradicting_sources=("simulated-visual-review",),
+        )
+
+        report = evaluate_candidate_with_evidence(
+            {"name": "candidate"},
+            self.valid_validation(),
+            claims,
+        )
+
+        self.assertEqual(report.evaluation.decision, "continue")
+        self.assertIn("fauna/mosquito_tigre/readable_as_mosquito", report.evaluation.reason)
+
     def test_evidence_does_not_mutate_candidate(self):
         candidate = {
             "name": "candidate",
