@@ -92,14 +92,9 @@ class CandidateEndToEndTests(unittest.TestCase):
         )
 
         self.assertTrue(result.stopped)
-        self.assertIsNotNone(result.loop)
-        self.assertEqual(result.loop.status, "max_iterations")
-        self.assertEqual(len(result.loop.iterations), 3)
-        self.assertTrue(all(
-            iteration.evaluation.decision == "continue"
-            for iteration in result.loop.iterations
-        ))
-        self.assertEqual(calls[0][0], 1)
+        self.assertIsNone(result.loop)
+        self.assertEqual(result.stop_reason, "evaluation_requires_continuation")
+        self.assertEqual(calls, [])
 
     def test_complete_candidate_with_unknown_external_evidence_requires_review(self):
         calls = []
@@ -117,11 +112,9 @@ class CandidateEndToEndTests(unittest.TestCase):
         )
 
         self.assertTrue(result.stopped)
-        self.assertIsNotNone(result.loop)
-        self.assertEqual(result.loop.status, "human_review")
-        self.assertEqual(len(result.loop.iterations), 1)
-        self.assertEqual(result.loop.iterations[0].evaluation.decision, "human_review")
-        self.assertEqual(calls[0][0], 1)
+        self.assertIsNone(result.loop)
+        self.assertEqual(result.stop_reason, "evaluation_requires_human_review")
+        self.assertEqual(calls, [])
 
 
 if __name__ == "__main__":
