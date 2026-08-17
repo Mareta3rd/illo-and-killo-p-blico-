@@ -1,9 +1,10 @@
 """First deterministic vertical slice for SinergYa Core v0.1.
 
 This module joins the validated pipeline, the bounded loop, the evidence-aware
-evaluator, and the compiled prompt. It remains model-agnostic: an external
-execution layer is injected rather than called from Core. Every candidate is
-revalidated against repository knowledge and the same frozen Evidence snapshot.
+evaluator, the compiled prompt, and semantic-regression protection. It remains
+model-agnostic: an external execution layer is injected rather than called
+from Core. Every candidate is revalidated against repository knowledge and the
+same frozen Evidence snapshot.
 """
 
 from __future__ import annotations
@@ -20,6 +21,7 @@ from .evaluator import EvaluationReport
 from .loop import Evaluation, LoopResult, run_loop
 from .pipeline import PipelineResult, run_pipeline
 from .prompt_compiler import CompiledPrompt
+from .semantic_regression import detect_semantic_regressions
 
 
 Candidate = dict[str, Any]
@@ -50,6 +52,11 @@ def run_vertical_slice(
     Evidence is validated once by the pipeline and then reused through its
     immutable snapshot for every loop candidate. The loop cannot reinterpret,
     replace, or silently bypass the execution-boundary Evidence.
+
+    When an initial candidate already has a passing evaluation, subsequent
+    candidates are checked for semantic regressions against the latest
+    accepted baseline. A regression is an additional ``continue`` constraint;
+    it never overrides a stronger ``human_review`` decision.
     """
     proposal = initial_candidate or {}
     pipeline = run_pipeline(
@@ -78,6 +85,8 @@ def run_vertical_slice(
             stop_reason="missing_evidence_snapshot",
         )
 
+    baseline_report: EvaluationReport | None = pipeline.evaluation
+
     def execute(iteration: int, previous: Candidate | None) -> Candidate:
         candidate = executor(prompt, iteration, previous)
         if not isinstance(candidate, dict):
@@ -85,12 +94,30 @@ def run_vertical_slice(
         return candidate
 
     def evaluate(candidate: Candidate, iteration: int) -> Evaluation:
+        nonlocal baseline_report
+
         validation: ValidationResult = validate_piece(candidate, knowledge)
         report: EvaluationReport = evaluate_candidate_with_evidence(
             candidate,
             validation,
             snapshot.claims,
         )
+
+        if baseline_report is not None:
+            regressions = detect_semantic_regressions(baseline_report, report)
+            if regressions:
+                names = ", ".join(regression.name for regression in regressions)
+                if report.evaluation.decision == "human_review":
+                    return report.evaluation
+
+                return Evaluation(
+                    "continue",
+                    f"semantic regressions detected: {names}",
+                )
+
+        if report.evaluation.decision == "accept":
+            baseline_report = report
+
         return report.evaluation
 
     loop = run_loop(
