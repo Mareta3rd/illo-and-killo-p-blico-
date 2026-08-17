@@ -70,29 +70,28 @@ class OrchestratorSemanticAuditTests(unittest.TestCase):
     def test_audit_trail_preserves_iteration_order(self):
         def executor(prompt, iteration, previous):
             if iteration == 1:
-                return dict(BASELINE)
-            return {
-                "checks": {
-                    "intention": True,
-                    "canon": True,
-                    "coherence": True,
-                    "reuse_intention": True,
-                    "visual_readability": True,
+                return {
+                    "checks": {
+                        "intention": True,
+                        "canon": True,
+                        "coherence": True,
+                        "reuse_intention": True,
+                    }
                 }
-            }
+            return dict(BASELINE)
 
         result = run_vertical_slice(
             "Crear una escena veraniega",
             ROOT,
             executor,
             evidence_claims=CLAIMS,
-            initial_candidate=BASELINE,
+            initial_candidate=None,
             max_iterations=2,
         )
 
         self.assertEqual(len(result.audit_trail), 2)
         self.assertEqual([record.iteration for record in result.audit_trail], [1, 2])
-        self.assertEqual([record.decision for record in result.audit_trail], ["accept", "accept"])
+        self.assertEqual([record.decision for record in result.audit_trail], ["human_review", "accept"])
 
 
 if __name__ == "__main__":
