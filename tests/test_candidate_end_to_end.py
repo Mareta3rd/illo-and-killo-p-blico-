@@ -21,7 +21,6 @@ CANDIDATE = {
     "characters": ["illo", "killo"],
     "elements": [
         {
-            "library": "objects",
             "id": "clavel",
             "intention": "character_identity",
         },
