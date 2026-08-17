@@ -21,11 +21,22 @@ CANDIDATE = {
     "characters": ["illo", "killo"],
     "elements": [
         {
+            "library": "objects",
+            "id": "clavel",
+            "intention": "character_identity",
+        },
+        {
             "library": "fauna",
             "id": "mosquito_tigre",
             "very_small": True,
             "intention": "scene_support",
-        }
+        },
+        {
+            "id": "black_spots",
+            "count": 2,
+            "color": "black",
+            "intention": "character_identity",
+        },
     ],
 }
 
