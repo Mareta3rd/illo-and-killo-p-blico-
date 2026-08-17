@@ -51,31 +51,31 @@ class SimulatedProviderEndToEndTests(unittest.TestCase):
         result, snapshot, calls = self._run("confirmed")
         claim = snapshot.claims["fauna/mosquito_tigre/readable_as_mosquito"]
         self.assertEqual(claim.state, EvidenceState.CONFIRMED)
-        self.assertEqual(result.loop.status, "accept")
+        self.assertIsNone(result.loop)
+        self.assertTrue(result.stopped)
+        self.assertEqual(result.stop_reason, "canon_requires_human_review")
         self.assertIsNotNone(result.execution_audit)
-        self.assertTrue(result.audit_trail)
-        self.assertEqual(calls, [1])
+        self.assertEqual(calls, [])
 
-    def test_contradicted_provider_evidence_reaches_continue(self):
+    def test_contradicted_provider_evidence_reaches_continue_gate(self):
         result, snapshot, calls = self._run("contradicted")
         claim = snapshot.claims["fauna/mosquito_tigre/readable_as_mosquito"]
         self.assertEqual(claim.state, EvidenceState.CONTRADICTED)
-        self.assertEqual(result.loop.status, "max_iterations")
+        self.assertIsNone(result.loop)
+        self.assertTrue(result.stopped)
+        self.assertEqual(result.stop_reason, "canon_requires_human_review")
         self.assertIsNotNone(result.execution_audit)
-        self.assertTrue(result.audit_trail)
-        self.assertEqual(calls, [1, 2, 3])
-        self.assertTrue(
-            any("evidence claims contradicted" in record.reason for record in result.audit_trail)
-        )
+        self.assertEqual(calls, [])
 
-    def test_unknown_provider_evidence_reaches_human_review(self):
+    def test_unknown_provider_evidence_reaches_human_review_gate(self):
         result, snapshot, calls = self._run("unknown")
         claim = snapshot.claims["fauna/mosquito_tigre/readable_as_mosquito"]
         self.assertEqual(claim.state, EvidenceState.UNKNOWN)
-        self.assertEqual(result.loop.status, "human_review")
-        self.assertEqual(result.stopped, True)
+        self.assertIsNone(result.loop)
+        self.assertTrue(result.stopped)
+        self.assertEqual(result.stop_reason, "canon_requires_human_review")
         self.assertIsNotNone(result.execution_audit)
-        self.assertEqual(calls, [1])
+        self.assertEqual(calls, [])
 
     def test_provider_snapshot_and_candidate_are_independent(self):
         adapter = DefaultEvidenceAdapter()
@@ -112,4 +112,6 @@ class SimulatedProviderEndToEndTests(unittest.TestCase):
             snapshot.claims["fauna/mosquito_tigre/readable_as_mosquito"].state,
             EvidenceState.CONFIRMED,
         )
-        self.assertEqual(result.loop.status, "accept")
+        self.assertIsNone(result.loop)
+        self.assertTrue(result.stopped)
+        self.assertEqual(result.stop_reason, "canon_requires_human_review")
