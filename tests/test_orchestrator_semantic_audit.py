@@ -76,6 +76,7 @@ class OrchestratorSemanticAuditTests(unittest.TestCase):
                         "canon": True,
                         "coherence": True,
                         "reuse_intention": True,
+                        "visual_readability": False,
                     }
                 }
             return dict(BASELINE)
@@ -85,13 +86,13 @@ class OrchestratorSemanticAuditTests(unittest.TestCase):
             ROOT,
             executor,
             evidence_claims=CLAIMS,
-            initial_candidate=None,
+            initial_candidate=BASELINE,
             max_iterations=2,
         )
 
         self.assertEqual(len(result.audit_trail), 2)
         self.assertEqual([record.iteration for record in result.audit_trail], [1, 2])
-        self.assertEqual([record.decision for record in result.audit_trail], ["human_review", "accept"])
+        self.assertEqual([record.decision for record in result.audit_trail], ["continue", "accept"])
 
 
 if __name__ == "__main__":
