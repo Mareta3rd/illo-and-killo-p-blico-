@@ -1,7 +1,7 @@
 """Build immutable EvidenceSnapshot objects from adapter claims.
 
-This boundary deliberately accepts only already-normalized EvidenceClaim values.
-It does not interpret provider payloads, infer canon, or alter claim states.
+This boundary accepts only already-normalized EvidenceClaim values. It does
+not interpret provider payloads, infer canon, or alter claim states.
 """
 
 from __future__ import annotations
@@ -23,6 +23,6 @@ def build_snapshot_from_adapter(
 
     claims: dict[str, EvidenceClaim] = {}
     for invariant, observation in observations.items():
-        claims[str(invariant)] = adapter.to_claim(str(invariant), observation)
+        claims[str(invariant)] = adapter.adapt(observation)
 
     return build_evidence_snapshot(root, claims)
