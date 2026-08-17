@@ -35,7 +35,7 @@ class ExecutionAuditTests(unittest.TestCase):
         )
 
         self.assertEqual(audit.idea, context.idea)
-        self.assertEqual(audit.route, context.route.value)
+        self.assertEqual(audit.route, getattr(context.route, "value", context.route))
         self.assertEqual(audit.evidence_keys, tuple(sorted(self.claims)))
         self.assertEqual(audit.iterations, (record,))
         self.assertIsNotNone(audit.evidence_digest)
