@@ -84,6 +84,7 @@ class OrchestratorSemanticRegressionTests(unittest.TestCase):
                     "canon": True,
                     "reuse_intention": True,
                     "visual_readability": False,
+                    "coherence": {"decision": "unknown", "reason": "external review is inconclusive"},
                 }
             }
 
