@@ -37,10 +37,11 @@ def evaluate_candidate_with_evidence(
     evaluator. An Evidence claim therefore cannot bypass validation or create
     a new decision rule: it only supplies an explicit check result.
 
-    If a candidate already contains a check with the same name and the two
-    explicit results disagree, the boundary refuses to choose silently and
-    requests human review. Matching results are harmlessly coalesced, while
-    missing candidate checks are supplied by Evidence.
+    Evidence-backed invariants are evaluated before the generic quality-check
+    policy. A contradicted claim forces continuation and an unknown claim forces
+    human review, even when the claim name is not one of the legacy required
+    quality checks. Matching candidate checks are harmlessly coalesced, while
+    conflicting explicit results force human review rather than silent choice.
     """
 
     evidence_checks = claims_to_checks(claims)
@@ -59,6 +60,30 @@ def evaluate_candidate_with_evidence(
             Evaluation(
                 "human_review",
                 f"conflicting candidate/evidence checks: {', '.join(sorted(conflicts))}",
+            ),
+            (),
+        )
+
+    failed_evidence = [
+        name for name, check in evidence_checks.items() if check["decision"] == "fail"
+    ]
+    if failed_evidence:
+        return EvaluationReport(
+            Evaluation(
+                "continue",
+                f"evidence claims contradicted: {', '.join(sorted(failed_evidence))}",
+            ),
+            (),
+        )
+
+    unknown_evidence = [
+        name for name, check in evidence_checks.items() if check["decision"] == "unknown"
+    ]
+    if unknown_evidence:
+        return EvaluationReport(
+            Evaluation(
+                "human_review",
+                f"evidence claims remain unknown: {', '.join(sorted(unknown_evidence))}",
             ),
             (),
         )
