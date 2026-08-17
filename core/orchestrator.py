@@ -1,10 +1,9 @@
 """First deterministic vertical slice for SinergYa Core v0.1.
 
 This module joins the validated pipeline, the bounded loop, the evidence-aware
-evaluator, the compiled prompt, and semantic-regression protection. It remains
-model-agnostic: an external execution layer is injected rather than called
-from Core. Every candidate is revalidated against repository knowledge and the
-same frozen Evidence snapshot.
+evaluator, the compiled prompt, semantic-regression protection, and an
+immutable semantic audit trail. It remains model-agnostic: an external
+execution layer is injected rather than called from Core.
 """
 
 from __future__ import annotations
@@ -21,7 +20,8 @@ from .evaluator import EvaluationReport
 from .loop import Evaluation, LoopResult, run_loop
 from .pipeline import PipelineResult, run_pipeline
 from .prompt_compiler import CompiledPrompt
-from .semantic_regression import detect_semantic_regressions
+from .semantic_audit import SemanticAuditRecord, build_semantic_audit_record
+from .semantic_regression import SemanticRegression, detect_semantic_regressions
 
 
 Candidate = dict[str, Any]
@@ -36,6 +36,7 @@ class VerticalSliceResult:
     loop: LoopResult[Candidate] | None
     stopped: bool
     stop_reason: str | None
+    audit_trail: tuple[SemanticAuditRecord, ...] = ()
 
 
 def run_vertical_slice(
@@ -55,8 +56,8 @@ def run_vertical_slice(
 
     When an initial candidate already has a passing evaluation, subsequent
     candidates are checked for semantic regressions against the latest
-    accepted baseline. A regression is an additional ``continue`` constraint;
-    it never overrides a stronger ``human_review`` decision.
+    accepted baseline. Each evaluated candidate also receives an immutable
+    audit record with a deterministic fingerprint.
     """
     proposal = initial_candidate or {}
     pipeline = run_pipeline(
@@ -86,6 +87,7 @@ def run_vertical_slice(
         )
 
     baseline_report: EvaluationReport | None = pipeline.evaluation
+    audit_trail: list[SemanticAuditRecord] = []
 
     def execute(iteration: int, previous: Candidate | None) -> Candidate:
         candidate = executor(prompt, iteration, previous)
@@ -103,22 +105,30 @@ def run_vertical_slice(
             snapshot.claims,
         )
 
+        regressions: tuple[SemanticRegression, ...] = ()
+        decision = report.evaluation
+
         if baseline_report is not None:
             regressions = detect_semantic_regressions(baseline_report, report)
-            if regressions:
-                names = ", ".join(regression.name for regression in regressions)
-                if report.evaluation.decision == "human_review":
-                    return report.evaluation
-
-                return Evaluation(
+            if regressions and decision.decision != "human_review":
+                decision = Evaluation(
                     "continue",
-                    f"semantic regressions detected: {names}",
+                    "semantic regressions detected: "
+                    + ", ".join(regression.name for regression in regressions),
                 )
 
-        if report.evaluation.decision == "accept":
+        if decision.decision == "accept":
             baseline_report = report
 
-        return report.evaluation
+        audit_trail.append(
+            build_semantic_audit_record(
+                iteration,
+                candidate,
+                EvaluationReport(decision, report.checks),
+                regressions,
+            )
+        )
+        return decision
 
     loop = run_loop(
         execute,
@@ -136,4 +146,5 @@ def run_vertical_slice(
             if loop.status == "human_review"
             else None
         ),
+        audit_trail=tuple(audit_trail),
     )
