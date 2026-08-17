@@ -98,3 +98,22 @@ def adapt_provider_call(callable_: Any) -> EvidenceClaim:
         return adapt_external_observation(callable_())
     except EvidenceProviderFailure:
         return _unknown_claim("external evidence provider unavailable")
+
+
+def claims_to_checks(claims: Mapping[str, EvidenceClaim]) -> dict[str, dict[str, str]]:
+    """Translate canonical evidence claims into evaluator check records.
+
+    This is a representation bridge only. It preserves the claim key and
+    tri-state decision without adding interpretation or mutating the claims.
+    """
+
+    decisions = {
+        EvidenceState.CONFIRMED: "pass",
+        EvidenceState.CONTRADICTED: "fail",
+        EvidenceState.UNKNOWN: "unknown",
+    }
+
+    return {
+        str(name): {"decision": decisions[claim.state]}
+        for name, claim in claims.items()
+    }
