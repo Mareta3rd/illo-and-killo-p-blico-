@@ -53,7 +53,7 @@ class SimulatedProviderEndToEndTests(unittest.TestCase):
         self.assertEqual(claim.state, EvidenceState.CONFIRMED)
         self.assertIsNone(result.loop)
         self.assertTrue(result.stopped)
-        self.assertEqual(result.stop_reason, "canon_requires_human_review")
+        self.assertEqual(result.stop_reason, "router_requires_human_review")
         self.assertIsNotNone(result.execution_audit)
         self.assertEqual(calls, [])
 
@@ -63,7 +63,7 @@ class SimulatedProviderEndToEndTests(unittest.TestCase):
         self.assertEqual(claim.state, EvidenceState.CONTRADICTED)
         self.assertIsNone(result.loop)
         self.assertTrue(result.stopped)
-        self.assertEqual(result.stop_reason, "canon_requires_human_review")
+        self.assertEqual(result.stop_reason, "router_requires_human_review")
         self.assertIsNotNone(result.execution_audit)
         self.assertEqual(calls, [])
 
@@ -73,7 +73,7 @@ class SimulatedProviderEndToEndTests(unittest.TestCase):
         self.assertEqual(claim.state, EvidenceState.UNKNOWN)
         self.assertIsNone(result.loop)
         self.assertTrue(result.stopped)
-        self.assertEqual(result.stop_reason, "canon_requires_human_review")
+        self.assertEqual(result.stop_reason, "router_requires_human_review")
         self.assertIsNotNone(result.execution_audit)
         self.assertEqual(calls, [])
 
@@ -114,4 +114,8 @@ class SimulatedProviderEndToEndTests(unittest.TestCase):
         )
         self.assertIsNone(result.loop)
         self.assertTrue(result.stopped)
-        self.assertEqual(result.stop_reason, "canon_requires_human_review")
+        self.assertEqual(result.stop_reason, "router_requires_human_review")
+
+
+if __name__ == "__main__":
+    unittest.main()
