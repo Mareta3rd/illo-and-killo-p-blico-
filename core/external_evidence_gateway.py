@@ -1,8 +1,4 @@
-"""Deterministic gateway between an external evidence provider and Core.
-
-The gateway owns provider invocation and normalization. It does not evaluate
-candidate quality, execute invariants, or select acceptance decisions.
-"""
+"""Deterministic gateway between an external evidence provider and Core."""
 
 from __future__ import annotations
 
@@ -24,6 +20,20 @@ class ExternalEvidenceGatewayResult:
     missing_keys: tuple[str, ...]
     stopped: bool
     stop_reason: str | None
+
+
+class ExternalEvidenceGateway:
+    """Provider-facing gateway that returns normalized, frozen evidence."""
+
+    def __init__(self, root: str | Path):
+        self._root = Path(root)
+
+    def collect(
+        self,
+        provider: ExternalEvidenceProvider,
+        requested_keys: Sequence[str],
+    ) -> ExternalEvidenceGatewayResult:
+        return collect_external_evidence(self._root, provider, requested_keys)
 
 
 def collect_external_evidence(
@@ -72,3 +82,6 @@ def collect_external_evidence(
         stopped=False,
         stop_reason=None,
     )
+
+
+__all__ = ["ExternalEvidenceGateway", "ExternalEvidenceGatewayResult", "collect_external_evidence"]
