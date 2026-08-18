@@ -11,21 +11,19 @@ from dataclasses import dataclass
 from typing import Any, Callable, Sequence
 
 from .external_evidence_adapter import ExternalEvidenceRecord
-from .real_evidence_provider import RealEvidenceProviderAdapter, RealEvidenceProviderError
-from .evidence_state import EvidenceState
+from .real_evidence_provider import RealEvidenceProviderError
+from .gemini_real_transport import (
+    build_gemini_interactions_transport,
+    parse_gemini_structured_evidence,
+)
 
 
 @dataclass(frozen=True)
 class GeminiEvidenceAdapter:
-    """Adapter around an injected Gemini client callable.
-
-    The callable must accept a request mapping and return a provider payload.
-    Parsing is injected so tests remain deterministic and credentials never
-    enter Core tests.
-    """
+    """Provider adapter combining Gemini transport and canonical parsing."""
 
     request: Callable[[dict[str, Any]], Any]
-    parse: Callable[[Any, Sequence[str]], Sequence[ExternalEvidenceRecord]]
+    parse: Callable[[Any, Sequence[str]], Sequence[ExternalEvidenceRecord]] = parse_gemini_structured_evidence
 
     def collect(self, requested_keys: Sequence[str]) -> Sequence[ExternalEvidenceRecord]:
         keys = tuple(requested_keys)
@@ -35,24 +33,33 @@ class GeminiEvidenceAdapter:
             "the image does not provide sufficient evidence.\n\n"
             + "\n".join(f"- {key}" for key in keys)
         )
-        payload = self.request({"prompt": prompt, "requested_keys": keys})
-        return tuple(self.parse(payload, keys))
-
-
-def build_gemini_transport(
-    client_generate: Callable[..., Any],
-    *,
-    model: str,
-) -> Callable[[dict[str, Any]], Any]:
-    """Build a tiny transport function for a Gemini generate-content client."""
-
-    def request(payload: dict[str, Any]) -> Any:
         try:
-            return client_generate(model=model, prompt=payload["prompt"])
-        except Exception as exc:  # provider boundary: normalize operational failures
-            raise RealEvidenceProviderError("gemini request failed") from exc
+            payload = self.request({"prompt": prompt, "requested_keys": keys})
+            return tuple(self.parse(payload, keys))
+        except RealEvidenceProviderError:
+            raise
+        except Exception as exc:
+            raise RealEvidenceProviderError("gemini evidence adapter failed") from exc
 
-    return request
+    @classmethod
+    def from_interactions_client(
+        cls,
+        client: Any,
+        *,
+        model: str,
+        image_bytes: bytes,
+        mime_type: str,
+    ) -> "GeminiEvidenceAdapter":
+        """Build the canonical adapter around Gemini's Interactions transport."""
+        return cls(
+            request=build_gemini_interactions_transport(
+                client,
+                model=model,
+                image_bytes=image_bytes,
+                mime_type=mime_type,
+            ),
+            parse=parse_gemini_structured_evidence,
+        )
 
 
-__all__ = ["GeminiEvidenceAdapter", "build_gemini_transport"]
+__all__ = ["GeminiEvidenceAdapter"]
