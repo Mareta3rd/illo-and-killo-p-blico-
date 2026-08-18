@@ -35,11 +35,12 @@ class GeminiEvidenceAdapter:
         )
         try:
             payload = self.request({"prompt": prompt, "requested_keys": keys})
-            return tuple(self.parse(payload, keys))
+            records = tuple(self.parse(payload, keys))
         except RealEvidenceProviderError:
             raise
         except Exception as exc:
             raise RealEvidenceProviderError("gemini evidence adapter failed") from exc
+        return records
 
     @classmethod
     def from_interactions_client(
@@ -62,4 +63,23 @@ class GeminiEvidenceAdapter:
         )
 
 
-__all__ = ["GeminiEvidenceAdapter"]
+def build_gemini_transport(
+    client_generate: Callable[..., Any],
+    *,
+    model: str,
+) -> Callable[[dict[str, Any]], Any]:
+    """Backward-compatible transport helper for existing adapter tests."""
+
+    def request(payload: dict[str, Any]) -> Any:
+        try:
+            return client_generate(model=model, prompt=payload["prompt"])
+        except Exception as exc:
+            raise RealEvidenceProviderError("gemini request failed") from exc
+
+    return request
+
+
+__all__ = [
+    "GeminiEvidenceAdapter",
+    "build_gemini_transport",
+]
