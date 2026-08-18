@@ -39,7 +39,7 @@ class ContractCompatibilityAuditTests(unittest.TestCase):
         claims = normalize_external_evidence((record,))
         claim = claims[KEY]
         self.assertEqual(claim.state, EvidenceState.CONTRADICTED)
-        self.assertEqual(claim.statement, record.statement)
+        self.assertEqual(claim.claim, record.claim_key)
         self.assertEqual(claim.contradicting_sources, record.contradicting_sources)
 
     def test_gateway_returns_snapshot_from_normalized_claims(self):
