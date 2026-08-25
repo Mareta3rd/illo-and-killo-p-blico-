@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, Sequence
 
+from .canonical_salience import CanonicalClaim
 from .external_evidence_adapter import ExternalEvidenceRecord
 from .real_evidence_provider import RealEvidenceProviderError
 from .gemini_real_transport import (
@@ -35,6 +36,31 @@ class GeminiEvidenceAdapter:
         )
         try:
             payload = self.request({"prompt": prompt, "requested_keys": keys})
+            records = tuple(self.parse(payload, keys))
+        except RealEvidenceProviderError:
+            raise
+        except Exception as exc:
+            raise RealEvidenceProviderError("gemini evidence adapter failed") from exc
+        return records
+
+    def collect_claims(self, claims: Sequence[CanonicalClaim]) -> Sequence[ExternalEvidenceRecord]:
+        """Evaluate canonical claims while supplying their meaning and salience metadata."""
+        normalized = tuple(claims)
+        keys = tuple(claim.key for claim in normalized)
+        prompt_lines = [
+            "Evaluate only the requested canonical evidence claims.",
+            "Do not turn salience metadata into evidence; it only explains the claim's role.",
+            "Return one observation per requested key. Preserve UNKNOWN when the image is insufficient.",
+            "",
+        ]
+        for claim in normalized:
+            prompt_lines.append(
+                f"- {claim.key}: {claim.statement} "
+                f"[narrative_role={claim.salience.narrative_role.label}; "
+                f"visual_salience={claim.salience.visual_salience.label}]"
+            )
+        try:
+            payload = self.request({"prompt": "\n".join(prompt_lines), "requested_keys": keys})
             records = tuple(self.parse(payload, keys))
         except RealEvidenceProviderError:
             raise
