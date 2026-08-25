@@ -1,3 +1,4 @@
+import base64
 import json
 import unittest
 
@@ -89,7 +90,7 @@ class GeminiRealTransportTests(unittest.TestCase):
         call = client.interactions.calls[0]
         self.assertEqual(text, json.dumps(self._payload()))
         self.assertEqual(call["model"], "gemini-test")
-        self.assertEqual(call["input"][0]["data"], b"image-bytes")
+        self.assertEqual(call["input"][0]["data"], base64.b64encode(b"image-bytes").decode("utf-8"))
         self.assertEqual(call["input"][0]["mime_type"], "image/png")
         self.assertEqual(call["response_format"]["mime_type"], "application/json")
         self.assertIn("observations", call["response_format"]["schema"]["properties"])
