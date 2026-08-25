@@ -49,4 +49,24 @@ class CanonicalSalience:
         return int(self.visual_salience)
 
 
-__all__ = ["CanonicalSalience", "NarrativeRole", "VisualSalience"]
+@dataclass(frozen=True)
+class CanonicalClaim:
+    """Canonical claim plus its human-readable meaning and salience."""
+
+    key: str
+    statement: str
+    salience: CanonicalSalience
+
+    def __post_init__(self) -> None:
+        if not self.key.strip():
+            raise ValueError("Canonical claim key is required")
+        if not self.statement.strip():
+            raise ValueError("Canonical claim statement is required")
+
+
+__all__ = [
+    "CanonicalClaim",
+    "CanonicalSalience",
+    "NarrativeRole",
+    "VisualSalience",
+]
