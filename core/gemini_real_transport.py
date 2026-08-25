@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import json
 from typing import Any, Sequence
 
@@ -107,7 +108,7 @@ def build_gemini_interactions_transport(
                 input=[
                     {
                         "type": "image",
-                        "data": image_bytes,
+                        "data": base64.b64encode(image_bytes).decode("utf-8"),
                         "mime_type": mime_type,
                     },
                     {"type": "text", "text": payload["prompt"]},
@@ -148,7 +149,6 @@ def build_gemini_interactions_transport(
     return request
 
 
-# Local import keeps runtime compatibility with the typing-only use above.
 from typing import Mapping  # noqa: E402
 
 
