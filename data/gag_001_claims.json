@@ -1,0 +1,17 @@
+{
+  "gag/001/composition/illo_primary": {
+    "statement": "Illo is the primary visual and narrative subject of the gag.",
+    "narrative_role": "primary",
+    "visual_salience": "dominant"
+  },
+  "gag/001/composition/ham_primary": {
+    "statement": "The ham is the central object of Illo's boxing action.",
+    "narrative_role": "primary",
+    "visual_salience": "dominant"
+  },
+  "gag/001/characters/killo_reaction": {
+    "statement": "Killo is visibly present as the reaction to Illo's action.",
+    "narrative_role": "secondary",
+    "visual_salience": "high"
+  }
+}
