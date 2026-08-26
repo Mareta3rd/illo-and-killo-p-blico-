@@ -8,6 +8,7 @@ from typing import Sequence
 from .evidence_snapshot import EvidenceSnapshot, build_evidence_snapshot
 from .external_evidence_adapter import (
     ExternalEvidenceRecord,
+    ExternalEvidenceProvider,
     normalize_external_observations,
 )
 
@@ -60,3 +61,17 @@ def snapshot_from_provider_observation(
         raise TypeError("observation must be a ProviderEvidenceObservation")
     claims = normalize_external_observations(observation.records)
     return build_evidence_snapshot(root, claims)
+
+
+def collect_provider_observation(
+    root: str,
+    provider: ExternalEvidenceProvider,
+    provider_name: str,
+    run_id: str,
+    requested_keys: Sequence[str],
+) -> tuple[ProviderEvidenceObservation, EvidenceSnapshot]:
+    """Collect one provider response and freeze its Core snapshot boundary."""
+    records = provider.collect(requested_keys)
+    observation = freeze_provider_observation(provider_name, run_id, records)
+    snapshot = snapshot_from_provider_observation(root, observation)
+    return observation, snapshot

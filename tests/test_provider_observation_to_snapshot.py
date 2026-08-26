@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 import unittest
 
 from core.evidence_state import EvidenceState
@@ -9,6 +10,7 @@ from core.evidence_snapshot import EvidenceSnapshot
 from core.external_evidence_adapter import ExternalEvidenceRecord
 from core.provider_evidence_observation import (
     ProviderEvidenceObservation,
+    collect_provider_observation,
     freeze_provider_observation,
     snapshot_from_provider_observation,
 )
@@ -71,6 +73,94 @@ class ProviderObservationToSnapshotTests(unittest.TestCase):
         snapshot = snapshot_from_provider_observation(self.ROOT, observation)
         self.assertEqual(set(snapshot.claims), {self.KEY, "gag/001/composition/ham_primary"})
         self.assertEqual(snapshot.get("gag/001/composition/ham_primary").state, EvidenceState.UNKNOWN)
+
+    def test_provider_collection_creates_observation_and_snapshot(self):
+        class Provider:
+            def collect(self, requested_keys):
+                return (self_record,)
+
+        self_record = self.record()
+        observation, snapshot = collect_provider_observation(
+            self.ROOT,
+            Provider(),
+            "gemini",
+            "run-007",
+            (self.KEY,),
+        )
+
+        self.assertEqual(observation.provider, "gemini")
+        self.assertEqual(observation.run_id, "run-007")
+        self.assertEqual(snapshot.get(self.KEY).state, EvidenceState.CONFIRMED)
+
+    def test_collection_passes_requested_keys_without_mutation(self):
+        requested = [self.KEY]
+        seen = []
+
+        class Provider:
+            def collect(self, requested_keys):
+                seen.append(requested_keys)
+                return (self_record,)
+
+        self_record = self.record()
+        collect_provider_observation(self.ROOT, Provider(), "gemini", "run-008", requested)
+
+        self.assertIs(seen[0], requested)
+        self.assertEqual(requested, [self.KEY])
+
+    def test_provider_error_does_not_create_snapshot(self):
+        class Provider:
+            def collect(self, requested_keys):
+                raise RuntimeError("provider unavailable")
+
+        with self.assertRaisesRegex(RuntimeError, "provider unavailable"):
+            collect_provider_observation(self.ROOT, Provider(), "gemini", "run-009", (self.KEY,))
+
+    def test_collection_preserves_all_evidence_states(self):
+        for state in EvidenceState:
+            with self.subTest(state=state):
+                observation, snapshot = collect_provider_observation(
+                    self.ROOT,
+                    type("Provider", (), {"collect": lambda _self, _keys: (self.record(state),)})(),
+                    "gemini",
+                    f"run-{state.value}",
+                    (self.KEY,),
+                )
+                self.assertEqual(observation.records[0].state, state)
+                self.assertEqual(snapshot.get(self.KEY).state, state)
+
+    def test_gag_claim_is_preserved_without_contract_evaluation(self):
+        observation, snapshot = collect_provider_observation(
+            self.ROOT,
+            type("Provider", (), {"collect": lambda _self, _keys: (self.record(),)})(),
+            "gemini",
+            "run-010",
+            (self.KEY,),
+        )
+
+        self.assertEqual(tuple(snapshot.claims), (self.KEY,))
+        self.assertEqual(snapshot.canonical_evaluations, ())
+        self.assertEqual(observation.records[0].claim_key, self.KEY)
+
+    def test_three_segment_invariant_keeps_contract_evaluation(self):
+        key = "fauna/mosquito_tigre/readable_as_mosquito"
+        record = ExternalEvidenceRecord(
+            key,
+            "candidate is visually readable as mosquito",
+            EvidenceState.CONFIRMED,
+            supporting_sources=("gemini",),
+        )
+
+        _, snapshot = collect_provider_observation(
+            str(Path(__file__).resolve().parents[1]),
+            type("Provider", (), {"collect": lambda _self, _keys: (record,)})(),
+            "gemini",
+            "run-011",
+            (key,),
+        )
+
+        self.assertEqual(snapshot.get(key).state, EvidenceState.CONFIRMED)
+        self.assertEqual(len(snapshot.canonical_evaluations), 1)
+        self.assertEqual(snapshot.canonical_evaluations[0].evaluation.decision, "pass")
 
 
 if __name__ == "__main__":
