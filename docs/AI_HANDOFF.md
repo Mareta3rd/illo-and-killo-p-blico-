@@ -16,9 +16,7 @@ Build a deterministic semantic/evidence architecture for the Illo & Killo projec
 
 ## Current checkpoint
 Global test suite last confirmed green:
-`339 tests in 7.235s — OK`
-
-The latest committed semantic-model checkpoint is the real-Gemini experiment contract commit on `feature/semantic-model`.
+`367 tests — OK`
 
 ## Architecture already built and tested
 The project now contains and tests the following boundary chain:
@@ -46,19 +44,15 @@ The adapter is deliberately outside Core decision logic. Gemini output must norm
 Gemini access from the Codespace is genuinely working.
 
 Verified in the Codespace:
-- `google-genai` installed successfully (`2.19.0` was installed at the time of verification).
+- `google-genai` installed successfully (`2.19.0` at the time of verification).
 - `from google import genai` works.
 - `GEMINI_API_KEY` is supplied through a GitHub Codespaces secret named `GEMINI_API_KEY`.
 - The key is not stored in the repository or chat.
-- `genai.Client(api_key=key)` initializes successfully.
+- `genai.Client()` initializes successfully.
 - A real request returned `GEMINI_REAL_OK`.
+- `gemini-3.6-flash` is the currently validated working model in this environment.
 
 Important: do not disclose or log the key. Do not replace the Codespaces secret with the literal key in any committed file.
-
-## Gemini model note
-A first connectivity test using `gemini-2.5-flash` returned 404 because that model is no longer available to new users. The same real connectivity test succeeded with `gemini-3.6-flash`, returning `GEMINI_REAL_OK`.
-
-Model identifiers should therefore be treated as configuration and verified against the currently available Gemini API rather than assumed from memory.
 
 ## Canon decision
 Only one image/gag is currently accepted as canonical for this phase: **Gag 001 · Jamón**.
@@ -71,45 +65,26 @@ A distinction is intentional:
 - CANON = approved project material.
 - TEST CORPUS = additional positive/negative/ambiguous images used to test evidence behavior; these do not need to be canon.
 
-## Current local image situation
-The Codespace screenshot showed an uploaded local file under `gags/images` named:
-`001_jamon.png.png`
-with untracked (`U`) status.
+## Provider-observation architecture
+Real provider variability is preserved before Core aggregation via:
+- `core/provider_evidence_observation.py`
+- `ProviderEvidenceObservation(provider, run_id, records)`
 
-The earlier attempt to locate repository-tracked image files with `find` returned no results because images were not yet tracked in the repository.
+A provider observation can cross the snapshot boundary without turning provider metadata into Core claims. Canonical Gag 001 claims such as `gag/001/composition/illo_primary` must not be rewritten merely to fit the three-segment catalog/entry/invariant contract used by the registered evidence taxonomy.
 
-The attached image used for the experiment is the Gag 001 artwork (Illo hitting the ham, Killo reacting, with a mosquito as a secondary decorative element).
+## Custom Copilot agent
+A repository-level custom agent has been added at:
+`.github/agents/semantic-boundary-engineer.md`
 
-Do not assume the double extension is intended. Before running the real image experiment, rename the local file to a clean canonical filename such as:
-`gags/images/001_jamon.png`
-Then verify with:
-`ls -lh gags/images/001_jamon.png`
+Purpose: execute and verify semantic-boundary engineering work in the Codespace, with strict rules around canon, provider isolation, evidence states, snapshots, contracts, credentials, focused tests, and full-suite regression checks.
 
-Do not commit the image until we deliberately decide that this image is the canonical asset and confirm repository asset policy.
+Repository-wide Copilot guardrails are also in:
+`.github/copilot-instructions.md`
 
-## First real perceptual experiment
-Initial experiment idea was `fauna/mosquito_tigre/readable_as_mosquito`, but this should be reconsidered before execution because the mosquito is a secondary element of Gag 001 and the image is primarily a composition test.
-
-A cleaner first experiment may use claims derived directly from Gag 001’s canonical specification, for example:
-- Illo is present and is the primary character/subject.
-- The ham is present and is the central action object.
-- Killo is present and reacts to the action.
-
-A mosquito-related claim can be tested later as a deliberately secondary/ambiguous case.
-
-Do not change Core semantics to accommodate a surprising Gemini answer. First record and analyze the real provider output.
-
-## Immediate next step
-1. Fix the local filename `001_jamon.png.png` → `001_jamon.png`.
-2. Decide the first Gag 001 invariant/claim to test against the real image.
-3. Run the real Gemini experiment from the Codespace using the existing script:
-   `python scripts/run_gemini_real_experiment.py <image> <claim_key>`
-4. Capture the full provider output and resulting `ExternalEvidenceRecord`.
-5. Analyze whether Gemini’s result is usable, ambiguous, contradictory, or incomplete.
-6. Only then decide whether code, contracts, prompt wording, or provider-specific parsing needs adjustment.
+The custom agent is intended as the local execution/development counterpart to the architectural reasoning done in the main project conversation. It can inspect files, edit code, run tests, and iterate in the Codespace; it must stop rather than invent semantics when an architectural decision is ambiguous.
 
 ## Conversation continuity
 If the original ChatGPT conversation becomes unavailable or visually resets, open a new chat and tell the assistant:
-"Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its Immediate next step. Do not assume anything not supported by the repository or this document."
+"Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Do not assume anything not supported by the repository or this document."
 
 This handoff file is intentionally the durable source of project continuity so progress does not depend on one chat thread.
