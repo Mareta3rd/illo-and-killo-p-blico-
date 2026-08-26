@@ -1,4 +1,4 @@
-"""Tests for the real provider-observation -> Core snapshot boundary."""
+"""Tests for the provider observation -> Core snapshot boundary."""
 
 from __future__ import annotations
 
