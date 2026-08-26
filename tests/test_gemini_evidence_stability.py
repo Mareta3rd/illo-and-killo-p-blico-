@@ -12,7 +12,7 @@ from core.gemini_evidence_adapter import GeminiEvidenceAdapter
 
 class GeminiEvidenceStabilityTests(unittest.TestCase):
     CLAIM = CanonicalClaim(
-        key="gag/001/composition/illo_primary",
+        key="gag/001/composition/illo_primary/main",
         statement="Illo is the primary visual and narrative subject of the gag.",
         salience=CanonicalSalience(NarrativeRole.PRIMARY, VisualSalience.DOMINANT),
     )
@@ -32,7 +32,7 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
                 {
                     "claim_key": self.CLAIM.key,
                     "statement": "Illo is the primary active subject.",
-                    "state": "CONFIRMED",
+                    "verdict": "confirmed",
                     "supporting_sources": ["image"],
                     "contradicting_sources": [],
                 }
@@ -52,7 +52,7 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
                 {
                     "claim_key": self.CLAIM.key,
                     "statement": "The image does not provide enough evidence to confirm this.",
-                    "state": "UNKNOWN",
+                    "verdict": "unknown",
                     "supporting_sources": [],
                     "contradicting_sources": [],
                 }
@@ -74,7 +74,7 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
                 {
                     "claim_key": self.CLAIM.key,
                     "statement": "Illo is the primary active subject.",
-                    "state": "CONFIRMED",
+                    "verdict": "confirmed",
                     "supporting_sources": ["image"],
                     "contradicting_sources": [],
                 }
@@ -102,22 +102,26 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
         self.assertNotIn("decision", claims[self.CLAIM.key].__dict__)
 
     def test_contradicted_and_unknown_are_preserved_as_observations(self):
-        for state in ("CONTRADICTED", "UNKNOWN"):
-            with self.subTest(state=state):
+        cases = (
+            ("contradicted", EvidenceState.CONTRADICTED, ("image",), ()),
+            ("unknown", EvidenceState.UNKNOWN, (), ()),
+        )
+        for verdict, expected_state, supporting, contradicting in cases:
+            with self.subTest(verdict=verdict):
                 payload = {
                     "observations": [
                         {
                             "claim_key": self.CLAIM.key,
                             "statement": "Provider observation.",
-                            "state": state,
-                            "supporting_sources": [],
-                            "contradicting_sources": ["image"] if state == "CONTRADICTED" else [],
+                            "verdict": verdict,
+                            "supporting_sources": supporting,
+                            "contradicting_sources": contradicting,
                         }
                     ]
                 }
                 adapter, _ = self._adapter(payload)
                 record = tuple(adapter.collect_claims((self.CLAIM,)))[0]
-                self.assertEqual(record.state.value, state)
+                self.assertEqual(record.state, expected_state)
 
 
 if __name__ == "__main__":
