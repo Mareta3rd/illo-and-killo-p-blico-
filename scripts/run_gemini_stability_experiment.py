@@ -48,18 +48,25 @@ def load_claim(claim_key: str) -> CanonicalClaim:
 
 
 def variant_prompt(claim: CanonicalClaim, variant: str) -> str:
-    base = f"Canonical claim: {claim.statement}\nCanonical key: {claim.key}\n"
-    if variant == "canonical":
-        return base + "Evaluate only this claim from the image. Preserve UNKNOWN when evidence is insufficient."
-    if variant == "semantic_rephrase":
-        return base + "Assess whether the image supports the stated claim. Do not infer missing evidence."
-    return (
-        base
-        + f"The claim metadata is narrative_role={claim.salience.narrative_role.label}, "
-        f"visual_salience={claim.salience.visual_salience.label}. "
-        "Use those values only as context for what is being checked; never as evidence. "
-        "Preserve UNKNOWN when the image is insufficient."
+    """Keep the canonical provider contract fixed; vary only one instruction."""
+    base = (
+        "Evaluate only the requested canonical evidence claim.\n"
+        "Do not turn salience metadata into evidence; it only explains the claim's role.\n"
+        "Return one observation for the requested key. Preserve UNKNOWN when the image is insufficient.\n\n"
+        f"- {claim.key}: {claim.statement} "
+        f"[narrative_role={claim.salience.narrative_role.label}; "
+        f"visual_salience={claim.salience.visual_salience.label}]\n\n"
     )
+
+    suffixes = {
+        "canonical": "Evaluate only this claim from the image.",
+        "semantic_rephrase": "Assess whether the image supports the stated claim without inferring missing evidence.",
+        "salience_explicit": (
+            "Remember that the salience values above are contextual metadata, not evidence, "
+            "and do not use them to determine the verdict."
+        ),
+    }
+    return base + suffixes[variant]
 
 
 def main() -> int:
@@ -84,9 +91,9 @@ def main() -> int:
     for variant in VARIANTS:
         prompt = variant_prompt(claim, variant)
 
-        # Use the canonical adapter contract, but substitute the prompt only at
-        # the provider boundary. The returned state still comes from Gemini's
-        # structured observation and is not converted into a Core decision.
+        # The runner intentionally overrides only the prompt at the provider
+        # boundary; the transport, structured response contract, parser, and
+        # Core decision boundary remain unchanged.
         adapter = GeminiEvidenceAdapter.from_interactions_client(
             client,
             model=args.model,
