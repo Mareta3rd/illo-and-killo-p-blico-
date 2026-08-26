@@ -6,6 +6,7 @@ from core.evidence_state import EvidenceState
 from core.external_evidence_adapter import (
     ExternalEvidenceRecord,
     normalize_external_evidence,
+    normalize_external_observations,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -93,6 +94,33 @@ class ExternalEvidenceAdapterTests(unittest.TestCase):
         snapshot = build_evidence_snapshot(str(ROOT), claims)
         self.assertEqual(len(snapshot), 1)
         self.assertEqual(snapshot.get("fauna/mosquito_tigre/readable_as_mosquito").state, EvidenceState.CONFIRMED)
+
+    def test_generic_observation_normalization_preserves_gag_claim_identity(self):
+        claims = normalize_external_observations(
+            [
+                ExternalEvidenceRecord(
+                    "gag/001/composition/illo_primary",
+                    "Illo is the primary visual and narrative subject of the gag.",
+                    EvidenceState.CONFIRMED,
+                    supporting_sources=("image",),
+                )
+            ]
+        )
+        self.assertEqual(list(claims), ["gag/001/composition/illo_primary"])
+        self.assertEqual(claims["gag/001/composition/illo_primary"].state, EvidenceState.CONFIRMED)
+
+    def test_registered_invariant_normalization_remains_strict(self):
+        with self.assertRaises(ValueError):
+            normalize_external_evidence(
+                [
+                    ExternalEvidenceRecord(
+                        "gag/001/composition/illo_primary",
+                        "Illo is the primary visual and narrative subject of the gag.",
+                        EvidenceState.CONFIRMED,
+                        supporting_sources=("image",),
+                    )
+                ]
+            )
 
 
 if __name__ == "__main__":
