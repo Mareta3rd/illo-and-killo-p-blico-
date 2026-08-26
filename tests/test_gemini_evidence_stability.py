@@ -89,7 +89,7 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
 
     def test_normalization_keeps_provider_state_out_of_acceptance_decisions(self):
         record = ExternalEvidenceRecord(
-            claim_key=self.CLAIM.key,
+            claim_key="gag/001/composition/illo_primary/main",
             statement="Illo is the primary active subject.",
             state=EvidenceState.CONFIRMED,
             supporting_sources=("image",),
@@ -97,10 +97,10 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
 
         claims = normalize_external_evidence((record,))
 
-        self.assertEqual(claims[self.CLAIM.key].state, EvidenceState.CONFIRMED)
-        self.assertEqual(claims[self.CLAIM.key].supporting_sources, ("image",))
+        self.assertEqual(claims[record.claim_key].state, EvidenceState.CONFIRMED)
+        self.assertEqual(claims[record.claim_key].supporting_sources, ("image",))
 
-        canonical_claim = claims[self.CLAIM.key]
+        canonical_claim = claims[record.claim_key]
         self.assertNotIn("decision", canonical_claim.__dataclass_fields__)
 
     def test_contradicted_and_unknown_are_preserved_as_observations(self):
