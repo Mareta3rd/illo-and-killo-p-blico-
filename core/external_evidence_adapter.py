@@ -27,22 +27,20 @@ class ExternalEvidenceProvider(Protocol):
         ...
 
 
-def normalize_external_evidence(
+def normalize_external_observations(
     records: Sequence[ExternalEvidenceRecord],
 ) -> Mapping[str, EvidenceClaim]:
-    """Convert external records into immutable Core EvidenceClaims.
+    """Convert external observations into immutable Core claims without imposing a key taxonomy.
 
-    Duplicate claim keys or malformed source/state combinations are rejected.
-    No claim semantics are inferred from text: the external adapter supplies
-    the explicit state and source references, while Core remains responsible
-    for contracts, snapshots, and execution policy.
+    Claim identity is preserved exactly. Taxonomy-specific validation belongs to
+    the layer that evaluates a claim under a registered invariant contract.
     """
     result: dict[str, EvidenceClaim] = {}
     for record in records:
         if not isinstance(record, ExternalEvidenceRecord):
             raise TypeError("External evidence records must use ExternalEvidenceRecord")
-        if not record.claim_key.strip() or record.claim_key.count("/") != 2:
-            raise ValueError("External evidence claim_key must be canonical catalog/entry/invariant")
+        if not record.claim_key.strip():
+            raise ValueError("External evidence claim_key is required")
         if record.claim_key in result:
             raise ValueError(f"Duplicate external evidence claim: {record.claim_key}")
         if not isinstance(record.state, EvidenceState):
@@ -66,3 +64,19 @@ def normalize_external_evidence(
         )
 
     return dict(sorted(result.items()))
+
+
+def normalize_external_evidence(
+    records: Sequence[ExternalEvidenceRecord],
+) -> Mapping[str, EvidenceClaim]:
+    """Convert external records for registered catalog/entry/invariant contracts.
+
+    This stricter boundary preserves the established three-segment invariant
+    taxonomy used by EvidenceContractEvaluation.
+    """
+    for record in records:
+        if not isinstance(record, ExternalEvidenceRecord):
+            raise TypeError("External evidence records must use ExternalEvidenceRecord")
+        if not record.claim_key.strip() or record.claim_key.count("/") != 2:
+            raise ValueError("External evidence claim_key must be canonical catalog/entry/invariant")
+    return normalize_external_observations(records)
