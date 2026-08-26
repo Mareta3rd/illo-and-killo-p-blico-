@@ -12,7 +12,7 @@ from core.gemini_evidence_adapter import GeminiEvidenceAdapter
 
 class GeminiEvidenceStabilityTests(unittest.TestCase):
     CLAIM = CanonicalClaim(
-        key="gag/001/composition/illo_primary/main",
+        key="gag/001/illo_primary",
         statement="Illo is the primary visual and narrative subject of the gag.",
         salience=CanonicalSalience(NarrativeRole.PRIMARY, VisualSalience.DOMINANT),
     )
@@ -89,7 +89,7 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
 
     def test_normalization_keeps_provider_state_out_of_acceptance_decisions(self):
         record = ExternalEvidenceRecord(
-            claim_key="gag/001/composition/illo_primary/main",
+            claim_key=self.CLAIM.key,
             statement="Illo is the primary active subject.",
             state=EvidenceState.CONFIRMED,
             supporting_sources=("image",),
