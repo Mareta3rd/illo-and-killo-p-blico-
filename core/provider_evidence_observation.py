@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Sequence
 
 from .evidence_snapshot import EvidenceSnapshot, build_evidence_snapshot
@@ -75,3 +76,54 @@ def collect_provider_observation(
     observation = freeze_provider_observation(provider_name, run_id, records)
     snapshot = snapshot_from_provider_observation(root, observation)
     return observation, snapshot
+
+
+@dataclass(frozen=True)
+class ProviderEvidencePipelineResult:
+    """Immutable result of provider evidence collection through the Core pipeline."""
+
+    observation: ProviderEvidenceObservation | None
+    snapshot: EvidenceSnapshot | None
+    pipeline: "PipelineResult | None"
+    stopped: bool
+    stop_reason: str | None
+
+
+def run_provider_evidence_pipeline(
+    idea: str,
+    root: str | Path,
+    provider: ExternalEvidenceProvider,
+    provider_name: str,
+    run_id: str,
+    requested_keys: Sequence[str],
+    proposal: dict | None = None,
+) -> ProviderEvidencePipelineResult:
+    """Collect provider evidence, freeze it, and pass only claims to the pipeline."""
+    try:
+        observation, snapshot = collect_provider_observation(
+            str(root), provider, provider_name, run_id, requested_keys
+        )
+    except Exception as exc:
+        return ProviderEvidencePipelineResult(
+            observation=None,
+            snapshot=None,
+            pipeline=None,
+            stopped=True,
+            stop_reason=f"external_evidence_provider_failed: {exc}",
+        )
+
+    from .pipeline import run_pipeline
+
+    pipeline = run_pipeline(
+        idea,
+        root,
+        proposal=proposal,
+        evidence_claims=snapshot.claims,
+    )
+    return ProviderEvidencePipelineResult(
+        observation=observation,
+        snapshot=snapshot,
+        pipeline=pipeline,
+        stopped=pipeline.stopped,
+        stop_reason=pipeline.stop_reason,
+    )
