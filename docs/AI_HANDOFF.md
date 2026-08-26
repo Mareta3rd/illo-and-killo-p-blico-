@@ -11,80 +11,114 @@ Build a deterministic semantic/evidence architecture for the Illo & Killo projec
 - Prefer small, reversible architectural steps and preserve the Core boundary.
 - Do not lower the canon quality bar merely to obtain more examples.
 
-## Current branch
-`feature/semantic-model`
+## Current branch and checkpoint
+Active branch: `feature/semantic-model`.
+Latest full-suite result actually confirmed in the current session: **387 tests, OK**.
+The Gemini end-to-end milestone is complete.
 
-## Current checkpoint
-Global test suite last confirmed green:
-`367 tests — OK`
-
-## Architecture already built and tested
-The project now contains and tests the following boundary chain:
+## Architecture validated
+The project now has tested boundaries for:
 
 provider
 → ExternalEvidenceRecord
-→ adapter
-→ gateway
+→ ProviderEvidenceObservation
 → EvidenceSnapshot
-→ evaluator
-→ regression detector
-→ orchestrator
-→ semantic/execution audit
+→ Core pipeline/evaluator
+→ decision
 
-Provider-specific work completed for Gemini:
+Earlier gateway/registry/orchestrator, regression, semantic-audit, and execution-audit layers remain part of the validated architecture.
+
+## Gemini — first real provider
+Gemini is the first real external evidence provider and has been exercised end-to-end from the Codespace.
+
+Validated components include:
 - `core/gemini_evidence_adapter.py`
 - `core/gemini_real_transport.py`
-- `scripts/run_gemini_real_experiment.py`
-- Gemini adapter/transport/integration tests
-- Real experiment contract tests
+- `core/provider_evidence_observation.py`
+- `scripts/run_gag001_gemini_experiment.py`
+- Gemini adapter/transport/integration/conformance tests
+- provider observation/snapshot/pipeline tests
 
-The adapter is deliberately outside Core decision logic. Gemini output must normalize into canonical `ExternalEvidenceRecord`; the Core does not accept provider-specific decisions.
-
-## Gemini real access status
-Gemini access from the Codespace is genuinely working.
-
-Verified in the Codespace:
-- `google-genai` installed successfully (`2.19.0` at the time of verification).
-- `from google import genai` works.
-- `GEMINI_API_KEY` is supplied through a GitHub Codespaces secret named `GEMINI_API_KEY`.
-- The key is not stored in the repository or chat.
+Real environment validation:
+- `google-genai` is installed and imports successfully.
+- `GEMINI_API_KEY` is supplied as a GitHub Codespaces secret; it is not stored in the repository or chat.
 - `genai.Client()` initializes successfully.
-- A real request returned `GEMINI_REAL_OK`.
-- `gemini-3.6-flash` is the currently validated working model in this environment.
+- `gemini-3.6-flash` produced a real `GEMINI_REAL_OK` response during connectivity validation.
 
-Important: do not disclose or log the key. Do not replace the Codespaces secret with the literal key in any committed file.
+## Gemini end-to-end milestone
+A real run was completed with:
+- image: `gags/images/001_jamon.png`
+- provider: `gemini`
+- model: `gemini-3.6-flash`
+- run id: `real-gag001-mosquito-20260826-01`
+- invariant: `fauna/mosquito_tigre/readable_as_mosquito`
+
+Observed result:
+- `CONFIRMED`
+- `supporting_sources=["image"]`
+- contract evaluation: `pass`
+- final Core decision: `accept`
+
+The provider returned evidence only. `accept` was produced by the Core after the evidence crossed the snapshot boundary and the candidate contained its required explicit Core checks.
+
+A separate real Gag 001 composition run validated that `gag/001/composition/illo_primary` can be preserved as a canonical claim without inventing a three-segment contract evaluation.
+
+An earlier real run where Gemini returned `CONFIRMED` without supporting sources was rejected by the parser. The interaction contract was then strengthened so the provider explicitly supplies `image` when the image is the evidence source.
 
 ## Canon decision
-Only one image/gag is currently accepted as canonical for this phase: **Gag 001 · Jamón**.
+Only one image/gag is currently accepted as canonical visual material: **Gag 001 · Jamón**.
 
-The repository has `gags/001_jamon.md`, whose official hierarchy is Illo → jamón → reacción de Killo.
+The second existing gag image is not canonical because it has unresolved character, execution, and composition problems. Do not promote it merely to enlarge the corpus.
 
-The second existing gag image is not currently acceptable as canon because it has known character, execution, and composition defects. Do not force it into canon merely to obtain a second example.
+Keep `CANON` separate from any future `TEST CORPUS` of positive, negative, ambiguous, or synthetic images.
 
-A distinction is intentional:
-- CANON = approved project material.
-- TEST CORPUS = additional positive/negative/ambiguous images used to test evidence behavior; these do not need to be canon.
+## Claim taxonomy boundary
+Canonical Gag 001 claims such as `gag/001/composition/illo_primary` are not the same thing as registered three-segment evidence-contract invariants such as `catalog/entry/invariant`.
 
-## Provider-observation architecture
-Real provider variability is preserved before Core aggregation via:
-- `core/provider_evidence_observation.py`
-- `ProviderEvidenceObservation(provider, run_id, records)`
-
-A provider observation can cross the snapshot boundary without turning provider metadata into Core claims. Canonical Gag 001 claims such as `gag/001/composition/illo_primary` must not be rewritten merely to fit the three-segment catalog/entry/invariant contract used by the registered evidence taxonomy.
+Do not rewrite, alias, or relax claims simply to fit the registered invariant taxonomy. Canonical gag claims may cross the snapshot boundary while remaining without contractual evaluation until a deliberate human decision establishes that relationship.
 
 ## Custom Copilot agent
-A repository-level custom agent has been added at:
-`.github/agents/semantic-boundary-engineer.md`
+Repository custom agent:
+`.github/agents/semantic-boundary-engineer.agent.md`
 
-Purpose: execute and verify semantic-boundary engineering work in the Codespace, with strict rules around canon, provider isolation, evidence states, snapshots, contracts, credentials, focused tests, and full-suite regression checks.
-
-Repository-wide Copilot guardrails are also in:
+Repository-wide Copilot guardrails:
 `.github/copilot-instructions.md`
 
-The custom agent is intended as the local execution/development counterpart to the architectural reasoning done in the main project conversation. It can inspect files, edit code, run tests, and iterate in the Codespace; it must stop rather than invent semantics when an architectural decision is ambiguous.
+The custom agent is the local execution/development counterpart to the architectural reasoning in the main project conversation. It can inspect files, edit code, run tests, and iterate in the Codespace, but it must stop rather than invent semantics when an architectural decision is ambiguous.
+
+## Next phase — OpenAI as second provider
+The next provider must implement the same provider boundary used by Gemini.
+
+Target architecture:
+
+OpenAI transport
+→ OpenAI provider adapter
+→ ExternalEvidenceRecord
+→ ProviderEvidenceObservation
+→ EvidenceSnapshot
+→ existing Core pipeline/evaluator
+
+Do not create a parallel OpenAI-specific Core path.
+
+Initial OpenAI phase should be staged:
+1. Verify the current OpenAI SDK/API surface and model availability in the live environment before coding against assumptions.
+2. Build a provider-specific transport/parser contract with injected/fake transport.
+3. Add conformance tests proving the adapter emits only `ExternalEvidenceRecord` and never Core decisions.
+4. Reuse the existing observation/snapshot/pipeline composition; do not duplicate it.
+5. Validate real connectivity with an environment secret, never source code or chat.
+6. Run one real perceptual invariant experiment.
+7. Run one real end-to-end Core decision experiment.
+8. Run the full suite after every meaningful integration block.
+
+OpenAI model identifiers, SDK methods, endpoints, authentication, and response schemas must be verified against the live environment when implementation starts. Do not assume a model name or endpoint from memory.
+
+## Next session starting point
+Read this file first. Then inspect the current branch and confirm the full suite before changing anything.
+
+The architectural target is not merely “call OpenAI”; it is to prove that a second independent provider can enter through the same evidence contract without changing Core semantics. Gemini remains the reference implementation for that conformance work.
 
 ## Conversation continuity
 If the original ChatGPT conversation becomes unavailable or visually resets, open a new chat and tell the assistant:
-"Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Do not assume anything not supported by the repository or this document."
+“Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Do not assume anything not supported by the repository or this document.”
 
 This handoff file is intentionally the durable source of project continuity so progress does not depend on one chat thread.
