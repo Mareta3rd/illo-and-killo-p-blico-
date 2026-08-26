@@ -31,7 +31,13 @@ class GeminiEvidenceAdapter:
         prompt = (
             "Evaluate only the requested canonical evidence claims. "
             "Return one observation per requested key. Preserve UNKNOWN when "
-            "the image does not provide sufficient evidence.\n\n"
+            "the image does not provide sufficient evidence. "
+            "The structured response must include claim_key, verdict, statement, "
+            "supporting_sources, and contradicting_sources. For CONFIRMED, include "
+            "at least one supporting source; use exactly 'image' when the evidence "
+            "comes from the provided image. For CONTRADICTED, include at least one "
+            "contradicting source; use exactly 'image' when the contradiction comes "
+            "from the provided image. For UNKNOWN, both source arrays must be empty.\n\n"
             + "\n".join(f"- {key}" for key in keys)
         )
         try:
@@ -51,6 +57,10 @@ class GeminiEvidenceAdapter:
             "Evaluate only the requested canonical evidence claims.",
             "Do not turn salience metadata into evidence; it only explains the claim's role.",
             "Return one observation per requested key. Preserve UNKNOWN when the image is insufficient.",
+            "Every observation must include claim_key, verdict, statement, supporting_sources, and contradicting_sources.",
+            "CONFIRMED requires at least one supporting source; use exactly 'image' when the evidence comes from the provided image.",
+            "CONTRADICTED requires at least one contradicting source; use exactly 'image' when the contradiction comes from the provided image.",
+            "UNKNOWN requires supporting_sources=[] and contradicting_sources=[]; do not add sources.",
             "",
         ]
         for claim in normalized:

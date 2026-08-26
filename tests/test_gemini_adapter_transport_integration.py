@@ -102,6 +102,23 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
         self.assertEqual(call["input"][0]["mime_type"], "image/jpeg")
         self.assertIn(KEY, call["input"][1]["text"])
 
+    def test_interactions_schema_requires_all_evidence_fields(self):
+        client = FakeClient(Response(json.dumps(payload())))
+        adapter = GeminiEvidenceAdapter.from_interactions_client(
+            client,
+            model="gemini-test",
+            image_bytes=b"image",
+            mime_type="image/png",
+        )
+
+        adapter.collect((KEY,))
+        required = client.interactions.calls[0]["response_format"]["schema"]["properties"]["observations"]["items"]["required"]
+
+        self.assertEqual(
+            required,
+            ["claim_key", "verdict", "statement", "supporting_sources", "contradicting_sources"],
+        )
+
     def test_adapter_does_not_evaluate_or_accept(self):
         client = FakeClient(Response(json.dumps(payload())))
         adapter = GeminiEvidenceAdapter.from_interactions_client(

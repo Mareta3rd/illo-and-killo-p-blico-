@@ -32,6 +32,26 @@ class GeminiEvidenceAdapterTests(unittest.TestCase):
         self.assertEqual(seen[0]["requested_keys"], (KEY,))
         self.assertNotIn("accept", seen[0]["prompt"].lower())
 
+    def test_request_states_structured_evidence_source_contract(self):
+        seen = []
+
+        def request(payload):
+            seen.append(payload)
+            return object()
+
+        adapter = GeminiEvidenceAdapter(request=request, parse=lambda payload, keys: (self._record(),))
+        adapter.collect((KEY,))
+
+        prompt = seen[0]["prompt"]
+        self.assertIn("claim_key, verdict, statement, supporting_sources, and contradicting_sources", prompt)
+        self.assertIn("CONFIRMED", prompt)
+        self.assertIn("at least one supporting source", prompt)
+        self.assertIn("exactly 'image'", prompt)
+        self.assertIn("CONTRADICTED", prompt)
+        self.assertIn("at least one contradicting source", prompt)
+        self.assertIn("UNKNOWN", prompt)
+        self.assertIn("both source arrays must be empty", prompt)
+
     def test_parser_output_preserves_confirmed_state(self):
         record = self._record(EvidenceState.CONFIRMED)
         adapter = GeminiEvidenceAdapter(request=lambda payload: object(), parse=lambda payload, keys: (record,))
