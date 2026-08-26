@@ -5,7 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Sequence
 
-from .external_evidence_adapter import ExternalEvidenceRecord
+from .evidence_snapshot import EvidenceSnapshot, build_evidence_snapshot
+from .external_evidence_adapter import (
+    ExternalEvidenceRecord,
+    normalize_external_evidence,
+)
 
 
 @dataclass(frozen=True)
@@ -39,3 +43,20 @@ def freeze_provider_observation(
         run_id=str(run_id),
         records=tuple(records),
     )
+
+
+def snapshot_from_provider_observation(
+    root: str,
+    observation: ProviderEvidenceObservation,
+) -> EvidenceSnapshot:
+    """Convert one frozen provider observation into the Core snapshot boundary.
+
+    Provider metadata stays on the observation. Records are normalized into the
+    provider-agnostic evidence contract before Core freezes and evaluates the
+    snapshot. No cross-provider aggregation or provider-specific interpretation
+    is performed here.
+    """
+    if not isinstance(observation, ProviderEvidenceObservation):
+        raise TypeError("observation must be a ProviderEvidenceObservation")
+    claims = normalize_external_evidence(observation.records)
+    return build_evidence_snapshot(root, claims)
