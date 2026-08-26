@@ -99,11 +99,13 @@ class GeminiEvidenceStabilityTests(unittest.TestCase):
 
         self.assertEqual(claims[self.CLAIM.key].state, EvidenceState.CONFIRMED)
         self.assertEqual(claims[self.CLAIM.key].supporting_sources, ("image",))
-        self.assertNotIn("decision", claims[self.CLAIM.key].__dict__)
+
+        canonical_claim = claims[self.CLAIM.key]
+        self.assertNotIn("decision", canonical_claim.__dataclass_fields__)
 
     def test_contradicted_and_unknown_are_preserved_as_observations(self):
         cases = (
-            ("contradicted", EvidenceState.CONTRADICTED, ("image",), ()),
+            ("contradicted", EvidenceState.CONTRADICTED, (), ("image",)),
             ("unknown", EvidenceState.UNKNOWN, (), ()),
         )
         for verdict, expected_state, supporting, contradicting in cases:
