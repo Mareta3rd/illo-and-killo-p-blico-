@@ -4,6 +4,9 @@ import unittest
 
 from core.evidence_state import EvidenceState
 from core.gemini_evidence_adapter import GeminiEvidenceAdapter
+from core.evidence_snapshot import EvidenceSnapshot
+from core.real_evidence_provider import RealEvidenceProviderError
+from scripts.run_gag001_gemini_experiment import collect_gag001_observation, load_claim
 
 KEY = "fauna/mosquito_tigre/readable_as_mosquito"
 
@@ -28,11 +31,20 @@ class FakeClient:
         self.interactions = FakeInteractions(response)
 
 
-def payload(verdict="confirmed"):
+class ErrorClient:
+    class Interactions:
+        def create(self, **kwargs):
+            raise TimeoutError("timeout")
+
+    def __init__(self):
+        self.interactions = self.Interactions()
+
+
+def payload(verdict="confirmed", claim_key=KEY):
     return {
         "observations": [
             {
-                "claim_key": KEY,
+                "claim_key": claim_key,
                 "verdict": verdict,
                 "statement": "candidate is visually readable as mosquito",
                 "supporting_sources": ["gemini"] if verdict == "confirmed" else [],
@@ -100,6 +112,68 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
         )
         self.assertFalse(hasattr(adapter, "evaluate"))
         self.assertFalse(hasattr(adapter, "accept"))
+
+    def test_gag001_gemini_adapter_reaches_observation_and_snapshot(self):
+        claim = load_claim("gag/001/composition/illo_primary")
+        client = FakeClient(Response(json.dumps(payload("unknown", claim.key))))
+
+        observation, snapshot = collect_gag001_observation(
+            client,
+            model="gemini-test",
+            image_bytes=b"image",
+            mime_type="image/png",
+            claim=claim,
+            run_id="run-gag001-test",
+        )
+
+        self.assertEqual(observation.provider, "gemini")
+        self.assertEqual(observation.run_id, "run-gag001-test")
+        self.assertIsInstance(snapshot, EvidenceSnapshot)
+        self.assertEqual(observation.records[0].claim_key, claim.key)
+        self.assertEqual(snapshot.get(claim.key).state, EvidenceState.UNKNOWN)
+        self.assertEqual(snapshot.get(claim.key).supporting_sources, ())
+        self.assertEqual(snapshot.canonical_evaluations, ())
+
+    def test_gag001_gemini_provider_error_does_not_create_partial_snapshot(self):
+        client = ErrorClient()
+        claim = load_claim("gag/001/composition/illo_primary")
+
+        with self.assertRaises(RealEvidenceProviderError):
+            collect_gag001_observation(
+                client,
+                model="gemini-test",
+                image_bytes=b"image",
+                mime_type="image/png",
+                claim=claim,
+                run_id="run-gag001-error",
+            )
+
+    def test_gag001_gemini_states_and_sources_reach_snapshot_unchanged(self):
+        claim = load_claim("gag/001/composition/illo_primary")
+        cases = (
+            ("confirmed", EvidenceState.CONFIRMED, ("gemini",), ()),
+            ("unknown", EvidenceState.UNKNOWN, (), ()),
+            ("contradicted", EvidenceState.CONTRADICTED, (), ("gemini",)),
+        )
+
+        for verdict, state, supporting, contradicting in cases:
+            with self.subTest(verdict=verdict):
+                client = FakeClient(Response(json.dumps(payload(verdict, claim.key))))
+                observation, snapshot = collect_gag001_observation(
+                    client,
+                    model="gemini-test",
+                    image_bytes=b"image",
+                    mime_type="image/png",
+                    claim=claim,
+                    run_id=f"run-gag001-{verdict}",
+                )
+
+                record = observation.records[0]
+                observed = snapshot.get(claim.key)
+                self.assertEqual(record.state, state)
+                self.assertEqual(observed.state, state)
+                self.assertEqual(observed.supporting_sources, supporting)
+                self.assertEqual(observed.contradicting_sources, contradicting)
 
 
 if __name__ == "__main__":

@@ -22,6 +22,11 @@ from google import genai
 
 from core.canonical_salience import CanonicalClaim, CanonicalSalience, NarrativeRole, VisualSalience
 from core.gemini_evidence_adapter import GeminiEvidenceAdapter
+from core.provider_evidence_observation import (
+    ProviderEvidenceObservation,
+    collect_provider_observation,
+)
+from core.evidence_snapshot import EvidenceSnapshot
 
 CLAIMS_PATH = REPO_ROOT / "data" / "gag_001_claims.json"
 
@@ -44,6 +49,31 @@ def load_claim(claim_key: str) -> CanonicalClaim:
         raise SystemExit(f"Invalid canonical claim definition: {claim_key}") from exc
 
 
+def collect_gag001_observation(
+    client: object,
+    *,
+    model: str,
+    image_bytes: bytes,
+    mime_type: str,
+    claim: CanonicalClaim,
+    run_id: str,
+) -> tuple[ProviderEvidenceObservation, EvidenceSnapshot]:
+    """Collect one Gag 001 claim through Gemini and freeze its Core boundary."""
+    adapter = GeminiEvidenceAdapter.from_interactions_client(
+        client,
+        model=model,
+        image_bytes=image_bytes,
+        mime_type=mime_type,
+    )
+    return collect_provider_observation(
+        str(REPO_ROOT),
+        adapter,
+        "gemini",
+        run_id,
+        (claim.key,),
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run a real Gemini experiment for Gag 001")
     parser.add_argument("image", type=Path)
@@ -52,6 +82,7 @@ def main() -> int:
         "gag/001/composition/ham_primary",
         "gag/001/characters/killo_reaction",
     ))
+    parser.add_argument("--run-id", required=True)
     parser.add_argument("--model", default=os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"))
     args = parser.parse_args()
 
@@ -65,14 +96,14 @@ def main() -> int:
         raise SystemExit(f"Unsupported image type: {args.image}")
 
     claim = load_claim(args.claim_key)
-    adapter = GeminiEvidenceAdapter.from_interactions_client(
+    observation, snapshot = collect_gag001_observation(
         genai.Client(),
         model=args.model,
         image_bytes=args.image.read_bytes(),
         mime_type=mime_type,
+        claim=claim,
+        run_id=args.run_id,
     )
-
-    records = tuple(adapter.collect_claims((claim,)))
     print(
         json.dumps(
             {
@@ -84,6 +115,10 @@ def main() -> int:
                     "narrative_role": claim.salience.narrative_role.label,
                     "visual_salience": claim.salience.visual_salience.label,
                 },
+                "observation": {
+                    "provider": observation.provider,
+                    "run_id": observation.run_id,
+                },
                 "records": [
                     {
                         "claim_key": record.claim_key,
@@ -92,8 +127,20 @@ def main() -> int:
                         "supporting_sources": list(record.supporting_sources),
                         "contradicting_sources": list(record.contradicting_sources),
                     }
-                    for record in records
+                    for record in observation.records
                 ],
+                "snapshot": {
+                    "claim_keys": list(snapshot.claims),
+                    "contract_evaluations": [
+                        {
+                            "catalog": evaluation.catalog,
+                            "entry": evaluation.entry,
+                            "invariant": evaluation.invariant,
+                            "decision": evaluation.evaluation.decision,
+                        }
+                        for evaluation in snapshot.canonical_evaluations
+                    ],
+                },
             },
             ensure_ascii=False,
             indent=2,
