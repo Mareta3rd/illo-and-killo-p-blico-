@@ -19,6 +19,11 @@ from core.canonical_salience import CanonicalClaim, CanonicalSalience, Narrative
 from core.gemini_evidence_adapter import GeminiEvidenceAdapter
 
 CLAIMS_PATH = REPO_ROOT / "data" / "gag_001_claims.json"
+CANONICAL_CLAIM_KEYS = (
+    "gag/001/composition/illo_primary",
+    "gag/001/composition/ham_primary",
+    "gag/001/characters/killo_reaction",
+)
 
 VARIANTS = (
     "canonical",
@@ -31,7 +36,7 @@ def load_claim(claim_key: str) -> CanonicalClaim:
     data = json.loads(CLAIMS_PATH.read_text(encoding="utf-8"))
     item = data.get(claim_key)
     if not isinstance(item, dict):
-        raise SystemExit(f"Unknown canonical claim: {claim_key}")
+        raise SystemExit(f"Unknown canonical claim: {claim_key}. Choose one of: {', '.join(CANONICAL_CLAIM_KEYS)}")
     return CanonicalClaim(
         key=claim_key,
         statement=item["statement"],
@@ -60,7 +65,7 @@ def variant_prompt(claim: CanonicalClaim, variant: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("image", type=Path)
-    parser.add_argument("claim_key")
+    parser.add_argument("claim_key", choices=CANONICAL_CLAIM_KEYS)
     parser.add_argument("--model", default=os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"))
     args = parser.parse_args()
 
