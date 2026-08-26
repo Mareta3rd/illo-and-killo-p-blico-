@@ -8,7 +8,7 @@ from typing import Sequence
 from .evidence_snapshot import EvidenceSnapshot, build_evidence_snapshot
 from .external_evidence_adapter import (
     ExternalEvidenceRecord,
-    normalize_external_evidence,
+    normalize_external_observations,
 )
 
 
@@ -52,11 +52,11 @@ def snapshot_from_provider_observation(
     """Convert one frozen provider observation into the Core snapshot boundary.
 
     Provider metadata stays on the observation. Records are normalized into the
-    provider-agnostic evidence contract before Core freezes and evaluates the
-    snapshot. No cross-provider aggregation or provider-specific interpretation
-    is performed here.
+    provider-agnostic evidence claim representation before Core freezes and
+    evaluates the snapshot. No cross-provider aggregation or provider-specific
+    interpretation is performed here.
     """
     if not isinstance(observation, ProviderEvidenceObservation):
         raise TypeError("observation must be a ProviderEvidenceObservation")
-    claims = normalize_external_evidence(observation.records)
+    claims = normalize_external_observations(observation.records)
     return build_evidence_snapshot(root, claims)
