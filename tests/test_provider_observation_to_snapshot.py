@@ -64,6 +64,8 @@ class ProviderObservationToSnapshotTests(unittest.TestCase):
             claim_key="gag/001/composition/ham_primary",
             statement="The ham is the central object of Illo's boxing action.",
             state=EvidenceState.UNKNOWN,
+            supporting_sources=(),
+            contradicting_sources=(),
         )
         observation = freeze_provider_observation("gemini", "run-006", (self.record(), second))
         snapshot = snapshot_from_provider_observation(self.ROOT, observation)
