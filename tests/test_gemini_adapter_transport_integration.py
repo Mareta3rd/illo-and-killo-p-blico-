@@ -1,3 +1,4 @@
+import base64
 import json
 import unittest
 
@@ -85,7 +86,7 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
         adapter.collect((KEY,))
         call = client.interactions.calls[0]
 
-        self.assertEqual(call["input"][0]["data"], b"image-bytes")
+        self.assertEqual(call["input"][0]["data"], base64.b64encode(b"image-bytes").decode("utf-8"))
         self.assertEqual(call["input"][0]["mime_type"], "image/jpeg")
         self.assertIn(KEY, call["input"][1]["text"])
 
