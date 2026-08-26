@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from core.evidence_state import EvidenceClaim, EvidenceState
+from core.evidence_state import EvidenceState
 from core.evidence_snapshot import EvidenceSnapshot
 from core.external_evidence_adapter import ExternalEvidenceRecord
 from core.provider_evidence_observation import (
@@ -59,15 +59,16 @@ class ProviderObservationToSnapshotTests(unittest.TestCase):
         self.assertEqual(tuple(snapshot.claims), (self.KEY,))
         self.assertEqual(observation.records[0], records[0])
 
-    def test_non_canonical_records_remain_available_without_evaluation(self):
-        record = ExternalEvidenceRecord(
-            claim_key="external/source/item",
-            statement="External source observation.",
+    def test_multiple_canonical_records_share_the_same_snapshot_boundary(self):
+        second = ExternalEvidenceRecord(
+            claim_key="gag/001/composition/ham_primary",
+            statement="The ham is the central object of Illo's boxing action.",
             state=EvidenceState.UNKNOWN,
         )
-        observation = freeze_provider_observation("gemini", "run-006", (record,))
+        observation = freeze_provider_observation("gemini", "run-006", (self.record(), second))
         snapshot = snapshot_from_provider_observation(self.ROOT, observation)
-        self.assertEqual(snapshot.get("external/source/item").state, EvidenceState.UNKNOWN)
+        self.assertEqual(set(snapshot.claims), {self.KEY, "gag/001/composition/ham_primary"})
+        self.assertEqual(snapshot.get("gag/001/composition/ham_primary").state, EvidenceState.UNKNOWN)
 
 
 if __name__ == "__main__":
