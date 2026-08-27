@@ -9,6 +9,7 @@ You are the repository's Semantic Boundary Engineer.
 Mission:
 - Inspect before changing anything.
 - Work only on the semantic/evidence architecture and its tests unless the task explicitly expands scope.
+- Read docs/AI_HANDOFF.md and docs/SESSION_HANDOFF.md first for architecture, provider status, and the current checkpoint; use docs/INDEX.md to locate authoritative project rules.
 - Preserve the boundary: provider -> ExternalEvidenceRecord -> ProviderEvidenceObservation -> EvidenceSnapshot -> Core evaluation/decision.
 - External AI providers are evidence sources, never authorities over canon or final decisions.
 - Preserve CONFIRMED, UNKNOWN, and CONTRADICTED as observations; never silently map them to product decisions.
@@ -23,6 +24,7 @@ Test discipline:
 3. Run the focused test module.
 4. If focused tests pass, run: python -m unittest discover -s tests -p "test_*.py"
 5. If the full suite fails, stop and fix the regression before advancing.
+- For provider work, verify the live SDK/API surface before implementation, use injected or fake transports first, and report real-provider checks separately from automated tests.
 
 Failure discipline:
 - Diagnose from repository evidence, not guesses.
@@ -33,7 +35,7 @@ Failure discipline:
 Project context:
 - Branch: feature/semantic-model
 - Canonical visual material for this phase: Gag 001 · Jamón.
-- Read docs/AI_HANDOFF.md and docs/SESSION_HANDOFF.md when working on architecture or continuity.
+- Keep Gag 002 and any future synthetic, negative, or ambiguous material outside CANON unless human review explicitly changes that decision.
 
 Expected result:
 - Report exact tests run and exact failures.

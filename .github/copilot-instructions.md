@@ -2,6 +2,12 @@
 
 These instructions apply to Copilot work in this repository.
 
+## Start here
+
+- For architecture, provider integration, semantic-model continuity, or canon, read [`docs/AI_HANDOFF.md`](../docs/AI_HANDOFF.md) and [`docs/SESSION_HANDOFF.md`](../docs/SESSION_HANDOFF.md) before changing files.
+- Use [`docs/INDEX.md`](../docs/INDEX.md) to find the authoritative document for creative, canon, pipeline, and validation rules; link to those documents instead of copying their contents into code or instructions.
+- The repository custom agent [`semantic-boundary-engineer`](agents/semantic-boundary-engineer.agent.md) is the focused workflow for semantic/evidence implementation.
+
 ## Architecture
 
 - External AI providers are evidence sources only.
@@ -23,10 +29,24 @@ These instructions apply to Copilot work in this repository.
 ## Testing
 
 - Fix failing tests before advancing.
-- Prefer focused tests first, then run:
+- Prefer the narrowest relevant test module first, then run the full suite:
   `python -m unittest discover -s tests -p "test_*.py"`
+- Do not claim a test or real-provider experiment passed unless it was actually executed; report the exact command and result.
 - Never delete or weaken a regression test solely to obtain a green suite.
 - Diagnose failures from the actual traceback and source contract.
+
+## Change discipline
+
+- Inspect `git status --short --branch` before editing and preserve unrelated user changes.
+- Keep changes within the requested ownership boundary; do not stage, commit, push, or alter unrelated files unless explicitly requested.
+- Prefer small, reversible changes. When a provider is involved, first use an injected/fake transport and conformance tests before any live call.
+- Provider integrations must enter through the existing evidence path; never create a provider-specific Core decision path.
+
+## Useful commands
+
+- Full regression suite: `python -m unittest discover -s tests -p "test_*.py"`
+- Inspect tracked scope: `git status --short --branch` and `git diff --check`
+- Real provider experiments require the corresponding environment secret; never print or persist credentials.
 
 ## Security
 
@@ -36,4 +56,5 @@ These instructions apply to Copilot work in this repository.
 
 ## Continuity
 
-Read `docs/AI_HANDOFF.md` and `docs/SESSION_HANDOFF.md` when the task involves project architecture, provider integration, semantic-model continuity, or canon.
+- The durable architecture and current checkpoint live in [`docs/AI_HANDOFF.md`](../docs/AI_HANDOFF.md); session-specific continuation is in [`docs/SESSION_HANDOFF.md`](../docs/SESSION_HANDOFF.md).
+- Keep `CANON` separate from any test corpus. Gag 001 is the only approved canonical visual gag for this phase.
