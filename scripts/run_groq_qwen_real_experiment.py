@@ -16,8 +16,15 @@ if str(REPO_ROOT) not in sys.path:
 
 from openai import OpenAI
 
+from core.evidence_snapshot import EvidenceSnapshot
 from core.groq_qwen_evidence_adapter import GroqQwenEvidenceAdapter
 from core.groq_qwen_real_transport import DEFAULT_GROQ_BASE_URL, DEFAULT_GROQ_QWEN_MODEL
+from core.provider_evidence_observation import (
+    ProviderEvidenceObservation,
+    ProviderEvidencePipelineResult,
+    collect_provider_observation,
+    run_provider_evidence_pipeline,
+)
 
 
 def read_image(path: Path) -> tuple[bytes, str]:
@@ -35,6 +42,54 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--model", default=os.environ.get("GROQ_MODEL", DEFAULT_GROQ_QWEN_MODEL))
     parser.add_argument("--base-url", default=os.environ.get("GROQ_BASE_URL", DEFAULT_GROQ_BASE_URL))
     return parser
+
+
+def collect_groq_qwen_observation(
+    client: object,
+    *,
+    model: str,
+    image_bytes: bytes,
+    mime_type: str,
+    claim_key: str,
+    run_id: str,
+    root: str | Path,
+) -> tuple[ProviderEvidenceObservation, EvidenceSnapshot]:
+    adapter = GroqQwenEvidenceAdapter.from_responses_client(
+        client,
+        model=model,
+        image_bytes=image_bytes,
+        mime_type=mime_type,
+    )
+    return collect_provider_observation(str(root), adapter, "groq_qwen", run_id, (claim_key,))
+
+
+def run_groq_qwen_evidence_pipeline(
+    client: object,
+    *,
+    idea: str,
+    root: str | Path,
+    model: str,
+    image_bytes: bytes,
+    mime_type: str,
+    claim_key: str,
+    run_id: str,
+    proposal: dict | None = None,
+) -> ProviderEvidencePipelineResult:
+    adapter = GroqQwenEvidenceAdapter.from_responses_client(
+        client,
+        model=model,
+        image_bytes=image_bytes,
+        mime_type=mime_type,
+    )
+    return run_provider_evidence_pipeline(
+        idea,
+        root,
+        adapter,
+        "groq_qwen",
+        run_id,
+        (claim_key,),
+        proposal=proposal,
+    )
 
 
 def main() -> int:
