@@ -125,6 +125,27 @@ Groq/Qwen real
 
 The provider must not return accept, continue, or human_review.
 
+Validated real E2E milestone:
+- model: `qwen/qwen3.8-27b`
+- image: `gags/images/001_jamon.png`
+- claim: `fauna/mosquito_tigre/readable_as_mosquito`
+- run id: `real-gag001-qwen-e2e-20260827-02`
+- provider verdict/state: `CONFIRMED`
+- `supporting_sources=["image"]`
+- `ProviderEvidenceObservation`: valid
+- `EvidenceSnapshot`: valid
+- canonical evaluation: `pass`
+- Core decision: `accept`
+- `stop_reason`: `null`
+- `stopped`: `false`
+
+Qwen emitted evidence only and no Core decision. The `accept` result belongs
+exclusively to Core after the evidence crossed the provider-neutral boundaries.
+The demonstrated path is:
+Groq/Qwen real → GroqQwenEvidenceAdapter → ExternalEvidenceRecord →
+ProviderEvidenceObservation → EvidenceSnapshot →
+`run_provider_evidence_pipeline(...)` → Core evaluation.
+
 ## Model-selection discipline
 Do not introduce fallback models automatically. If the explicitly selected model is unavailable for the account or capability combination, report the exact limitation and stop for human model-selection review.
 

@@ -109,7 +109,8 @@ no alternate model was tried. OpenAI remains provider-specific evidence and is
 not connected to the Core observation pipeline yet.
 
 ## Groq/Qwen provider status
-Groq/Qwen Phase A is implemented provider-specifically, with no real request:
+Groq/Qwen is validated through the provider-neutral path with one real
+multimodal Qwen 3.8 27B experiment:
 - `core/groq_qwen_real_transport.py`
 - `core/groq_qwen_evidence_adapter.py`
 - Groq/Qwen transport/adapter/integration tests
@@ -119,13 +120,23 @@ endpoint. `qwen/qwen3.6-27b` remains explicitly selectable as a secondary,
 JSON Object Mode-compatible candidate; it is rejected for this project's strict
 closed JSON Schema contract. No automatic fallback is allowed.
 The transport now uses provider-layer model profiles and validates required
-capabilities before constructing a request. Core, observations, snapshots, and
-pipeline remain unchanged. Focused tests pass: **19 tests, OK**. The latest
-full suite passes: **418 tests, OK**. No real Groq/Qwen connectivity or image
-test has been performed.
+capabilities before constructing a request. The real run used:
+- model: `qwen/qwen3.8-27b`
+- image: `gags/images/001_jamon.png`
+- claim: `fauna/mosquito_tigre/readable_as_mosquito`
+- run id: `real-gag001-qwen-e2e-20260827-02`
 
-Groq/Qwen is not connected to ProviderEvidenceObservation, EvidenceSnapshot,
-or the Core pipeline.
+The real result was `CONFIRMED` with `supporting_sources=["image"]`.
+`ProviderEvidenceObservation` and `EvidenceSnapshot` were valid; the
+canonical evaluation was `pass`, with `stop_reason=null` and `stopped=false`.
+The final Core decision was `accept`.
+
+Qwen emitted evidence only and no Core decision. The `accept` decision belongs
+exclusively to Core. The provider-neutral integration is demonstrated through
+ExternalEvidenceRecord → ProviderEvidenceObservation → EvidenceSnapshot →
+`run_provider_evidence_pipeline(...)` → Core evaluation.
+
+No Groq/Qwen-specific Observation, Snapshot, or Core decision path exists.
 
 ## Next phase — OpenAI as second provider
 The next provider must implement the same provider boundary used by Gemini.
