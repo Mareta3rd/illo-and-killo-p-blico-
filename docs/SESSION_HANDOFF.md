@@ -3,7 +3,7 @@
 ## Repository state
 - Repository: `Mareta3rd/illo-and-killo-p-blico-`
 - Active branch: `feature/semantic-model`
-- Latest confirmed full suite in this session: **387 tests, OK**.
+- Latest confirmed full suite in this session: **413 tests, OK**.
 - The semantic-model work must continue from the current branch; do not assume `main` contains the latest work.
 
 ## Architecture already completed
@@ -124,6 +124,32 @@ Planned sequence:
 8. Full-suite regression after each meaningful block.
 
 OpenAI SDK methods, authentication, endpoints, model identifiers, and response schemas must be verified live when this phase starts; do not assume them from memory.
+
+## OpenAI provider status
+OpenAI Phase A is now implemented and committed:
+- `core/openai_real_transport.py`
+- `core/openai_evidence_adapter.py`
+- OpenAI transport/adapter/integration tests
+
+The validated SDK is `openai==3.4.0`. The Codespace secret is configured but
+is not stored in the repository or chat. One real connectivity attempt with
+`gpt-5.4-mini` initialized the client but returned `429 insufficient_quota`;
+no alternate model was tried. OpenAI remains provider-specific evidence and is
+not connected to the Core observation pipeline.
+
+## Groq/Qwen provider status
+Groq/Qwen Phase A is implemented provider-specifically, with no real request:
+- `core/groq_qwen_real_transport.py`
+- `core/groq_qwen_evidence_adapter.py`
+- Groq/Qwen transport/adapter/integration tests
+
+The candidate is `qwen/qwen3.6-27b` through the OpenAI-compatible Groq endpoint.
+Qwen 3.6 27B is marked Preview by Groq; no automatic fallback is allowed.
+Focused tests passed: **14 tests, OK**. The full suite passed: **413 tests,
+OK**. No real Groq/Qwen connectivity or image test has been performed.
+
+Groq/Qwen is not connected to ProviderEvidenceObservation, EvidenceSnapshot,
+or the Core pipeline.
 
 ## Working principles
 - Do not invent test results, file paths, API behavior, or repository state.

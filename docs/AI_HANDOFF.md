@@ -13,18 +13,19 @@ Build a deterministic semantic/evidence architecture for the Illo & Killo projec
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Latest full-suite result actually confirmed in the current session: **387 tests, OK**.
+Latest full-suite result actually confirmed in the current session: **413 tests, OK**.
 The Gemini end-to-end milestone is complete.
 
 ## Architecture validated
 The project now has tested boundaries for:
 
-provider
+ provider
 → ExternalEvidenceRecord
 → ProviderEvidenceObservation
 → EvidenceSnapshot
+→ contractual evaluation when applicable
 → Core pipeline/evaluator
-→ decision
+→ Core decision
 
 Earlier gateway/registry/orchestrator, regression, semantic-audit, and execution-audit layers remain part of the validated architecture.
 
@@ -44,6 +45,7 @@ Real environment validation:
 - `GEMINI_API_KEY` is supplied as a GitHub Codespaces secret; it is not stored in the repository or chat.
 - `genai.Client()` initializes successfully.
 - `gemini-3.6-flash` produced a real `GEMINI_REAL_OK` response during connectivity validation.
+- The validated package version was `google-genai==2.19.0`.
 
 ## Gemini end-to-end milestone
 A real run was completed with:
@@ -77,6 +79,14 @@ Canonical Gag 001 claims such as `gag/001/composition/illo_primary` are not the 
 
 Do not rewrite, alias, or relax claims simply to fit the registered invariant taxonomy. Canonical gag claims may cross the snapshot boundary while remaining without contractual evaluation until a deliberate human decision establishes that relationship.
 
+## Provider-observation architecture
+Real provider variability is preserved before Core aggregation via:
+- `core/provider_evidence_observation.py`
+- `ProviderEvidenceObservation(provider, run_id, records)`
+
+The provider-neutral observation path preserves provider records before Core
+normalization. Provider metadata does not become a Core claim.
+
 ## Custom Copilot agent
 Repository custom agent:
 `.github/agents/semantic-boundary-engineer.agent.md`
@@ -85,6 +95,32 @@ Repository-wide Copilot guardrails:
 `.github/copilot-instructions.md`
 
 The custom agent is the local execution/development counterpart to the architectural reasoning in the main project conversation. It can inspect files, edit code, run tests, and iterate in the Codespace, but it must stop rather than invent semantics when an architectural decision is ambiguous.
+
+## OpenAI provider status
+OpenAI Phase A is implemented and committed with:
+- `core/openai_real_transport.py`
+- `core/openai_evidence_adapter.py`
+- OpenAI transport/adapter/integration tests
+
+The validated SDK is `openai==3.4.0`. The Codespace secret is configured but is
+not stored in the repository or chat. One real connectivity attempt with
+`gpt-5.4-mini` initialized the client but returned `429 insufficient_quota`;
+no alternate model was tried. OpenAI remains provider-specific evidence and is
+not connected to the Core observation pipeline yet.
+
+## Groq/Qwen provider status
+Groq/Qwen Phase A is implemented provider-specifically, with no real request:
+- `core/groq_qwen_real_transport.py`
+- `core/groq_qwen_evidence_adapter.py`
+- Groq/Qwen transport/adapter/integration tests
+
+The candidate is `qwen/qwen3.6-27b` through the OpenAI-compatible Groq endpoint.
+Qwen 3.6 27B is marked Preview by Groq; no automatic fallback is allowed.
+Focused tests passed: **14 tests, OK**. The full suite passed: **413 tests,
+OK**. No real Groq/Qwen connectivity or image test has been performed.
+
+Groq/Qwen is not connected to ProviderEvidenceObservation, EvidenceSnapshot,
+or the Core pipeline.
 
 ## Next phase — OpenAI as second provider
 The next provider must implement the same provider boundary used by Gemini.
