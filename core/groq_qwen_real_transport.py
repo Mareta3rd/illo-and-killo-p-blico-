@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import json
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Sequence
@@ -60,6 +61,22 @@ _SUPPORTED_VERDICTS = {
     "unknown": EvidenceState.UNKNOWN,
 }
 _FORBIDDEN_DECISIONS = {"accept", "continue", "human_review"}
+_SENSITIVE_EXCEPTION_PATTERNS = (
+    (re.compile(r"(?i)(authorization\s*[:=]\s*bearer\s+)[^\s,;]+"), r"\1[REDACTED]"),
+    (re.compile(r"(?i)(api[_-]?key\s*[:=]\s*)[^\s,;]+"), r"\1[REDACTED]"),
+)
+
+
+def _format_groq_qwen_exception(exc: Exception) -> str:
+    message = str(exc)
+    for pattern, replacement in _SENSITIVE_EXCEPTION_PATTERNS:
+        message = pattern.sub(replacement, message)
+    details = [type(exc).__name__, f"message={message}"]
+    for attribute in ("status_code", "code"):
+        value = getattr(exc, attribute, None)
+        if value is not None:
+            details.append(f"{attribute}={value}")
+    return ", ".join(details)
 
 
 def get_groq_qwen_model_profile(model_id: str) -> ModelProfile:
@@ -193,7 +210,10 @@ def build_groq_qwen_responses_transport(
                 }},
             )
         except Exception as exc:
-            raise RealEvidenceProviderError("groq qwen responses request failed") from exc
+            detail = _format_groq_qwen_exception(exc)
+            raise RealEvidenceProviderError(
+                f"groq qwen responses request failed: {detail}"
+            ) from exc
         output_text = getattr(response, "output_text", None)
         if not isinstance(output_text, str) or not output_text.strip():
             raise RealEvidenceProviderError("groq qwen responses response contained no structured text")

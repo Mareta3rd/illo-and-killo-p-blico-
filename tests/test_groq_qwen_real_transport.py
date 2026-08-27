@@ -42,6 +42,13 @@ class Response:
         self.output_text = text
 
 
+class RealisticProviderError(Exception):
+    def __init__(self, message, status_code, code):
+        super().__init__(message)
+        self.status_code = status_code
+        self.code = code
+
+
 class GroqQwenRealTransportTests(unittest.TestCase):
     def payload(self, verdict="unknown"):
         return {"observations": [{
@@ -143,6 +150,26 @@ class GroqQwenRealTransportTests(unittest.TestCase):
         request = build_groq_qwen_responses_transport(client, image_bytes=b"x", mime_type="image/png")
         with self.assertRaisesRegex(RealEvidenceProviderError, "groq qwen responses request failed"):
             request({"prompt": "evaluate"})
+
+    def test_transport_error_preserves_safe_provider_details(self):
+        original = RealisticProviderError(
+            "invalid request; Authorization: Bearer secret-token api_key=secret-key",
+            400,
+            "invalid_request_error",
+        )
+        client = FakeClient(error=original)
+        request = build_groq_qwen_responses_transport(client, image_bytes=b"x", mime_type="image/png")
+
+        with self.assertRaises(RealEvidenceProviderError) as raised:
+            request({"prompt": "evaluate"})
+
+        error = raised.exception
+        self.assertIs(error.__cause__, original)
+        self.assertIn("RealisticProviderError", str(error))
+        self.assertIn("status_code=400", str(error))
+        self.assertIn("code=invalid_request_error", str(error))
+        self.assertNotIn("secret-token", str(error))
+        self.assertNotIn("secret-key", str(error))
 
     def test_parser_preserves_states(self):
         for verdict, state in (("confirmed", EvidenceState.CONFIRMED), ("contradicted", EvidenceState.CONTRADICTED), ("unknown", EvidenceState.UNKNOWN)):
