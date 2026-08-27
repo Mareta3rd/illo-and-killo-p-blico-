@@ -157,10 +157,14 @@ def parse_groq_qwen_structured_evidence(
             raise RealEvidenceProviderError("groq qwen contradicting sources are invalid")
 
         state = _SUPPORTED_VERDICTS[verdict]
-        if state is EvidenceState.CONFIRMED and not supporting:
-            raise RealEvidenceProviderError("confirmed Groq Qwen evidence requires supporting sources")
-        if state is EvidenceState.CONTRADICTED and not contradicting:
-            raise RealEvidenceProviderError("contradicted Groq Qwen evidence requires contradicting sources")
+        if state is EvidenceState.CONFIRMED and supporting != ["image"]:
+            raise RealEvidenceProviderError(
+                "confirmed Groq Qwen image evidence requires supporting_sources=[\"image\"]"
+            )
+        if state is EvidenceState.CONTRADICTED and contradicting != ["image"]:
+            raise RealEvidenceProviderError(
+                "contradicted Groq Qwen image evidence requires contradicting_sources=[\"image\"]"
+            )
         if state is EvidenceState.UNKNOWN and (supporting or contradicting):
             raise RealEvidenceProviderError("unknown Groq Qwen evidence must not claim support or contradiction")
         records.append(ExternalEvidenceRecord(

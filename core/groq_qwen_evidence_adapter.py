@@ -25,7 +25,11 @@ class GroqQwenEvidenceAdapter:
         prompt = (
             "Evaluate only the requested canonical evidence claims. Return one observation per requested key. "
             "Preserve UNKNOWN when the image is insufficient. Return claim_key, statement, verdict, "
-            "supporting_sources, and contradicting_sources. Return evidence observations only.\n\n"
+            "supporting_sources, and contradicting_sources. For CONFIRMED image evidence, set "
+            'supporting_sources to exactly ["image"] and keep the perceptual explanation in statement, '
+            "never in supporting_sources. For CONTRADICTED image evidence, set contradicting_sources to "
+            'exactly ["image"] and keep supporting_sources empty. For UNKNOWN, set both source lists to []. '
+            "Source fields are identifiers only. Return evidence observations only.\n\n"
             + "\n".join(f"- {key}" for key in keys)
         )
         try:

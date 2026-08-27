@@ -27,11 +27,29 @@ class GroqQwenEvidenceAdapterTests(unittest.TestCase):
         self.assertEqual(seen[0]["requested_keys"], (KEY,))
         self.assertEqual(requested, [KEY])
 
+    def test_prompt_requires_image_source_identifier_and_statement_explanation(self):
+        seen = []
+        adapter = GroqQwenEvidenceAdapter(request=lambda payload: (seen.append(payload), self.payload(self.item()))[1])
+        adapter.collect((KEY,))
+        prompt = seen[0]["prompt"]
+        self.assertIn('supporting_sources to exactly ["image"]', prompt)
+        self.assertIn('contradicting_sources to exactly ["image"]', prompt)
+        self.assertIn("keep the perceptual explanation in statement", prompt)
+        self.assertIn("Source fields are identifiers only", prompt)
+
     def test_states_and_sources_are_preserved(self):
         for verdict, state in (("confirmed", EvidenceState.CONFIRMED), ("contradicted", EvidenceState.CONTRADICTED), ("unknown", EvidenceState.UNKNOWN)):
             with self.subTest(verdict=verdict):
                 record = GroqQwenEvidenceAdapter(request=lambda payload, v=verdict: self.payload(self.item(verdict=v))).collect((KEY,))[0]
                 self.assertEqual(record.state, state)
+
+    def test_statement_can_contain_perceptual_explanation(self):
+        item = self.item("fauna/mosquito_tigre/readable_as_mosquito", "confirmed") | {
+            "statement": "The flying insect has the hallmark physical traits of a mosquito."
+        }
+        record = GroqQwenEvidenceAdapter(request=lambda payload: self.payload(item)).collect((KEY,))[0]
+        self.assertEqual(record.statement, item["statement"])
+        self.assertEqual(record.supporting_sources, ("image",))
 
     def test_gag001_claim_is_preserved_as_four_segments(self):
         item = self.item(GAG_KEY, "confirmed")
@@ -47,7 +65,9 @@ class GroqQwenEvidenceAdapterTests(unittest.TestCase):
     def test_claim_validation_rejects_invalid_payloads(self):
         cases = (
             (self.payload(self.item(verdict="confirmed") | {"supporting_sources": []}), "confirmed"),
+            (self.payload(self.item(verdict="confirmed") | {"supporting_sources": ["the image shows a mosquito"]}), "confirmed source explanation"),
             (self.payload(self.item(verdict="contradicted") | {"contradicting_sources": []}), "contradicted"),
+            (self.payload(self.item(verdict="contradicted") | {"contradicting_sources": ["the image contradicts the claim"]}), "contradicted source explanation"),
             (self.payload(self.item() | {"supporting_sources": ["image"]}), "unknown"),
             (self.payload(self.item("invented/key")), "unrequested"),
             (self.payload(self.item(), self.item()), "duplicate"),
