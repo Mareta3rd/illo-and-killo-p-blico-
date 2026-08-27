@@ -17,6 +17,7 @@ if str(REPO_ROOT) not in sys.path:
 from openai import OpenAI
 
 from core.evidence_snapshot import EvidenceSnapshot
+from core.execution_artifact import build_execution_artifact, write_execution_artifact
 from core.groq_qwen_evidence_adapter import GroqQwenEvidenceAdapter
 from core.groq_qwen_real_transport import DEFAULT_GROQ_BASE_URL, DEFAULT_GROQ_QWEN_MODEL
 from core.provider_evidence_observation import (
@@ -41,6 +42,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--model", default=os.environ.get("GROQ_MODEL", DEFAULT_GROQ_QWEN_MODEL))
     parser.add_argument("--base-url", default=os.environ.get("GROQ_BASE_URL", DEFAULT_GROQ_BASE_URL))
+    parser.add_argument("--artifact-path", type=Path, help="Write the execution artifact JSON to PATH")
     return parser
 
 
@@ -102,13 +104,29 @@ def main() -> int:
 
     image_bytes, mime_type = read_image(args.image_path)
     client = OpenAI(api_key=api_key, base_url=args.base_url, max_retries=0)
-    adapter = GroqQwenEvidenceAdapter.from_responses_client(
+    observation, snapshot = collect_groq_qwen_observation(
         client,
         model=args.model,
         image_bytes=image_bytes,
         mime_type=mime_type,
+        claim_key=args.claim_key,
+        run_id=args.run_id,
+        root=REPO_ROOT,
     )
-    records = adapter.collect((args.claim_key,))
+    if args.artifact_path is not None:
+        try:
+            write_execution_artifact(
+                args.artifact_path,
+                build_execution_artifact(
+                    observation,
+                    snapshot,
+                    model=args.model,
+                    image=str(args.image_path),
+                    core_decision=None,
+                ),
+            )
+        except OSError as exc:
+            raise SystemExit(f"Unable to write execution artifact: {exc}") from exc
 
     print(json.dumps({
         "model": args.model,
@@ -122,7 +140,7 @@ def main() -> int:
                 "supporting_sources": list(record.supporting_sources),
                 "contradicting_sources": list(record.contradicting_sources),
             }
-            for record in records
+            for record in observation.records
         ],
     }, ensure_ascii=False, indent=2))
     return 0

@@ -22,6 +22,7 @@ from google import genai
 
 from core.canonical_salience import CanonicalClaim, CanonicalSalience, NarrativeRole, VisualSalience
 from core.gemini_evidence_adapter import GeminiEvidenceAdapter
+from core.execution_artifact import build_execution_artifact, write_execution_artifact
 from core.provider_evidence_observation import (
     ProviderEvidenceObservation,
     collect_provider_observation,
@@ -84,6 +85,7 @@ def main() -> int:
     ))
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--model", default=os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"))
+    parser.add_argument("--artifact-path", type=Path, help="Write the execution artifact JSON to PATH")
     args = parser.parse_args()
 
     if not os.environ.get("GEMINI_API_KEY"):
@@ -104,6 +106,20 @@ def main() -> int:
         claim=claim,
         run_id=args.run_id,
     )
+    if args.artifact_path is not None:
+        try:
+            write_execution_artifact(
+                args.artifact_path,
+                build_execution_artifact(
+                    observation,
+                    snapshot,
+                    model=args.model,
+                    image=str(args.image),
+                    core_decision=None,
+                ),
+            )
+        except OSError as exc:
+            raise SystemExit(f"Unable to write execution artifact: {exc}") from exc
     print(
         json.dumps(
             {

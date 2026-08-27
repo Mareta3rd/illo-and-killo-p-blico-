@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from core.evidence_state import EvidenceState
+from core.execution_artifact import read_execution_artifact
 from core.real_evidence_provider import RealEvidenceProviderError
 from scripts import run_groq_qwen_real_experiment as runner
 
@@ -110,6 +111,40 @@ class GroqQwenRealExperimentTests(unittest.TestCase):
         client = FakeClient.instances[0]
         self.assertEqual(client.base_url, "https://example.test/v1")
         self.assertEqual(client.responses.calls[0]["model"], "qwen/qwen3.8-27b")
+
+    @patch.object(runner, "OpenAI", FakeClient)
+    def test_artifact_path_persists_the_existing_observation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            artifact_path = Path(directory) / "execution.json"
+            result, output, image_name = self.run_cli("--artifact-path", str(artifact_path))
+
+            artifact = read_execution_artifact(artifact_path)
+            self.assertEqual(result, 0)
+            self.assertEqual(artifact.run_id, "run-001")
+            self.assertEqual(artifact.provider, "groq_qwen")
+            self.assertEqual(artifact.model, "qwen/qwen3.8-27b")
+            self.assertEqual(artifact.image, image_name)
+            self.assertEqual(artifact.claims[0].claim_key, KEY)
+            self.assertEqual(artifact.claims[0].state, EvidenceState.UNKNOWN)
+            self.assertEqual(artifact.canonical_evaluations, ())
+            self.assertIsNone(artifact.core_decision)
+            self.assertNotIn("test-groq-secret", artifact_path.read_text(encoding="utf-8"))
+            self.assertEqual(output["records"][0]["state"], "UNKNOWN")
+
+    @patch.object(runner, "OpenAI", FakeClient)
+    def test_without_artifact_path_keeps_current_output_and_writes_nothing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            artifact_path = Path(directory) / "missing.json"
+            result, output, _ = self.run_cli()
+            self.assertEqual(result, 0)
+            self.assertEqual(output["records"][0]["claim_key"], KEY)
+            self.assertFalse(artifact_path.exists())
+
+    @patch.object(runner, "OpenAI", FakeClient)
+    def test_invalid_artifact_path_is_a_clear_cli_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(SystemExit, "Unable to write execution artifact"):
+                self.run_cli("--artifact-path", str(Path(directory) / "missing" / "run.json"))
 
     @patch.object(runner, "OpenAI", FakeClient)
     def test_provider_failures_reach_boundary_without_exposing_key(self):
