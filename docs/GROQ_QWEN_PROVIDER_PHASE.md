@@ -1,12 +1,12 @@
-# Groq + Qwen 3.6 27B Provider Phase
+# Groq + Qwen Provider Phase
 
 ## Objective
-Add a second practical real evidence provider using Groq-hosted Qwen 3.6 27B, while reusing the existing provider-neutral evidence architecture and keeping Core unchanged.
+Add a second practical real evidence provider using Groq-hosted Qwen models, while reusing the existing provider-neutral evidence architecture and keeping Core unchanged.
 
 Target:
 
 Groq transport
-→ Qwen 3.6 27B
+→ explicitly selected Qwen model
 → provider adapter/parser
 → ExternalEvidenceRecord
 → ProviderEvidenceObservation
@@ -15,15 +15,19 @@ Groq transport
 → Core decision
 
 ## Verified current external contract
-Groq documentation currently lists Qwen 3.6 27B as:
+Groq documentation currently lists these relevant capabilities:
+- `qwen/qwen3.8-27b`: text + images, vision, reasoning, tool use, and JSON Schema Mode;
 - model ID: qwen/qwen3.6-27b
 - multimodal: text + images
 - vision
 - reasoning
 - JSON Object Mode
-- 131K context window
-- max 16,384 output tokens
 - image input supported
+
+`qwen/qwen3.6-27b` remains a compatible secondary candidate for contracts that
+only require JSON Object Mode. The current project contract requires strict,
+closed JSON Schema Structured Outputs, so it is rejected explicitly for this
+transport contract. `qwen/qwen3.8-27b` is the primary candidate.
 
 Groq also documents an OpenAI-compatible API and Responses API, including image input. The project can therefore use the already-installed OpenAI Python SDK with:
 - base_url=https://api.groq.com/openai/v1
@@ -34,10 +38,10 @@ Do not assume free-tier capacity is unlimited. Verify the current account limits
 ## Cost / availability policy
 Groq has a Free tier with published rate limits. Exact limits are account/model dependent and must be checked in the current Groq Console. Never design the system around unlimited free usage.
 
-The first candidate model is explicitly:
-qwen/qwen3.6-27b
+The primary model is explicitly:
+qwen/qwen3.8-27b
 
-The model is currently marked Preview by Groq. Treat that status as operational metadata, not as a Core semantic property.
+Model availability and preview status are operational metadata, not Core semantic properties.
 
 ## Non-negotiable boundaries
 - Groq/Qwen is evidence only, never Core authority.
@@ -64,10 +68,10 @@ Before network access:
 2. use the existing openai SDK rather than adding groq SDK unless a concrete incompatibility is demonstrated;
 3. implement a Groq-specific transport around the OpenAI-compatible endpoint;
 4. use an injected/fake Responses client in tests;
-5. use Qwen model ID qwen/qwen3.6-27b;
+5. select a supported Qwen model explicitly, defaulting to qwen/qwen3.8-27b;
 6. construct multimodal Responses input with input_text + input_image;
 7. use data URL Base64 image input;
-8. use structured JSON Schema if the model/API combination demonstrably supports it; otherwise stop and report the limitation rather than silently falling back to an unconstrained parser contract.
+8. use strict structured JSON Schema only when the selected model profile declares support; otherwise reject the configuration before any request rather than silently falling back to JSON Object Mode.
 
 ## Phase B — conformance
 Required tests:
@@ -122,7 +126,7 @@ Groq/Qwen real
 The provider must not return accept, continue, or human_review.
 
 ## Model-selection discipline
-Do not introduce fallback models automatically. If qwen/qwen3.6-27b is unavailable for the account or capability combination, report the exact limitation and stop for human model-selection review.
+Do not introduce fallback models automatically. If the explicitly selected model is unavailable for the account or capability combination, report the exact limitation and stop for human model-selection review.
 
 ## OpenAI relationship
 OpenAI API remains a prepared provider but may be blocked by quota. Its adapter should not be reused as a semantic provider identity. The Groq transport may legitimately use the OpenAI Python SDK because Groq exposes an OpenAI-compatible endpoint; the adapter and provider identity remain Groq/Qwen-specific.

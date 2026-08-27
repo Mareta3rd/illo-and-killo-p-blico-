@@ -3,6 +3,7 @@ import unittest
 
 from core.evidence_state import EvidenceState
 from core.groq_qwen_evidence_adapter import GroqQwenEvidenceAdapter
+from core.groq_qwen_real_transport import ModelProfile
 
 
 KEY = "gag/001/composition/illo_primary"
@@ -37,7 +38,11 @@ class GroqQwenAdapterTransportIntegrationTests(unittest.TestCase):
     def test_fake_responses_client_reaches_external_record(self):
         client = FakeClient(Response())
         adapter = GroqQwenEvidenceAdapter.from_responses_client(
-            client, model="qwen/test", image_bytes=b"image", mime_type="image/png"
+            client,
+            model="qwen/test",
+            model_profile=ModelProfile("qwen/test", True, True, True, True),
+            image_bytes=b"image",
+            mime_type="image/png",
         )
         record = adapter.collect((KEY,))[0]
         self.assertEqual(record.claim_key, KEY)

@@ -143,10 +143,14 @@ Groq/Qwen Phase A is implemented provider-specifically, with no real request:
 - `core/groq_qwen_evidence_adapter.py`
 - Groq/Qwen transport/adapter/integration tests
 
-The candidate is `qwen/qwen3.6-27b` through the OpenAI-compatible Groq endpoint.
-Qwen 3.6 27B is marked Preview by Groq; no automatic fallback is allowed.
-Focused tests passed: **14 tests, OK**. The full suite passed: **413 tests,
-OK**. No real Groq/Qwen connectivity or image test has been performed.
+The primary candidate is `qwen/qwen3.8-27b` through the OpenAI-compatible Groq
+endpoint. `qwen/qwen3.6-27b` remains explicitly selectable as a secondary,
+JSON Object Mode-compatible candidate; it is rejected for this project's strict
+closed JSON Schema contract. No automatic fallback is allowed.
+The transport uses provider-layer model profiles and rejects unsupported
+capability combinations before any request. Core remains unchanged. Focused
+tests pass: **19 tests, OK**. The latest full suite passes: **418 tests, OK**.
+No real Groq/Qwen connectivity or image test has been performed.
 
 Groq/Qwen is not connected to ProviderEvidenceObservation, EvidenceSnapshot,
 or the Core pipeline.

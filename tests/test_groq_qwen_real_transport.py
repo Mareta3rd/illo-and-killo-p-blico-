@@ -7,9 +7,12 @@ from core.evidence_state import EvidenceState
 from core.groq_qwen_real_transport import (
     DEFAULT_GROQ_BASE_URL,
     DEFAULT_GROQ_QWEN_MODEL,
+    GROQ_QWEN_MODEL_PROFILES,
     GROQ_QWEN_EVIDENCE_SCHEMA,
+    ModelProfile,
     build_groq_qwen_client,
     build_groq_qwen_responses_transport,
+    get_groq_qwen_model_profile,
     parse_groq_qwen_structured_evidence,
 )
 from core.real_evidence_provider import RealEvidenceProviderError
@@ -60,13 +63,55 @@ class GroqQwenRealTransportTests(unittest.TestCase):
         openai_client.assert_called_once_with(api_key=None, base_url="https://example.test/v1")
 
     def test_defaults_are_groq_endpoint_and_qwen_model(self):
-        self.assertEqual(DEFAULT_GROQ_QWEN_MODEL, "qwen/qwen3.6-27b")
+        self.assertEqual(DEFAULT_GROQ_QWEN_MODEL, "qwen/qwen3.8-27b")
         self.assertEqual(DEFAULT_GROQ_BASE_URL, "https://api.groq.com/openai/v1")
+
+    def test_model_profiles_declare_structured_output_capability(self):
+        self.assertTrue(get_groq_qwen_model_profile("qwen/qwen3.8-27b").structured_outputs)
+        self.assertFalse(get_groq_qwen_model_profile("qwen/qwen3.6-27b").structured_outputs)
+        self.assertEqual(set(GROQ_QWEN_MODEL_PROFILES), {"qwen/qwen3.6-27b", "qwen/qwen3.8-27b"})
+
+    def test_model_selection_is_explicit(self):
+        client = FakeClient(Response(json.dumps(self.payload())))
+        request = build_groq_qwen_responses_transport(
+            client, model="qwen/qwen3.8-27b", image_bytes=b"x", mime_type="image/png"
+        )
+        request({"prompt": "evaluate"})
+        self.assertEqual(client.responses.calls[0]["model"], "qwen/qwen3.8-27b")
+
+    def test_qwen36_is_rejected_without_structured_outputs(self):
+        with self.assertRaisesRegex(RealEvidenceProviderError, "structured_outputs"):
+            build_groq_qwen_responses_transport(
+                FakeClient(), model="qwen/qwen3.6-27b", image_bytes=b"x", mime_type="image/png"
+            )
+
+    def test_no_fallback_to_json_object_mode(self):
+        client = FakeClient()
+        with self.assertRaises(RealEvidenceProviderError):
+            build_groq_qwen_responses_transport(
+                client, model="qwen/qwen3.6-27b", image_bytes=b"x", mime_type="image/png"
+            )
+        self.assertEqual(client.responses.calls, [])
+
+    def test_custom_profile_can_be_selected_for_fake_transport(self):
+        profile = ModelProfile("qwen/test", True, True, True, True)
+        client = FakeClient(Response(json.dumps(self.payload())))
+        build_groq_qwen_responses_transport(
+            client,
+            model="qwen/test",
+            model_profile=profile,
+            image_bytes=b"x",
+            mime_type="image/png",
+        )({"prompt": "evaluate"})
 
     def test_request_contains_model_text_image_and_base64_mime(self):
         client = FakeClient(Response(json.dumps(self.payload())))
         request = build_groq_qwen_responses_transport(
-            client, model="qwen/test", image_bytes=b"image-bytes", mime_type="image/jpeg"
+            client,
+            model="qwen/test",
+            model_profile=ModelProfile("qwen/test", True, True, True, True),
+            image_bytes=b"image-bytes",
+            mime_type="image/jpeg",
         )
         request({"prompt": "evaluate"})
         call = client.responses.calls[0]

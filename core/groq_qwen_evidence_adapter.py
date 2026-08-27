@@ -8,6 +8,7 @@ from typing import Any, Callable, Sequence
 from .external_evidence_adapter import ExternalEvidenceRecord
 from .groq_qwen_real_transport import (
     DEFAULT_GROQ_QWEN_MODEL,
+    ModelProfile,
     build_groq_qwen_responses_transport,
     parse_groq_qwen_structured_evidence,
 )
@@ -42,10 +43,15 @@ class GroqQwenEvidenceAdapter:
         model: str = DEFAULT_GROQ_QWEN_MODEL,
         image_bytes: bytes,
         mime_type: str,
+        model_profile: ModelProfile | None = None,
     ) -> "GroqQwenEvidenceAdapter":
         """Build an adapter around an already configured OpenAI-compatible client."""
         return cls(build_groq_qwen_responses_transport(
-            client, model=model, image_bytes=image_bytes, mime_type=mime_type
+            client,
+            model=model,
+            image_bytes=image_bytes,
+            mime_type=mime_type,
+            model_profile=model_profile,
         ))
 
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import json
 from collections.abc import Mapping
+from dataclasses import dataclass
 from typing import Any, Sequence
 
 from .evidence_state import EvidenceState
@@ -12,8 +13,25 @@ from .external_evidence_adapter import ExternalEvidenceRecord
 from .real_evidence_provider import RealEvidenceProviderError
 
 
-DEFAULT_GROQ_QWEN_MODEL = "qwen/qwen3.6-27b"
+DEFAULT_GROQ_QWEN_MODEL = "qwen/qwen3.8-27b"
 DEFAULT_GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+
+
+@dataclass(frozen=True)
+class ModelProfile:
+    model_id: str
+    vision: bool
+    reasoning: bool
+    structured_outputs: bool
+    tool_use: bool
+    max_images: int | None = None
+    max_image_bytes: int | None = None
+
+
+GROQ_QWEN_MODEL_PROFILES = {
+    "qwen/qwen3.6-27b": ModelProfile("qwen/qwen3.6-27b", True, True, False, True),
+    "qwen/qwen3.8-27b": ModelProfile("qwen/qwen3.8-27b", True, True, True, True),
+}
 GROQ_QWEN_EVIDENCE_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
@@ -42,6 +60,23 @@ _SUPPORTED_VERDICTS = {
     "unknown": EvidenceState.UNKNOWN,
 }
 _FORBIDDEN_DECISIONS = {"accept", "continue", "human_review"}
+
+
+def get_groq_qwen_model_profile(model_id: str) -> ModelProfile:
+    try:
+        return GROQ_QWEN_MODEL_PROFILES[model_id]
+    except KeyError as exc:
+        raise RealEvidenceProviderError(f"unsupported Groq Qwen model: {model_id}") from exc
+
+
+def _validate_model_capabilities(profile: ModelProfile, required_capabilities: Sequence[str]) -> None:
+    for capability in required_capabilities:
+        if not hasattr(profile, capability) or not isinstance(getattr(profile, capability), bool):
+            raise RealEvidenceProviderError(f"unknown Groq Qwen model capability: {capability}")
+        if not getattr(profile, capability):
+            raise RealEvidenceProviderError(
+                f"Groq Qwen model {profile.model_id} does not support required capability: {capability}"
+            )
 
 
 def build_groq_qwen_client(*, api_key: str | None = None, base_url: str = DEFAULT_GROQ_BASE_URL) -> Any:
@@ -130,8 +165,14 @@ def build_groq_qwen_responses_transport(
     base_url: str = DEFAULT_GROQ_BASE_URL,
     image_bytes: bytes,
     mime_type: str,
+    model_profile: ModelProfile | None = None,
+    required_capabilities: Sequence[str] = ("vision", "structured_outputs"),
 ) -> Any:
     """Build an injected Groq/Qwen Responses API request function."""
+    profile = model_profile or get_groq_qwen_model_profile(model)
+    if profile.model_id != model:
+        raise RealEvidenceProviderError("Groq Qwen model profile does not match the selected model")
+    _validate_model_capabilities(profile, required_capabilities)
     if client is None:
         client = build_groq_qwen_client(api_key=api_key, base_url=base_url)
 
@@ -163,8 +204,11 @@ def build_groq_qwen_responses_transport(
 __all__ = [
     "DEFAULT_GROQ_BASE_URL",
     "DEFAULT_GROQ_QWEN_MODEL",
+    "GROQ_QWEN_MODEL_PROFILES",
     "GROQ_QWEN_EVIDENCE_SCHEMA",
+    "ModelProfile",
     "build_groq_qwen_client",
     "build_groq_qwen_responses_transport",
+    "get_groq_qwen_model_profile",
     "parse_groq_qwen_structured_evidence",
 ]
