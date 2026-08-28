@@ -76,6 +76,7 @@ class ApplicationTests(unittest.TestCase):
         result = run_application(self.request(provider, executor=lambda prompt, iteration, previous: executions.append(iteration) or dict(PROPOSAL)))
 
         self.assertEqual(provider.calls, 1)
+        self.assertEqual(result.run_id, "application-run-001")
         self.assertEqual(executions, [1])
         self.assertIsInstance(result.observation, ProviderEvidenceObservation)
         self.assertIsInstance(result.snapshot, EvidenceSnapshot)
@@ -107,12 +108,31 @@ class ApplicationTests(unittest.TestCase):
 
     def test_provider_failure_stops_before_snapshot(self):
         result = run_application(self.request(FailingProvider()))
+        self.assertEqual(result.run_id, "application-run-001")
         self.assertIsNone(result.observation)
         self.assertIsNone(result.snapshot)
         self.assertIsNone(result.core)
         self.assertIsNone(result.artifact)
         self.assertTrue(result.stopped)
         self.assertIn("external_evidence_provider_failed", result.stop_reason)
+
+    def test_artifact_failure_preserves_execution_and_core_decision(self):
+        executions = []
+        request = self.request(
+            FakeProvider(),
+            artifact_path=ROOT / "missing" / "application.json",
+            executor=lambda prompt, iteration, previous: executions.append(iteration) or dict(PROPOSAL),
+        )
+        result = run_application(request)
+
+        self.assertEqual(result.run_id, request.run_id)
+        self.assertIsNotNone(result.observation)
+        self.assertIsNotNone(result.snapshot)
+        self.assertIsNotNone(result.core)
+        self.assertIsNone(result.artifact)
+        self.assertIsNotNone(result.artifact_error)
+        self.assertEqual(result.core.pipeline.evaluation.evaluation.decision, "accept")
+        self.assertEqual(executions, [1])
 
     def test_core_stop_preserves_existing_result(self):
         result = run_application(self.request(FakeProvider(EvidenceState.UNKNOWN)))

@@ -38,10 +38,12 @@ class ApplicationRequest:
 
 @dataclass(frozen=True)
 class ApplicationResult:
+    run_id: str
     observation: ProviderEvidenceObservation | None
     snapshot: EvidenceSnapshot | None
     core: VerticalSliceResult | None
     artifact: ExecutionArtifact | None
+    artifact_error: str | None
     stopped: bool
     stop_reason: str | None
 
@@ -60,10 +62,12 @@ def run_application(request: ApplicationRequest) -> ApplicationResult:
         )
     except Exception as exc:
         return ApplicationResult(
+            run_id=request.run_id,
             observation=None,
             snapshot=None,
             core=None,
             artifact=None,
+            artifact_error=None,
             stopped=True,
             stop_reason=f"external_evidence_provider_failed: {exc}",
         )
@@ -78,6 +82,7 @@ def run_application(request: ApplicationRequest) -> ApplicationResult:
     )
     snapshot = core.pipeline.evidence_snapshot or collected_snapshot
     artifact = None
+    artifact_error = None
     if request.artifact_path is not None:
         artifact = build_execution_artifact(
             observation,
@@ -89,13 +94,16 @@ def run_application(request: ApplicationRequest) -> ApplicationResult:
         try:
             write_execution_artifact(request.artifact_path, artifact)
         except OSError as exc:
-            raise RuntimeError(f"unable to write execution artifact: {exc}") from exc
+            artifact = None
+            artifact_error = f"unable to write execution artifact: {exc}"
 
     return ApplicationResult(
+        run_id=request.run_id,
         observation=observation,
         snapshot=snapshot,
         core=core,
         artifact=artifact,
+        artifact_error=artifact_error,
         stopped=core.stopped,
         stop_reason=core.stop_reason,
     )
