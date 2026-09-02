@@ -61,6 +61,12 @@ GROQ_QWEN_CANDIDATE_SCHEMA = {
             "type": "object",
             "additionalProperties": False,
             "description": "Pre-validation checks by the generator",
+            "required": [
+                "intention",
+                "canon",
+                "coherence",
+                "reuse_intention",
+            ],
             "properties": {
                 "intention": {
                     "oneOf": [
@@ -125,7 +131,13 @@ GROQ_QWEN_CANDIDATE_SCHEMA = {
             },
         },
     },
-    "required": ["content"],
+    "required": [
+        "content",
+        "characters",
+        "roles",
+        "elements",
+        "checks",
+    ],
 }
 
 _FORBIDDEN_CANDIDATE_FIELDS = {
@@ -324,7 +336,7 @@ def build_groq_qwen_responses_transport(
         prompt_text = _build_candidate_request_prompt(compiled, iteration, previous)
 
         try:
-            response = client.beta.chat.completions.parse(
+            response = client.chat.completions.create(
                 model=model,
                 messages=[
                     {
@@ -347,10 +359,13 @@ def build_groq_qwen_responses_transport(
                 f"groq qwen candidate request failed: {formatted_exc}"
             ) from exc
 
-        if response.choices and response.choices[0].message.parsed:
-            return response.choices[0].message.parsed
-        else:
-            raise ProviderCandidateError("groq qwen candidate response missing parsed content")
+        if response.choices:
+            content = getattr(response.choices[0].message, "content", None)
+            if content:
+                return parse_groq_qwen_candidate(content)
+        raise ProviderCandidateError(
+            "groq qwen candidate response missing content"
+        )
 
     return transport
 

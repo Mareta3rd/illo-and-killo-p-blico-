@@ -47,8 +47,9 @@ class FakeParsedChoice:
 
 @dataclass
 class FakeParsedMessage:
-    """Mock message with parsed content."""
-    parsed: dict[str, Any]
+    """Mock message returned by chat.completions.create()."""
+    parsed: dict[str, Any] | None = None
+    content: str | None = None
 
 
 @dataclass
@@ -64,19 +65,20 @@ class FakeParsedClient:
         self.response_data = response_data or {"content": "fake candidate"}
         self.last_request = None
         self.call_count = 0
-        self.beta = MagicMock()
-        self.beta.chat = MagicMock()
-        self.beta.chat.completions = MagicMock()
-        self.beta.chat.completions.parse = self._parse
+        self.chat = MagicMock()
+        self.chat.completions = MagicMock()
+        self.chat.completions.create = self._create
 
-    def _parse(self, **kwargs) -> FakeParsedResponse:
-        """Record request and return fake response."""
+    def _create(self, **kwargs) -> FakeParsedResponse:
+        """Record request and return fake JSON completion response."""
         self.call_count += 1
         self.last_request = kwargs
         return FakeParsedResponse(
             choices=[
                 FakeParsedChoice(
-                    message=FakeParsedMessage(parsed=self.response_data)
+                    message=FakeParsedMessage(
+                        content=__import__("json").dumps(self.response_data)
+                    )
                 )
             ]
         )
@@ -214,7 +216,10 @@ class GroqQwenCandidateExecutorTests(unittest.TestCase):
         self.assertFalse(schema["additionalProperties"])
         self.assertIn("content", schema["properties"])
         self.assertIn("checks", schema["properties"])
-        self.assertEqual(schema["required"], ["content"])
+        self.assertEqual(
+            schema["required"],
+            ["content", "characters", "roles", "elements", "checks"],
+        )
 
     def test_schema_forbids_additional_properties(self):
         """Schema should reject unknown fields (additionalProperties=False)."""
