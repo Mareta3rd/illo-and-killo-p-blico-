@@ -23,6 +23,7 @@ class RepositoryKnowledge:
 
 DEFAULT_DATA_FILES = (
     "characters.yaml",
+    "relationships.yaml",
     "decisions.yaml",
     "fauna.yaml",
     "heritage.yaml",
