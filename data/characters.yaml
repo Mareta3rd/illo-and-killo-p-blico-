@@ -128,15 +128,3 @@ pisha:
     movement: contained_then_explosive
     default_energy: moderate
     pose_expression: innocent_with_escalation
-
-relationship:
-  type: inseparable_companions
-  dynamics:
-    - mutual_trust
-    - mutual_teasing
-    - mutual_protection
-    - shared_mischief
-    - situational_role_switching
-  protagonist_balance: dynamic
-  conflict_style: playful_not_malicious
-  loyalty: immediate_and_fundamental
