@@ -18,7 +18,7 @@ class EvidenceTests(unittest.TestCase):
         evidence = build_evidence(ROOT)
 
         self.assertIn("001_jamon.md", evidence.gag_history)
-        self.assertIn("002_pesca.md", evidence.gag_history)
+        self.assertIn("002_pesca_legacy.md", evidence.gag_history)
 
     def test_detects_historical_asset_from_gag_text(self):
         evidence = build_evidence(ROOT)
