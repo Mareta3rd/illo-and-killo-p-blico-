@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class PromptCompilerTests(unittest.TestCase):
 
     VALID_PROPOSAL = {
-        "characters": ["xoxo", "pisha"],
+        "characters": ["arsa", "pisha"],
         "elements": [
             {"id": "clavel", "intention": "character_identity"},
             {
@@ -24,7 +24,7 @@ class PromptCompilerTests(unittest.TestCase):
 
     def test_compiles_valid_parody_result(self):
         result = run_pipeline(
-            "Crear una parodia de Peaky Blinders con Xoxo y Pisha",
+            "Crear una parodia de Peaky Blinders con Arsa y Pisha",
             ROOT,
             self.VALID_PROPOSAL,
         )
@@ -39,7 +39,7 @@ class PromptCompilerTests(unittest.TestCase):
             compiled.checks,
         )
         self.assertIn(
-            "idea=Crear una parodia de Peaky Blinders con Xoxo y Pisha",
+            "idea=Crear una parodia de Peaky Blinders con Arsa y Pisha",
             compiled.context_summary,
         )
 
@@ -55,7 +55,7 @@ class PromptCompilerTests(unittest.TestCase):
 
     def test_render_is_deterministic(self):
         result = run_pipeline(
-            "Crear un gag nuevo de Xoxo y Pisha",
+            "Crear un gag nuevo de Arsa y Pisha",
             ROOT,
             self.VALID_PROPOSAL,
         )
