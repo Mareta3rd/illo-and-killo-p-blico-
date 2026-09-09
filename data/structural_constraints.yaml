@@ -5,24 +5,34 @@ version: "0.1"
 
 structural:
   characters:
-    illo:
+    xoxo:
+      white_pelage:
+        expected:
+          - path: [body, color]
+            value: white
+      yellow_blonde_flame_tuft:
+        expected:
+          - path: [mane_tuft, color]
+            value: yellow_blonde
+          - path: [mane_tuft, shape]
+            value: flame_like_crest
       green_scarf:
         expected:
           - path: [scarf, color]
             value: green
-      yellow_tuft:
-        expected:
-          - path: [tuft, color]
-            value: yellow
       black_hands:
         expected:
-          - path: [hands, color]
+          - path: [legs, hands, color]
             value: black
+      three_finger_hands:
+        expected:
+          - path: [legs, hands, fingers]
+            value: 3
       black_hooves:
         expected:
-          - path: [feet, type]
+          - path: [legs, feet, type]
             value: hoof
-          - path: [feet, color]
+          - path: [legs, feet, color]
             value: black
       short_flame_tail:
         expected:
@@ -30,7 +40,15 @@ structural:
             value: flame
           - path: [tail, length]
             value: short
-    killo:
+      stylized_equine_hint:
+        expected:
+          - path: [muzzle]
+            value: equine_hint_integrated
+    pisha:
+      red_pelage:
+        expected:
+          - path: [body, color]
+            value: red
       black_spots:
         expected:
           - path: [spots, color]
@@ -39,20 +57,32 @@ structural:
         expected:
           - path: [flower, type]
             value: clavel
-      compact_shape:
+      compact_round_shape:
         expected:
           - path: [body, shape]
             value: compact_round
+      short_rounded_horns:
+        expected:
+          - path: [horns, type]
+            value: short_rounded
       black_hands:
         expected:
-          - path: [hands, color]
+          - path: [legs, hands, color]
             value: black
+      three_finger_hands:
+        expected:
+          - path: [legs, hands, fingers]
+            value: 3
       black_hooves:
         expected:
-          - path: [feet, type]
+          - path: [legs, feet, type]
             value: hoof
-          - path: [feet, color]
+          - path: [legs, feet, color]
             value: black
+      bovine_hint:
+        expected:
+          - path: [muzzle]
+            value: simple_bovine_hint
 
 status:
   policy: "Missing structural constraints remain unknown and require explicit human resolution; they are never inferred."
