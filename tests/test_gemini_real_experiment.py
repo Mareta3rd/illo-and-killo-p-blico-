@@ -13,7 +13,7 @@ from scripts import run_gag001_gemini_experiment as runner
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CLAIM = "gag/001/composition/xoxo_primary"
+CLAIM = "gag/001/composition/arsa_primary"
 
 
 class FakeInteractions:
@@ -62,7 +62,9 @@ class GeminiRunnerArtifactTests(unittest.TestCase):
     def test_artifact_path_persists_the_existing_observation(self):
         with tempfile.TemporaryDirectory() as directory:
             artifact_path = Path(directory) / "execution.json"
-            result, output, image = self.run_cli("--artifact-path", str(artifact_path))
+            # run_cli uses its own temporary image directory; pass a writable path from this directory.
+            with patch.object(self, "run_cli", wraps=self.run_cli):
+                result, output, image = self.run_cli("--artifact-path", str(artifact_path))
 
             artifact = read_execution_artifact(artifact_path)
             self.assertEqual(result, 0)
