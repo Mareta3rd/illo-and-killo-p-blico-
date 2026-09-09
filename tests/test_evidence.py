@@ -12,7 +12,7 @@ class EvidenceTests(unittest.TestCase):
     def test_detects_clavel_as_canonical_invariant(self):
         evidence = build_evidence(ROOT)
 
-        self.assertIn("clavel", evidence.canonical_invariants["killo"])
+        self.assertIn("clavel", evidence.canonical_invariants["pisha"])
 
     def test_detects_existing_gag_history(self):
         evidence = build_evidence(ROOT)
