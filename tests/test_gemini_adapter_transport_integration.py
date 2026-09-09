@@ -123,7 +123,7 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
         self.assertFalse(hasattr(adapter, "accept"))
 
     def test_gag001_gemini_adapter_reaches_observation_and_snapshot(self):
-        claim = load_claim("gag/001/composition/xoxo_primary")
+        claim = load_claim("gag/001/composition/arsa_primary")
         client = FakeClient(Response(json.dumps(payload("unknown", claim.key))))
         observation, snapshot = collect_gag001_observation(
             client,
@@ -143,7 +143,7 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
 
     def test_gag001_gemini_provider_error_does_not_create_partial_snapshot(self):
         client = ErrorClient()
-        claim = load_claim("gag/001/composition/xoxo_primary")
+        claim = load_claim("gag/001/composition/arsa_primary")
         with self.assertRaises(RealEvidenceProviderError):
             collect_gag001_observation(
                 client,
@@ -155,7 +155,7 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
             )
 
     def test_gag001_gemini_states_and_sources_reach_snapshot_unchanged(self):
-        claim = load_claim("gag/001/composition/xoxo_primary")
+        claim = load_claim("gag/001/composition/arsa_primary")
         cases = (
             ("confirmed", EvidenceState.CONFIRMED, ("gemini",), ()),
             ("unknown", EvidenceState.UNKNOWN, (), ()),
