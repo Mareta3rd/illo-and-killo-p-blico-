@@ -13,7 +13,7 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
         result = evaluate_structural(
             "green_scarf",
             {"scarf": {"color": "green"}},
-            **self._constraint("characters", "xoxo", "green_scarf"),
+            **self._constraint("characters", "arsa", "green_scarf"),
         )
         self.assertEqual(result.decision, "pass")
 
@@ -21,7 +21,7 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
         result = evaluate_structural(
             "green_scarf",
             {"scarf": {"color": "red"}},
-            **self._constraint("characters", "xoxo", "green_scarf"),
+            **self._constraint("characters", "arsa", "green_scarf"),
         )
         self.assertEqual(result.decision, "fail")
 
@@ -29,7 +29,7 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
         result = evaluate_structural(
             "black_hooves",
             {"legs": {"feet": {"type": "hoof", "color": "black"}}},
-            **self._constraint("characters", "xoxo", "black_hooves"),
+            **self._constraint("characters", "arsa", "black_hooves"),
         )
         self.assertEqual(result.decision, "pass")
 
@@ -37,21 +37,21 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
         result = evaluate_structural(
             "black_hooves",
             {"legs": {"feet": {"type": "hoof"}}},
-            **self._constraint("characters", "xoxo", "black_hooves"),
+            **self._constraint("characters", "arsa", "black_hooves"),
         )
         self.assertEqual(result.decision, "unknown")
 
     def test_missing_constraint_is_not_inferred(self):
         self.assertIsNone(
             load_structural_constraint(
-                self.ROOT, "characters", "xoxo", "invented_structure"
+                self.ROOT, "characters", "arsa", "invented_structure"
             )
         )
 
-    def test_real_repository_catalog_is_migrated_to_xoxo_pisha(self):
+    def test_real_repository_catalog_is_migrated_to_arsa_pisha(self):
         knowledge = load_repository(self.ROOT)
         self.assertEqual(
-            knowledge.data["characters"]["xoxo"]["invariants"][0],
+            knowledge.data["characters"]["arsa"]["invariants"][0],
             "white_pelage",
         )
         self.assertEqual(
@@ -60,6 +60,7 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
         )
         self.assertNotIn("illo", knowledge.data["characters"])
         self.assertNotIn("killo", knowledge.data["characters"])
+        self.assertNotIn("xoxo", knowledge.data["characters"])
 
     def _constraint(self, catalog, entry, invariant):
         required_paths, expected = load_structural_constraint(
