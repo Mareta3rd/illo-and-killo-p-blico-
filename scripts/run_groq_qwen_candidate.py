@@ -33,9 +33,9 @@ from core.groq_qwen_candidate_transport import (
     DEFAULT_GROQ_QWEN_CANDIDATE_MODEL,
 )
 
-DEFAULT_REQUESTED_CLAIMS = ("gag/001/composition/illo_primary",)
+DEFAULT_REQUESTED_CLAIMS = ("gag/001/composition/arsa_primary",)
 DEFAULT_PROPOSAL: dict[str, Any] = {
-    "characters": ["illo", "killo"],
+    "characters": ["arsa", "pisha"],
     "elements": [
         {"id": "clavel", "intention": "character_identity"},
         {"id": "black_spots", "count": 2, "intention": "character_identity"},
