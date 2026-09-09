@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 INITIAL = {
-    "characters": ["illo", "killo"],
+    "characters": ["xoxo", "pisha"],
     "elements": [
         {"id": "clavel", "intention": "character_identity"},
         {"id": "black_spots", "count": 2, "intention": "character_identity"},
@@ -34,7 +34,7 @@ class OrchestratorTests(unittest.TestCase):
             return {**INITIAL}
 
         result = run_vertical_slice(
-            "Crear un gag nuevo de Illo y Killo",
+            "Crear un gag nuevo de Xoxo y Pisha",
             ROOT,
             executor,
             evidence_claims=COMPLETE_EVIDENCE,
@@ -53,7 +53,7 @@ class OrchestratorTests(unittest.TestCase):
             prompts.append(prompt)
             if iteration == 1:
                 return {
-                    "characters": ["illo", "killo"],
+                    "characters": ["xoxo", "pisha"],
                     "elements": [
                         {"id": "clavel", "intention": "character_identity"},
                         {"id": "black_spots", "count": 1, "intention": "character_identity"},
@@ -62,7 +62,7 @@ class OrchestratorTests(unittest.TestCase):
             return {**INITIAL}
 
         result = run_vertical_slice(
-            "Crear un gag nuevo de Illo y Killo",
+            "Crear un gag nuevo de Xoxo y Pisha",
             ROOT,
             executor,
             evidence_claims=COMPLETE_EVIDENCE,
@@ -82,7 +82,7 @@ class OrchestratorTests(unittest.TestCase):
             previous_values.append(previous)
             if iteration == 1:
                 return {
-                    "characters": ["illo", "killo"],
+                    "characters": ["xoxo", "pisha"],
                     "elements": [
                         {"id": "clavel", "intention": "character_identity"},
                         {"id": "black_spots", "count": 1, "intention": "character_identity"},
@@ -91,7 +91,7 @@ class OrchestratorTests(unittest.TestCase):
             return {**INITIAL}
 
         result = run_vertical_slice(
-            "Crear un gag nuevo de Illo y Killo",
+            "Crear un gag nuevo de Xoxo y Pisha",
             ROOT,
             executor,
             evidence_claims=COMPLETE_EVIDENCE,
@@ -112,7 +112,7 @@ class OrchestratorTests(unittest.TestCase):
             raise AssertionError("executor must not run when Evidence is incomplete")
 
         result = run_vertical_slice(
-            "Crear un gag nuevo de Illo y Killo",
+            "Crear un gag nuevo de Xoxo y Pisha",
             ROOT,
             executor,
             evidence_claims=evidence,
@@ -126,16 +126,13 @@ class OrchestratorTests(unittest.TestCase):
 
     def test_unknown_evidence_blocks_before_loop(self):
         evidence = dict(COMPLETE_EVIDENCE)
-        evidence["coherence"] = EvidenceClaim(
-            "coherence",
-            EvidenceState.UNKNOWN,
-        )
+        evidence["coherence"] = EvidenceClaim("coherence", EvidenceState.UNKNOWN)
 
         def executor(prompt, iteration, previous):
             raise AssertionError("executor must not run when Evidence requires review")
 
         result = run_vertical_slice(
-            "Crear un gag nuevo de Illo y Killo",
+            "Crear un gag nuevo de Xoxo y Pisha",
             ROOT,
             executor,
             evidence_claims=evidence,
