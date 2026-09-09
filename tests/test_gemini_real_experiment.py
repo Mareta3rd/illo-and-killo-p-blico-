@@ -13,7 +13,7 @@ from scripts import run_gag001_gemini_experiment as runner
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CLAIM = "gag/001/composition/illo_primary"
+CLAIM = "gag/001/composition/xoxo_primary"
 
 
 class FakeInteractions:
