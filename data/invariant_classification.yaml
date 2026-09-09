@@ -6,7 +6,7 @@ version: "0.1"
 
 classification:
   characters:
-    xoxo:
+    arsa:
       white_pelage: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       yellow_blonde_flame_tuft: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       green_scarf: {family: structural, mechanism: deterministic_structure, evidence_required: false}
