@@ -6,18 +6,25 @@ version: "0.1"
 
 classification:
   characters:
-    illo:
+    xoxo:
+      white_pelage: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      yellow_blonde_flame_tuft: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       green_scarf: {family: structural, mechanism: deterministic_structure, evidence_required: false}
-      yellow_tuft: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       black_hands: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      three_finger_hands: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       black_hooves: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       short_flame_tail: {family: structural, mechanism: deterministic_structure, evidence_required: false}
-    killo:
+      stylized_equine_hint: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+    pisha:
+      red_pelage: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       black_spots: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       clavel: {family: structural, mechanism: deterministic_structure, evidence_required: false}
-      compact_shape: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      compact_round_shape: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      short_rounded_horns: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       black_hands: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      three_finger_hands: {family: structural, mechanism: deterministic_structure, evidence_required: false}
       black_hooves: {family: structural, mechanism: deterministic_structure, evidence_required: false}
+      bovine_hint: {family: structural, mechanism: deterministic_structure, evidence_required: false}
 
   fauna:
     mosquito_tigre:
