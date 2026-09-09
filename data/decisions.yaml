@@ -1,8 +1,8 @@
 decisions:
   - id: DECISION_0001
-    topic: xoxo_hands_and_hooves
-    problem: Xoxo needed consistent anatomy across all pieces.
-    decision: Keep Xoxo's hands black and hooves black as canonical invariants.
+    topic: arsa_hands_and_hooves
+    problem: Arsa needed consistent anatomy across all pieces.
+    decision: Keep Arsa's hands black and hooves black as canonical invariants.
     reason: They improve silhouette recognition and keep the character stable.
     impact: High
     status: Canon
@@ -19,14 +19,14 @@ decisions:
     topic: parody_language
     problem: Cultural parody needed to feel complete rather than partial.
     decision: Parodies must adapt titles, typography, credits and names when relevant.
-    reason: A parody should be recognizable as the original structure while becoming XOXO & PISHA.
+    reason: A parody should be recognizable as the original structure while becoming Arsa & Pisha.
     impact: High
     status: Canon
 
   - id: DECISION_0004
     topic: cultural_recognition
     problem: References could become too vague if over-filtered.
-    decision: Cultural references must remain recognizable while living in the XOXO & PISHA universe.
+    decision: Cultural references must remain recognizable while living in the Arsa & Pisha universe.
     reason: Recognition is part of the gag and part of the collection value.
     impact: High
     status: Canon
