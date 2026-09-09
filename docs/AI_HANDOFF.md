@@ -1,176 +1,111 @@
-# AI HANDOFF — Illo & Killo Semantic Model
+# AI HANDOFF — Arsa & Pisha Semantic Model
 
 ## Purpose
-Build a deterministic semantic/evidence architecture for the Illo & Killo project. External AI providers are evidence sources only; the Core owns canonical claims, evidence contracts, snapshots, evaluation, regression detection, audit, routing, and final decisions.
+Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** project. External AI providers are evidence sources or candidate generators only, according to their explicit provider contract; **Core owns canonical claims, evidence contracts, snapshots, evaluation, regression detection, audit, routing, and final decisions**.
 
 ## Working principles
 - Do not invent facts, files, paths, test results, APIs, or project state.
 - Never put API keys/secrets in chat, source code, commits, issues, or tests.
 - Fix every failing test before advancing.
-- After meaningful integration blocks, run the complete unittest suite.
+- After meaningful integration blocks, run the complete test suite.
 - Prefer small, reversible architectural steps and preserve the Core boundary.
 - Do not lower the canon quality bar merely to obtain more examples.
+- Treat historical Illo & Killo material as reference/inspiration only unless a documented decision explicitly promotes an element into current canon.
+- Provider output must never silently become canon or a Core decision.
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Latest full-suite result actually confirmed in the current session: **413 tests, OK**.
-The Gemini end-to-end milestone is complete.
+Latest full-suite result confirmed in the current working session: **542 passed, 49 subtests passed**.
+Current HEAD after the nomenclature/test alignment work: `f7a44bd` before the documentation updates recorded immediately afterward.
 
-## Architecture validated
-The project now has tested boundaries for:
+The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon.
 
- provider
-→ ExternalEvidenceRecord
-→ ProviderEvidenceObservation
-→ EvidenceSnapshot
-→ contractual evaluation when applicable
-→ Core pipeline/evaluator
-→ Core decision
+## Current canonical characters
+The structured character catalog defines:
+- `arsa` / **Arsa**: co-lead; white pelage; yellow-blonde flame-like crest; green scarf; black three-finger hands; black hooves; short flame tail; stylized equine hint; high-energy, impulsive, mischievous, expressive and tender behavioral grammar.
+- `pisha` / **Pisha**: co-lead; red pelage; black spots; clavel; short rounded horns; black three-finger hands; black hooves; compact bovine hint; apparently calm, observant, innocent, proud, mischievous, absent-minded and tender behavioral grammar.
 
-Earlier gateway/registry/orchestrator, regression, semantic-audit, and execution-audit layers remain part of the validated architecture.
+Their relationship is explicitly modeled as inseparable companions with mutual trust, teasing, protection and shared mischief, with situational role switching and tenderness underneath the mischief.
 
-## Gemini — first real provider
-Gemini is the first real external evidence provider and has been exercised end-to-end from the Codespace.
+## Canon Gag 001
+The accepted canonical visual material remains **Gag 001 · Jamón**.
 
-Validated components include:
-- `core/gemini_evidence_adapter.py`
-- `core/gemini_real_transport.py`
-- `core/provider_evidence_observation.py`
-- `scripts/run_gag001_gemini_experiment.py`
-- Gemini adapter/transport/integration/conformance tests
-- provider observation/snapshot/pipeline tests
+Its current semantic claim keys are:
+- `gag/001/composition/arsa_primary`
+- `gag/001/composition/ham_primary`
+- `gag/001/characters/pisha_reaction`
 
-Real environment validation:
-- `google-genai` is installed and imports successfully.
-- `GEMINI_API_KEY` is supplied as a GitHub Codespaces secret; it is not stored in the repository or chat.
-- `genai.Client()` initializes successfully.
-- `gemini-3.6-flash` produced a real `GEMINI_REAL_OK` response during connectivity validation.
-- The validated package version was `google-genai==2.19.0`.
+The old Illo/Killo naming in historical documentation must not be used as the active interpretation of these claims.
 
-## Gemini end-to-end milestone
-A real run was completed with:
-- image: `gags/images/001_jamon.png`
-- provider: `gemini`
-- model: `gemini-3.6-flash`
-- run id: `real-gag001-mosquito-20260826-01`
-- invariant: `fauna/mosquito_tigre/readable_as_mosquito`
+## Validated architecture
+The project has tested boundaries for:
 
-Observed result:
-- `CONFIRMED`
-- `supporting_sources=["image"]`
-- contract evaluation: `pass`
-- final Core decision: `accept`
+`provider → ExternalEvidenceRecord → ProviderEvidenceObservation → EvidenceSnapshot → contractual evaluation when applicable → Core pipeline/evaluator → Core decision`
 
-The provider returned evidence only. `accept` was produced by the Core after the evidence crossed the snapshot boundary and the candidate contained its required explicit Core checks.
+Earlier gateway/registry/orchestrator, regression, semantic-audit and execution-audit layers remain part of the validated architecture.
 
-A separate real Gag 001 composition run validated that `gag/001/composition/illo_primary` can be preserved as a canonical claim without inventing a three-segment contract evaluation.
+## Gemini
+Gemini is a validated external evidence provider. Its provider-specific transport and adapter enter through the common observation/snapshot path.
 
-An earlier real run where Gemini returned `CONFIRMED` without supporting sources was rejected by the parser. The interaction contract was then strengthened so the provider explicitly supplies `image` when the image is the evidence source.
+Previously validated live configuration included a real Gemini run against `gags/images/001_jamon.png`, with evidence entering Core and a final Core decision of `accept`. The provider supplied evidence; Core supplied the decision.
 
-## Canon decision
-Only one image/gag is currently accepted as canonical visual material: **Gag 001 · Jamón**.
+The Gemini stability/composition tests and experiment scripts have now been aligned with the current Arsa-based Gag 001 claim keys.
 
-The second existing gag image is not canonical because it has unresolved character, execution, and composition problems. Do not promote it merely to enlarge the corpus.
+## OpenAI
+OpenAI Phase A exists as a provider-specific transport/adapter implementation, but its earlier real connectivity attempt returned `429 insufficient_quota`. Do not treat OpenAI as the next mandatory phase merely because older handoff text says so.
 
-Keep `CANON` separate from any future `TEST CORPUS` of positive, negative, ambiguous, or synthetic images.
+Any future live OpenAI work must verify the current SDK/API surface and model availability before implementation assumptions are made.
 
-## Claim taxonomy boundary
-Canonical Gag 001 claims such as `gag/001/composition/illo_primary` are not the same thing as registered three-segment evidence-contract invariants such as `catalog/entry/invariant`.
+## Groq/Qwen
+Groq/Qwen is already validated through the provider-neutral evidence path with a real multimodal Qwen 3.8 27B experiment using `gags/images/001_jamon.png`.
 
-Do not rewrite, alias, or relax claims simply to fit the registered invariant taxonomy. Canonical gag claims may cross the snapshot boundary while remaining without contractual evaluation until a deliberate human decision establishes that relationship.
+The candidate-generation path also exists through:
+- `core/groq_qwen_candidate_executor.py`
+- `core/groq_qwen_candidate_transport.py`
+- `scripts/run_groq_qwen_candidate.py`
 
-## Provider-observation architecture
-Real provider variability is preserved before Core aggregation via:
-- `core/provider_evidence_observation.py`
-- `ProviderEvidenceObservation(provider, run_id, records)`
+The default candidate model is `qwen/qwen3.8-27b`, and the transport requires structured outputs for the strict candidate schema. No automatic fallback is allowed.
 
-The provider-neutral observation path preserves provider records before Core
-normalization. Provider metadata does not become a Core claim.
+The candidate transport is intentionally provider-specific and returns a `Candidate`; it must not return Core decisions or evidence-contract decisions. Forbidden fields include `accept`, `decision`, `evidence`, and `claim_key`.
 
-## Custom Copilot agent
-Repository custom agent:
-`.github/agents/semantic-boundary-engineer.agent.md`
+## Current semantic-context gap
+The current `CompiledPrompt` is structurally correct but semantically sparse. Its `context_summary` currently contains mainly:
+- the idea,
+- confidence,
+- known character keys,
+- repository section names.
 
-Repository-wide Copilot guardrails:
-`.github/copilot-instructions.md`
+That is not enough for a creative candidate generator to reliably express the current universe. The next architectural task is therefore to build a **small, deterministic semantic context** from existing canonical repository data rather than dumping the entire repository or duplicating canon into ad hoc prompt text.
 
-The custom agent is the local execution/development counterpart to the architectural reasoning in the main project conversation. It can inspect files, edit code, run tests, and iterate in the Codespace, but it must stop rather than invent semantics when an architectural decision is ambiguous.
+The target context should make available, as relevant to the route/task:
+- current character identities and protected visual/behavioral invariants;
+- Arsa/Pisha relationship grammar and dynamic role switching;
+- current humor grammar, especially one-gag-per-image, immediate visual readability, absurd escalation, non-malicious conflict and protected tenderness;
+- Andalusian structural/behavioral layer as primary, with environmental/or ornamental references only when useful;
+- relevant documented decisions and current Gag 001 claim information when the task concerns that gag;
+- explicit separation between current canon and historical Illo/Killo material.
 
-## OpenAI provider status
-OpenAI Phase A is implemented and committed with:
-- `core/openai_real_transport.py`
-- `core/openai_evidence_adapter.py`
-- OpenAI transport/adapter/integration tests
+The compiler remains a transformation layer. It must not invent missing semantics, mutate canon, or let the provider decide which material is canonical.
 
-The validated SDK is `openai==3.4.0`. The Codespace secret is configured but is
-not stored in the repository or chat. One real connectivity attempt with
-`gpt-5.4-mini` initialized the client but returned `429 insufficient_quota`;
-no alternate model was tried. OpenAI remains provider-specific evidence and is
-not connected to the Core observation pipeline yet.
+## Next implementation sequence
+1. Inspect the existing Core knowledge-loading path and identify the authoritative structured sources already available to `PipelineContext`.
+2. Extend `CompiledPrompt` with a deterministic semantic-context representation or an equivalent provider-neutral structure.
+3. Build that context from authoritative current data, with route/task relevance and bounded size.
+4. Add focused tests proving that Arsa/Pisha semantics are present and historical Illo/Killo content is not treated as active identity.
+5. Keep the Groq/Qwen transport unchanged except where the new compiled representation requires a deliberate rendering adjustment.
+6. Run the complete suite.
+7. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
 
-## Groq/Qwen provider status
-Groq/Qwen is validated through the provider-neutral path with one real
-multimodal Qwen 3.8 27B experiment:
-- `core/groq_qwen_real_transport.py`
-- `core/groq_qwen_evidence_adapter.py`
-- Groq/Qwen transport/adapter/integration tests
+## Documentation discipline
+`docs/BIBLIA_2_0.md` is the canonical narrative reference for the current universe and explicitly distinguishes historical Illo & Killo material from Arsa & Pisha canon.
 
-The primary candidate is `qwen/qwen3.8-27b` through the OpenAI-compatible Groq
-endpoint. `qwen/qwen3.6-27b` remains explicitly selectable as a secondary,
-JSON Object Mode-compatible candidate; it is rejected for this project's strict
-closed JSON Schema contract. No automatic fallback is allowed.
-The transport now uses provider-layer model profiles and validates required
-capabilities before constructing a request. The real run used:
-- model: `qwen/qwen3.8-27b`
-- image: `gags/images/001_jamon.png`
-- claim: `fauna/mosquito_tigre/readable_as_mosquito`
-- run id: `real-gag001-qwen-e2e-20260827-02`
+`README.md`, `docs/HUMOR.md`, and `docs/PALETA.md` are current-facing documents and must describe Arsa & Pisha. Historical references should remain only where their historical status is explicit and useful.
 
-The real result was `CONFIRMED` with `supporting_sources=["image"]`.
-`ProviderEvidenceObservation` and `EvidenceSnapshot` were valid; the
-canonical evaluation was `pass`, with `stop_reason=null` and `stopped=false`.
-The final Core decision was `accept`.
+Do not blindly mass-replace `Illo`, `Killo`, or `Xoxo`: historical archives and tests can legitimately retain legacy terminology when they are explicitly testing or preserving historical material.
 
-Qwen emitted evidence only and no Core decision. The `accept` decision belongs
-exclusively to Core. The provider-neutral integration is demonstrated through
-ExternalEvidenceRecord → ProviderEvidenceObservation → EvidenceSnapshot →
-`run_provider_evidence_pipeline(...)` → Core evaluation.
+## Continuity rule
+If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
 
-No Groq/Qwen-specific Observation, Snapshot, or Core decision path exists.
+“Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Arsa & Pisha are current canon; Illo & Killo are historical material only. Verify repository state and tests before changing anything.”
 
-## Next phase — OpenAI as second provider
-The next provider must implement the same provider boundary used by Gemini.
-
-Target architecture:
-
-OpenAI transport
-→ OpenAI provider adapter
-→ ExternalEvidenceRecord
-→ ProviderEvidenceObservation
-→ EvidenceSnapshot
-→ existing Core pipeline/evaluator
-
-Do not create a parallel OpenAI-specific Core path.
-
-Initial OpenAI phase should be staged:
-1. Verify the current OpenAI SDK/API surface and model availability in the live environment before coding against assumptions.
-2. Build a provider-specific transport/parser contract with injected/fake transport.
-3. Add conformance tests proving the adapter emits only `ExternalEvidenceRecord` and never Core decisions.
-4. Reuse the existing observation/snapshot/pipeline composition; do not duplicate it.
-5. Validate real connectivity with an environment secret, never source code or chat.
-6. Run one real perceptual invariant experiment.
-7. Run one real end-to-end Core decision experiment.
-8. Run the full suite after every meaningful integration block.
-
-OpenAI model identifiers, SDK methods, endpoints, authentication, and response schemas must be verified against the live environment when implementation starts. Do not assume a model name or endpoint from memory.
-
-## Next session starting point
-Read this file first. Then inspect the current branch and confirm the full suite before changing anything.
-
-The architectural target is not merely “call OpenAI”; it is to prove that a second independent provider can enter through the same evidence contract without changing Core semantics. Gemini remains the reference implementation for that conformance work.
-
-## Conversation continuity
-If the original ChatGPT conversation becomes unavailable or visually resets, open a new chat and tell the assistant:
-“Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Do not assume anything not supported by the repository or this document.”
-
-This handoff file is intentionally the durable source of project continuity so progress does not depend on one chat thread.
+This handoff is the durable continuity document. It must be updated whenever a major architectural or canon-level state change is made.
