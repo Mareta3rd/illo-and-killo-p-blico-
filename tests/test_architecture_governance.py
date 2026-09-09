@@ -53,13 +53,13 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertEqual(result.decision, "unknown")
 
     def test_deterministic_invariant_cannot_cross_evidence_boundary(self):
-        decision = dispatch_invariant(str(ROOT), "characters", "killo", "clavel")
+        decision = dispatch_invariant(str(ROOT), "characters", "pisha", "clavel")
         self.assertFalse(decision.evidence_required)
         with self.assertRaises(ValueError):
             evaluate_classified_evidence(
                 str(ROOT),
                 "characters",
-                "killo",
+                "pisha",
                 "clavel",
                 "pass",
             )
