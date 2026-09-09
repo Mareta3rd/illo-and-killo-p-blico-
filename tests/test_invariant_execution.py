@@ -27,7 +27,7 @@ class InvariantExecutionTests(unittest.TestCase):
     def test_deterministic_invariant_cannot_enter_evidence_boundary(self):
         with self.assertRaises(ValueError):
             evaluate_classified_evidence(
-                str(ROOT), "characters", "killo", "clavel", "pass"
+                str(ROOT), "characters", "pisha", "clavel", "pass"
             )
 
     def test_contradicted_evidence_stays_contradicted(self):
