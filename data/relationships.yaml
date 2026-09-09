@@ -1,0 +1,17 @@
+version: "0.1"
+
+# Provider-neutral relationship knowledge kept outside character catalog entries.
+relationships:
+  xoxo_pisha:
+    participants: [xoxo, pisha]
+    type: inseparable_companions
+    dynamics:
+      - mutual_trust
+      - mutual_teasing
+      - mutual_protection
+      - shared_mischief
+      - situational_role_switching
+    protagonist_balance: dynamic
+    conflict_style: playful_not_malicious
+    loyalty: immediate_and_fundamental
+    tonal_rule: tenderness_under_gamemischief
