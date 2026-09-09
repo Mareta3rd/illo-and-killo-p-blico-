@@ -20,9 +20,9 @@ from core.gemini_evidence_adapter import GeminiEvidenceAdapter
 
 CLAIMS_PATH = REPO_ROOT / "data" / "gag_001_claims.json"
 CANONICAL_CLAIM_KEYS = (
-    "gag/001/composition/illo_primary",
+    "gag/001/composition/xoxo_primary",
     "gag/001/composition/ham_primary",
-    "gag/001/characters/killo_reaction",
+    "gag/001/characters/pisha_reaction",
 )
 
 VARIANTS = (
@@ -90,10 +90,6 @@ def main() -> int:
 
     for variant in VARIANTS:
         prompt = variant_prompt(claim, variant)
-
-        # The runner intentionally overrides only the prompt at the provider
-        # boundary; the transport, structured response contract, parser, and
-        # Core decision boundary remain unchanged.
         adapter = GeminiEvidenceAdapter.from_interactions_client(
             client,
             model=args.model,
@@ -111,13 +107,10 @@ def main() -> int:
                 "variant": variant,
                 "claim_key": record.claim_key,
                 "state": record.state.value,
-                "statement": record.statement,
-                "supporting_sources": list(record.supporting_sources),
-                "contradicting_sources": list(record.contradicting_sources),
             }
         )
 
-    print(json.dumps({"model": args.model, "image": str(args.image), "results": results}, ensure_ascii=False, indent=2))
+    print(json.dumps({"model": args.model, "claim": claim.key, "variants": results}, indent=2))
     return 0
 
 
