@@ -16,10 +16,10 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `68e5025`.
-Latest full-suite result confirmed before the documentation/corpus cleanup block: **542 passed, 49 subtests passed**.
+Current repository checkpoint: `493a855`.
+Latest full-suite result confirmed before the current documentation/corpus cleanup block: **542 passed, 49 subtests passed**.
 
-The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon. Earlier Xoxo terminology is also historical/intermediate and must not be treated as the active name.
+The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon. Earlier Xoxo terminology is historical/intermediate and must not be treated as the active name.
 
 ## Current canonical characters
 The structured character catalog defines:
@@ -55,7 +55,7 @@ Current claim keys:
 - `gag/001/composition/ham_primary`
 - `gag/001/characters/pisha_reaction`
 
-`gags/001_jamon.md` now documents the current Arsa/Pisha semantic version. The former `gags/images/001_jamon.png` was removed from the active tree because it belongs to the previous visual base. A new current raster can be canonized later through deliberate review.
+`gags/001_jamon.md` documents the current Arsa/Pisha semantic version. The former `gags/images/001_jamon.png` was removed from the active tree because it belongs to the previous visual base. A new current raster can be canonized later through deliberate review.
 
 Gag 002 · Pesca is not current canon and its specification has been moved to historical material.
 
@@ -73,6 +73,8 @@ Two historical images covering an espeto/fishing scene and a jamón/mosquito gag
 These images are not current reference sheets and do not override `data/characters.yaml`, the current model sheets, current palette, current humor rules or canonical claims. Historical names, anatomy, proportions, typography, palette details and exact designs must not be reintroduced automatically.
 
 The historical corpus is documented under `history/creative-corpus/` and is intended for extraction of successful mechanisms, lessons and reusable ideas only after revalidation against current canon.
+
+The complete prepared transfer package is available as `Arsa_Pisha_historical_creative_corpus_COMPLETE.zip`. The earlier transfer package was incomplete; use the COMPLETE package instead.
 
 ## Repository cleanup completed in the current block
 Current-facing roots have been evolved to Arsa & Pisha, including:
@@ -143,14 +145,14 @@ The target context should make available, as relevant to the route/task:
 The compiler remains a transformation layer. It must not invent missing semantics, mutate canon, or let the provider decide which material is canonical.
 
 ## Next implementation sequence
-1. Copy the prepared historical image package into `history/creative-corpus/` in the Codespace and verify filenames against its manifest.
+1. Copy the **COMPLETE** historical image package into `history/creative-corpus/` in the Codespace and verify filenames against its manifest.
 2. Verify active-root references no longer point to the removed legacy Gag 001 raster; historical experiment scripts may explicitly reference archived material when that is their purpose.
 3. Finish reviewing any remaining current-facing Illo/Killo/Xoxo references; preserve only those that are explicitly historical.
 4. Extend `CompiledPrompt` with a deterministic semantic-context representation or equivalent provider-neutral structure.
 5. Build that context from authoritative current data, with route/task relevance and bounded size.
 6. Add focused tests proving Arsa/Pisha semantics are present and historical identity is not activated by the context builder.
 7. Keep the Groq/Qwen transport unchanged unless the new compiled representation requires a deliberate rendering adjustment.
-8. Run the complete suite.
+8. Run the complete suite after the cleanup and context changes.
 9. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
 10. Update this handoff again at the end of that block.
 
