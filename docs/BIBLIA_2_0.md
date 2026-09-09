@@ -1,28 +1,28 @@
-# Biblia XOXO & PISHA v3.0
+# Biblia Arsa & Pisha v3.1
 
 ## 1. Filosofía
-XOXO & PISHA es un universo visual contemporáneo con alma andaluza. No representa folclore literal ni turismo decorativo. Representa actitud, humor, ritmo, cercanía, irreverencia controlada, ternura, picardía y doble lectura.
+Arsa & Pisha es un universo visual contemporáneo con alma andaluza. No representa folclore literal ni turismo decorativo. Representa actitud, humor, ritmo, cercanía, irreverencia controlada, ternura, picardía y doble lectura.
 
 La identidad visual combina caricatura animada moderna, simplificación infantil y una gramática de tebeo español. Las referencias externas se utilizan por la función estética o humorística que aportan, nunca como instrucciones de copia literal.
 
 ## 2. Identidad de los personajes
 
-### Xoxo
-Xoxo es una criatura blanca, de identidad animal ambigua y rasgos equinos reconocibles sin ser un caballo literal. Tiene cabeza grande y expresiva, cuerpo estilizado, patas algo más largas y estilizadas que las de Pisha, pezuñas, manos negras de tres dedos, morro con reminiscencia equina, cresta/mechón rubio-amarillo con forma de llama, pañuelo verde y cola corta con forma de llama.
+### Arsa
+Arsa es una criatura blanca, de identidad animal ambigua y rasgos equinos reconocibles sin ser un caballo literal. Tiene cabeza grande y expresiva, cuerpo estilizado, patas algo más largas y estilizadas que las de Pisha, pezuñas, manos negras de tres dedos, morro con reminiscencia equina, cresta/mechón rubio-amarillo con forma de llama, pañuelo verde y cola corta con forma de llama.
 
 Es la más gamberra y pícara del dúo: presumida, impulsiva, nerviosa, muy expresiva y aparentemente brillante. Sus ideas pueden parecer magníficas y terminar en situaciones surrealistas. Tiene energía de niño después de un kilo de azúcar y la personalidad de una mecha encendida: pólvora a punto de estallar.
 
-Su presentación tiende a femenina. El nombre Xoxo participa deliberadamente en un juego lingüístico andaluz de inversión entre nombre y sexo del personaje. Esta característica puede alimentar el humor, pero no convierte al personaje en una representación sexual.
+Su presentación tiende a femenina. El nombre Arsa participa deliberadamente en el juego lingüístico andaluz del personaje: su forma nominal es masculina mientras la presentación del personaje tiende a femenina. Esta característica puede alimentar el humor, pero no convierte al personaje en una representación sexual.
 
 ### Pisha
-Pisha es una criatura roja, de identidad animal ambigua y rasgos bovinos reconocibles sin ser un toro literal. Tiene cabeza grande, es ligeramente más pequeño que Xoxo, cuerpo compacto y robusto, patas cortas y suavemente curvadas, pezuñas, manos negras de tres dedos y cuernos pequeños y redondeados. Conserva sus lunares negros y el clavel en la oreja como rasgos identitarios.
+Pisha es una criatura roja, de identidad animal ambigua y rasgos bovinos reconocibles sin ser un toro literal. Tiene cabeza grande, es ligeramente más pequeño que Arsa, cuerpo compacto y robusto, patas cortas y suavemente curvadas, pezuñas, manos negras de tres dedos y cuernos pequeños y redondeados. Conserva sus lunares negros y el clavel en la oreja como rasgos identitarios.
 
-Pisha parece más contenido que Xoxo, pero tiene una naturaleza traviesa: pequeño demonio con carita de niño tomando su primera comunión. Es ingenuo sin ser tonto, observador, orgulloso, impulsivo y despistado. Cuando se pone nervioso puede convertirse en el principal agente del caos.
+Pisha parece más contenido que Arsa, pero tiene una naturaleza traviesa: pequeño demonio con carita de niño tomando su primera comunión. Es ingenuo sin ser tonto, observador, orgulloso, impulsivo y despistado. Cuando se pone nervioso puede convertirse en el principal agente del caos.
 
-Su presentación tiende a masculina. El nombre Pisha participa deliberadamente en un juego lingüístico andaluz de inversión entre la lectura externa del nombre y su referencia andaluza masculina. Esta característica puede alimentar el humor, pero no convierte al personaje en una representación sexual.
+Su presentación tiende a masculina. El nombre Pisha participa deliberadamente en el juego lingüístico andaluz del personaje: su forma nominal es femenina mientras la presentación del personaje tiende a masculina. Esta característica puede alimentar el humor, pero no convierte al personaje en una representación sexual.
 
 ## 3. Relación
-Xoxo y Pisha son compañeros inseparables. Se acompañan, se defienden, se provocan y se gastan bromas, pero la relación fundamental es de amistad, compañerismo y lealtad.
+Arsa y Pisha son compañeros inseparables. Se acompañan, se defienden, se provocan y se gastan bromas, pero la relación fundamental es de amistad, compañerismo y lealtad.
 
 No existe una jerarquía fija de protagonista y ayudante. Cualquiera de los dos puede iniciar, conducir, empeorar o resolver un gag. El liderazgo y el peso cómico cambian según la situación.
 
@@ -46,7 +46,7 @@ El conflicto entre ambos es principalmente juego, complicidad o consecuencia de 
 - **Rasca y Pica:** gamberrismo, reacción visual, ritmo y contraste inocencia/caos, sin necesidad de violencia extrema.
 - **Los Compadres:** cotidianeidad andaluza, camaradería, picaresca, códigos sociales y humor reconocible sin ridiculización de Andalucía.
 
-Estas referencias describen funciones. No deben interpretarse como mandato de imitación literal ni como sustituto de la identidad propia de XOXO & PISHA.
+Estas referencias describen funciones. No deben interpretarse como mandato de imitación literal ni como sustituto de la identidad propia de Arsa & Pisha.
 
 ## 5. Ternura protegida
 Los personajes deben resultar entrañables incluso cuando son gamberros. Las situaciones pueden ser absurdas, ácidas, obscenas o negras en dosis adecuadas, pero no nacen de crueldad ni malicia retorcida.
@@ -77,11 +77,11 @@ Un gag puede desarrollarse en Sevilla, Málaga, una playa, un supermercado de To
 ## 8. Color
 La paleta es intensa, limpia y contrastada, pero atemporal.
 
-- Xoxo: blanco dominante y mechón/cresta rubio-amarillo intenso.
+- Arsa: blanco dominante y mechón/cresta rubio-amarillo intenso.
 - Pisha: rojo fuerte, con familia roja/coral coherente.
 - Lunares de Pisha: negro.
 - Manos y pezuñas: negro.
-- Pañuelo de Xoxo: verde con matiz adaptable dentro de una gama coherente.
+- Pañuelo de Arsa: verde con matiz adaptable dentro de una gama coherente.
 - Acentos: cian, turquesa, lima, amarillo ácido, magenta u otros colores intensos cuando aporten función.
 
 No todo el universo debe ser fluorescente. Los tonos ácido/fluor son recursos puntuales, no una identidad dependiente de una moda.
@@ -98,7 +98,7 @@ Regla:
 ## 10. Recursos anatómicos cómicos
 La anatomía cómica es contextual y opcional.
 
-### Xoxo
+### Arsa
 Puede utilizar un marcador femenino discreto y estilizado. Una variante gráfica en forma de X puede emplearse como licencia visual puntual cuando el gag y la composición lo justifiquen.
 
 ### Pisha
@@ -113,7 +113,7 @@ En ambos casos:
 
 ## 11. Comportamiento visual
 
-### Xoxo
+### Arsa
 Movimiento rápido, reactivo y elástico. Cambios repentinos de pose y dirección. Gestualidad grande. Mucha energía acumulada. Puede parecer que ha tenido una idea brillante justo antes de provocar el caos.
 
 ### Pisha
@@ -138,8 +138,15 @@ Pose, expresión, perspectiva, iluminación, ropa contextual, escenario y compos
 
 La creatividad puede ser amplia dentro del canon. La generación no puede convertir una preferencia estilística en una modificación de identidad.
 
-## 14. Principio final
-XOXO & PISHA debe sentirse simultáneamente:
+## 14. Patrimonio histórico del proyecto
+Los personajes y trabajos de **Illo & Killo** pertenecen a la historia del desarrollo anterior. Se conservan como material de origen, referencia, aprendizaje e inspiración potencial.
+
+No constituyen el canon actual de Arsa & Pisha salvo que una decisión futura documentada incorpore expresamente un elemento concreto al nuevo canon.
+
+La conservación del material histórico no implica continuidad automática de nombres, diseños, escenas ni rasgos.
+
+## 15. Principio final
+Arsa & Pisha debe sentirse simultáneamente:
 
 - moderno y atemporal;
 - infantil y gamberro;
