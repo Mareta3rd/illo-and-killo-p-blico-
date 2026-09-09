@@ -31,7 +31,7 @@ from core.evidence_snapshot import EvidenceSnapshot
 
 CLAIMS_PATH = REPO_ROOT / "data" / "gag_001_claims.json"
 CANONICAL_CLAIM_KEYS = (
-    "gag/001/composition/xoxo_primary",
+    "gag/001/composition/arsa_primary",
     "gag/001/composition/ham_primary",
     "gag/001/characters/pisha_reaction",
 )
