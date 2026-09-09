@@ -1,7 +1,7 @@
-# Humor
+# Humor · Arsa & Pisha
 
 ## Regla central
-XOXO & PISHA debe funcionar en dos lecturas: primero la escena, después el matiz.
+**Arsa & Pisha** debe funcionar en dos lecturas: primero la escena, después el matiz.
 
 ## Principios
 - Un gag por ilustración.
@@ -14,13 +14,13 @@ XOXO & PISHA debe funcionar en dos lecturas: primero la escena, después el mati
 - Los detalles de segunda lectura deben ser pocos, precisos y con función.
 - El dúo debe resultar entrañable incluso cuando está siendo gamberro.
 
-## Dinámica Xoxo / Pisha
+## Dinámica Arsa / Pisha
 - Son compañeros inseparables y se defienden de forma inmediata.
 - Se hacen bromas, se provocan y pueden forzarse mutuamente, pero su relación es fundamentalmente afectiva y leal.
 - Ninguno es el ayudante permanente del otro.
 - El liderazgo y el peso cómico pueden cambiar según el gag.
-- Xoxo aporta energía, iniciativa, picardía y escalada impulsiva.
-- Pisha aporta observación, contención aparente, orgullo y una posible escalada cuando se pone nervioso o se despista.
+- **Arsa** aporta energía, iniciativa, picardía y escalada impulsiva.
+- **Pisha** aporta observación, contención aparente, orgullo y una posible escalada cuando se pone nervioso o se despista.
 
 ## Gramática del gag
 - La acción debe parecer inevitable una vez vista.
@@ -41,7 +41,7 @@ Puede aparecer mediante lugares, arquitectura, objetos, ambientes y situaciones 
 ### 3. Andalucía ornamental
 Se utiliza con moderación. Los tópicos visuales nunca deben convertir el universo en una caricatura turística o folclórica.
 
-La intención es que XOXO & PISHA pueda funcionar en Sevilla, Málaga, una playa, un supermercado de Tokio o una nave espacial y seguir siendo inequívocamente el mismo universo.
+La intención es que **Arsa & Pisha** pueda funcionar en Sevilla, Málaga, una playa, un supermercado de Tokio o una nave espacial y seguir siendo inequívocamente el mismo universo.
 
 ## Referencias funcionales
 - Rayman Origins: silueta, elasticidad, deformación expresiva, energía visual y acabado moderno.
@@ -50,7 +50,7 @@ La intención es que XOXO & PISHA pueda funcionar en Sevilla, Málaga, una playa
 - Rasca y Pica: gamberrismo, reacción visual, ritmo y contraste inocencia/caos, sin necesidad de violencia extrema.
 - Los Compadres: cotidianeidad andaluza, camaradería, picaresca, códigos sociales y humor reconocible sin convertirlo en tópico decorativo.
 
-Las referencias describen funciones que ayudan a construir el estilo propio. No son instrucciones de copia literal ni sustituyen el canon de XOXO & PISHA.
+Las referencias describen funciones que ayudan a construir el estilo propio. No son instrucciones de copia literal ni sustituyen el canon de **Arsa & Pisha**.
 
 ## Ternura protegida
 Los personajes deben conservar una lectura afectiva y simpática incluso cuando protagonizan un gag ácido, obsceno o negro. La acción puede ser absurda; la intención no debe ser maliciosa.
