@@ -16,10 +16,35 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `293317daa0d42d47f2d573d0309b34c48c86becb` (`add work-block closure guardrail script`).
+Current repository checkpoint: `a222fa0` (`classify historical creative corpus`).
 
-The most recent local verification reported before the final test-alignment commit was **541 passed, 49 subtests passed, 1 failed**. The remaining failure was the historical-gag filename assertion; it was aligned with the actual archived path `002_pesca_legacy.md`. The test suite must now be rerun after the Codespace pulls the current branch. Do not record the suite as green until that run actually completes successfully.
+### Verified closure status
+The historical-corpus cleanup block is **CLOSED and GREEN**.
 
+Confirmed in the Codespace immediately before closure:
+- historical corpus rename/classification completed;
+- 10 historical image files are present under the intended `history/creative-corpus/` subdirectories;
+- original numeric generation IDs are retained in every semantic filename;
+- `git diff --check` passed with no output;
+- complete test suite: **542 passed, 49 subtests passed in 19.32s**;
+- commit `a222fa0` created and pushed successfully to `origin/feature/semantic-model`;
+- `bash scripts/close_work_block.sh` completed successfully and reported checkpoint `a222fa0` with clean working-tree/diff checks.
+
+The ten semantic filenames are:
+- `APO-001_pesca-barca_1788957758584.png`
+- `APO-002_portada-parodia-sierra-nevada_1788957758616.png`
+- `APO-003_guitarra-baile_1788957758655.png`
+- `APO-004_vespino-fuga_1788957758694.png`
+- `APO-005_jamon-golpe_1788957758729.png`
+- `APO-006_guitarra-persecucion_1788957758750.png`
+- `APO-007_guitarra-confrontacion_1788957758780.png`
+- `APO-008_titulo-personajes-variante_1788957758814.png`
+- `KAI-001_espetos-en-barca_1788958159854.png`
+- `KAI-002_jamon-mosquito_1788958159883.png`
+
+The repository now has durable work-block guardrails in `docs/WORK_BLOCK_PROTOCOL.md` and `scripts/close_work_block.sh`. The protocol requires a coherent block to be solved, verified, inspected, committed, pushed, handed off, given one next direction, and then stopped. The closure script runs the complete suite, whitespace validation, working-tree/diff inspection and checkpoint reporting; it deliberately does not commit, push or edit the handoff automatically.
+
+## Current creative canon
 The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon. Earlier Xoxo terminology is historical/intermediate and must not be treated as the active name.
 
 ## Current canonical characters
@@ -63,19 +88,17 @@ Gag 002 · Pesca is not current canon and its specification has been moved to hi
 ## Historical creative corpus
 Previously developed material supplied during earlier creative work is intentionally preserved as **historical development corpus**, not canon.
 
-Recovered image groups:
-
 ### Arsa & Pisha Origins
 Eight historical images. This is the first development stage: it is historically related to the project but is **not an early canonical version of current Arsa & Pisha**. In that stage the characters were a horse and a bull and several later decisions were discarded. Use these images only to study visual/gag mechanisms and evolution.
 
 ### Illo & Killo
 Two historical images covering an espeto/fishing scene and a jamón/mosquito gag. This is the immediately previous development stage before current Arsa & Pisha. It may supply useful mechanisms and lessons, but it is not current canon.
 
-The historical corpus is documented under `history/creative-corpus/` and is intended for extraction of successful mechanisms, lessons and reusable ideas only after revalidation against current canon. The image filenames currently preserve their numeric generation IDs; semantic filenames may be introduced after image-by-image classification, while retaining the generation ID in the filename for traceability.
+The historical corpus is documented under `history/creative-corpus/` and is intended for extraction of successful mechanisms, lessons and reusable ideas only after revalidation against current canon. The corpus is now classified semantically while retaining each original generation ID for traceability.
 
-Historical naming/classification rule: classify by **content + gag/mechanism**, not by guessed chronology. Examples of useful semantic categories include fishing/pesca, jamón, fiesta, Vespino/fuga/action, parody-cover, guitar/dance/confrontation, and other distinct gag mechanisms discovered during review. Do not assign a title solely from a filename or memory when the image itself has not been checked.
+Historical naming/classification rule: classify by **content + gag/mechanism**, not by guessed chronology. The current archive follows that rule through descriptive names such as fishing/pesca, parody-cover, guitar/dance, Vespino/fuga, jamón impact, guitar chase/confrontation, title variants, espeto/fishing and jamón/mosquito.
 
-## Repository cleanup completed in the current block
+## Repository cleanup completed
 Current-facing roots have been evolved to Arsa & Pisha, including:
 - `model-sheets/arsa.md`
 - `model-sheets/pisha.md`
@@ -87,7 +110,7 @@ Current-facing roots have been evolved to Arsa & Pisha, including:
 - `docs/INDEX.md`
 - `.github/agents/semantic-boundary-engineer.agent.md`
 
-Obsolete `model-sheets/illo.md`, `model-sheets/killo.md` and current `gags/002_pesca.md` were removed from active roots. `docs/SESSION_HANDOFF.md` is now explicitly historical/superseded and points to this file as the durable source of continuity.
+Obsolete `model-sheets/illo.md`, `model-sheets/killo.md` and current `gags/002_pesca.md` were removed from active roots. `docs/SESSION_HANDOFF.md` is historical/superseded and points to this file as the durable source of continuity.
 
 The GitHub repository slug itself still contains the historical name because renaming the remote repository is a separate GitHub administration action; do not rename or recreate the repository implicitly during development.
 
@@ -106,7 +129,7 @@ Previously validated live configuration included real runs against the earlier G
 Gemini stability/composition tests and experiment scripts use the current Arsa-based claim keys.
 
 ## OpenAI
-OpenAI Phase A exists as a provider-specific transport/adapter implementation, but its earlier real connectivity attempt returned `429 insufficient_quota`. Do not treat OpenAI as the next mandatory phase merely because older handoff text says so.
+OpenAI Phase A exists as a provider-specific transport/adapter implementation, but an earlier real connectivity attempt returned `429 insufficient_quota`. Do not treat OpenAI as the next mandatory phase merely because older handoff text says so.
 
 Any future live OpenAI work must verify the current SDK/API surface and model availability before implementation assumptions are made.
 
@@ -122,63 +145,30 @@ The default candidate model is `qwen/qwen3.8-27b`, and the transport requires st
 
 The candidate transport is intentionally provider-specific and returns a `Candidate`; it must not return Core decisions or evidence-contract decisions. Forbidden fields include `accept`, `decision`, `evidence`, and `claim_key`.
 
-## Current semantic-context gap
-The current `CompiledPrompt` is structurally correct but semantically sparse. Its `context_summary` currently contains mainly:
-- the idea,
-- confidence,
-- known character keys,
-- repository section names.
+## Current semantic-context gap — NEXT TARGET
+The next and only planned implementation target is to build a **small, deterministic semantic context** for `CompiledPrompt` from authoritative current repository data.
 
-That is not enough for a creative candidate generator to reliably express the current universe. The next architectural task is therefore to build a **small, deterministic semantic context** from existing canonical repository data rather than dumping the entire repository or duplicating canon into ad hoc prompt text.
-
-The target context should make available, as relevant to the route/task:
-- current character identities and protected visual/behavioral invariants;
+The target context should expose, only as relevant to the route/task:
+- current Arsa/Pisha identities and protected visual/behavioral invariants;
 - the distinction between arms/hands and legs/hooves;
 - Arsa/Pisha relationship grammar and dynamic role switching;
-- current humor grammar, especially one-gag-per-image, immediate visual readability, absurd escalation, non-malicious conflict and protected tenderness;
-- Andalusian structural/behavioral layer as primary, with environmental/or ornamental references only when useful;
-- mature visual-language guidance: contemporary/vanguard finish with a restrained vintage soul, never a retro costume;
-- relevant documented decisions and current Gag 001 claim information when the task concerns that gag;
+- current humor grammar, especially one-gag-per-image, immediate readability, absurd escalation, non-malicious conflict and protected tenderness;
+- Andalusian structural/behavioral layer as primary, with environmental/ornamental references only when useful;
+- contemporary/vanguard visual finish with a restrained vintage soul, never retro imitation;
+- relevant documented decisions and current Gag 001 claims when applicable;
 - explicit separation between current canon and historical Illo/Killo/Xoxo material.
 
-The compiler remains a transformation layer. It must not invent missing semantics, mutate canon, or let the provider decide which material is canonical.
+The semantic context must be deterministic, bounded, route/task-relevant and derived from authoritative sources. It must not duplicate canon into uncontrolled prompt prose, invent missing semantics, mutate canonical data, or allow the provider to decide what is canonical.
 
-## Work-block closure protocol
-Every meaningful block should end in the same deterministic sequence:
+### Deliberately out of scope until this target is closed
+- new provider integrations;
+- live OpenAI work;
+- automatic provider fallback;
+- new creative-canon changes;
+- replacing or reinterpreting the historical corpus;
+- the next real Qwen candidate-generation experiment.
 
-1. **Solve** the declared problem completely enough to have a coherent architectural state.
-2. **Verify** with focused tests and then the complete suite for integration work.
-3. **Inspect** the working tree and ensure no accidental files, generated artifacts or secrets have slipped in.
-4. **Save** the work with a descriptive commit and push the active branch when the block is ready to preserve.
-5. **Record** the new checkpoint, test result, decisions, unresolved gaps and exact next step in this handoff.
-6. **Mark direction**: state one next implementation target, and explicitly state what is out of scope until that target is closed.
-7. **Stop** at a stable checkpoint rather than starting an unrelated improvement merely because the session is still open.
-
-A block is not considered closed while a failing test, undocumented architectural change, unresolved canon ambiguity, or unrecorded next direction remains.
-
-The repository now includes `docs/WORK_BLOCK_PROTOCOL.md` and `scripts/close_work_block.sh` as practical guardrails for this cycle. The script runs the complete suite, `git diff --check`, working-tree/diff inspection and reports the current checkpoint; it intentionally does **not** commit, push or edit the handoff automatically, because those operations still require an explicit judgment about what is being saved.
-
-A new session should begin by reading this handoff, checking the branch/worktree and rerunning the relevant verification before making changes. The conversation is context; this file is the durable state.
-
-## Next implementation sequence
-1. Pull the current `feature/semantic-model` branch into the Codespace and run `PYTHONPATH=. pytest -q`.
-2. Once the suite is green, verify active-root references no longer point to the removed legacy Gag 001 raster; historical experiment scripts may explicitly reference archived material when that is their purpose.
-3. Finish reviewing any remaining current-facing Illo/Killo/Xoxo references; preserve only those that are explicitly historical.
-4. Verify the 10-image historical corpus in `history/creative-corpus/` and classify/rename it semantically while retaining each original generation ID.
-5. Extend `CompiledPrompt` with a deterministic semantic-context representation or equivalent provider-neutral structure.
-6. Build that context from authoritative current data, with route/task relevance and bounded size.
-7. Add focused tests proving Arsa/Pisha semantics are present and historical identity is not activated by the context builder.
-8. Keep the Groq/Qwen transport unchanged unless the new compiled representation requires a deliberate rendering adjustment.
-9. Run the complete suite after the cleanup and context changes.
-10. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
-11. Update this handoff again at the end of that block.
-
-## Documentation discipline
-`docs/BIBLIA_2_0.md` is the canonical narrative reference for the current universe and explicitly distinguishes historical Illo & Killo material from Arsa & Pisha canon.
-
-`README.md`, `docs/HUMOR.md`, `docs/PALETA.md`, `docs/CANON_100.md`, `docs/SEMANTIC_MODEL.md`, the model sheets and prompts are current-facing and must describe Arsa & Pisha.
-
-Do not blindly mass-replace `Illo`, `Killo`, or `Xoxo`: historical archives can legitimately retain legacy terminology when their historical status is explicit and useful. Conversely, any current-facing canon, prompt context or real current experiment must use Arsa & Pisha.
+The next session must start by reading this handoff, checking branch/worktree state, and rerunning the relevant verification before implementation. After the semantic-context target is solved and verified, the handoff must be updated again before starting the next experimental phase.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
