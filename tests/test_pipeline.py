@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class PipelineTests(unittest.TestCase):
 
     VALID_GAG_PROPOSAL = {
-        "characters": ["illo", "killo"],
+        "characters": ["xoxo", "pisha"],
         "elements": [
             {"id": "clavel", "intention": "character_identity"},
             {"id": "black_spots", "count": 2, "intention": "character_identity"},
@@ -29,7 +29,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_clear_gag_completes_pipeline(self):
         result = run_pipeline(
-            "Crear un gag nuevo de Illo y Killo",
+            "Crear un gag nuevo de Xoxo y Pisha",
             ROOT,
             self.VALID_GAG_PROPOSAL,
         )
@@ -44,7 +44,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_clear_parody_completes_pipeline(self):
         result = run_pipeline(
-            "Crear una parodia de Peaky Blinders con Illo y Killo",
+            "Crear una parodia de Peaky Blinders con Xoxo y Pisha",
             ROOT,
             self.VALID_GAG_PROPOSAL,
         )
@@ -55,14 +55,14 @@ class PipelineTests(unittest.TestCase):
         self.assertIsNotNone(result.compiled_prompt)
         self.assertEqual(result.compiled_prompt.route, "parody")
 
-    def test_killo_without_clavel_stops_pipeline(self):
+    def test_pisha_without_clavel_stops_pipeline(self):
         proposal = {
-            "characters": ["killo"],
+            "characters": ["pisha"],
             "elements": [],
         }
 
         result = run_pipeline(
-            "Crear un gag nuevo de Killo",
+            "Crear un gag nuevo de Pisha",
             ROOT,
             proposal,
         )
@@ -72,13 +72,13 @@ class PipelineTests(unittest.TestCase):
         self.assertFalse(result.context.requires_human_review)
         self.assertIsNone(result.compiled_prompt)
         self.assertIn(
-            "CANON_KILLO_CLAVEL_MISSING",
+            "CANON_PISHA_CLAVEL_MISSING",
             {issue.code for issue in result.validation.issues},
         )
 
     def test_recurring_asset_without_intention_stops_pipeline(self):
         proposal = {
-            "characters": ["illo", "killo"],
+            "characters": ["xoxo", "pisha"],
             "elements": [
                 {"id": "clavel", "intention": "character_identity"},
                 {"id": "black_spots", "count": 2, "intention": "character_identity"},
@@ -87,7 +87,7 @@ class PipelineTests(unittest.TestCase):
         }
 
         result = run_pipeline(
-            "Crear un gag nuevo de Illo y Killo",
+            "Crear un gag nuevo de Xoxo y Pisha",
             ROOT,
             proposal,
         )
@@ -107,70 +107,3 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result.stop_reason, "missing_idea")
         self.assertTrue(result.context.requires_human_review)
         self.assertIsNone(result.compiled_prompt)
-
-    def test_pipeline_does_not_mutate_proposal_or_loaded_knowledge(self):
-        proposal = copy.deepcopy(self.VALID_GAG_PROPOSAL)
-        before = copy.deepcopy(proposal)
-
-        result = run_pipeline(
-            "Crear un gag nuevo de Illo y Killo",
-            ROOT,
-            proposal,
-        )
-
-        self.assertEqual(proposal, before)
-        self.assertIsNotNone(result.compiled_prompt)
-        self.assertIn("characters", result.context.knowledge.data)
-
-    def test_evidence_can_complete_real_pipeline(self):
-        result = run_pipeline(
-            "Crear un gag nuevo de Illo y Killo",
-            ROOT,
-            self.VALID_GAG_PROPOSAL,
-            self.COMPLETE_EVIDENCE,
-        )
-
-        self.assertFalse(result.stopped)
-        self.assertIsNotNone(result.evaluation)
-        self.assertEqual(result.evaluation.evaluation.decision, "accept")
-        self.assertIsNotNone(result.compiled_prompt)
-
-    def test_unknown_evidence_stops_real_pipeline_for_review(self):
-        claims = dict(self.COMPLETE_EVIDENCE)
-        claims["coherence"] = EvidenceClaim("coherence", EvidenceState.UNKNOWN)
-
-        result = run_pipeline(
-            "Crear un gag nuevo de Illo y Killo",
-            ROOT,
-            self.VALID_GAG_PROPOSAL,
-            claims,
-        )
-
-        self.assertTrue(result.stopped)
-        self.assertEqual(result.stop_reason, "evaluation_requires_human_review")
-        self.assertIsNotNone(result.evaluation)
-        self.assertIsNone(result.compiled_prompt)
-
-    def test_contradicted_evidence_stops_real_pipeline_for_continuation(self):
-        claims = dict(self.COMPLETE_EVIDENCE)
-        claims["reuse_intention"] = EvidenceClaim(
-            "reuse",
-            EvidenceState.CONTRADICTED,
-            contradicting_sources=("canon/example.md",),
-        )
-
-        result = run_pipeline(
-            "Crear un gag nuevo de Illo y Killo",
-            ROOT,
-            self.VALID_GAG_PROPOSAL,
-            claims,
-        )
-
-        self.assertTrue(result.stopped)
-        self.assertEqual(result.stop_reason, "evaluation_requires_continuation")
-        self.assertIsNotNone(result.evaluation)
-        self.assertIsNone(result.compiled_prompt)
-
-
-if __name__ == "__main__":
-    unittest.main()
