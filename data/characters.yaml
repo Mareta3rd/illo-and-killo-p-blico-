@@ -1,59 +1,105 @@
-illo:
-  name: Illo
-  role: impulsive_side
-  species_hint: horse_like_but_not_horse
+xoxo:
+  name: Xoxo
+  role: impulsive_lead
+  species_hint: equine_like_but_not_horse
+  presentation:
+    gender_expression: feminine_leaning
+    naming_wordplay: masculine_name_with_feminine_andalusian_reference
+  personality:
+    traits:
+      - mischievous
+      - impulsive
+      - proud
+      - expressive
+      - energetic
+      - tender
+      - apparent_brightness_with_surreal_outcomes
+    metaphor: "pólvora a punto de estallar"
   body:
     color: white
-    shape: teardrop
+    shape: stylized_teardrop
     head_dominance: high
-    muzzle: integrated
+    size_relative_to_pisha: slightly_larger
+    muzzle: equine_hint_integrated
+    mane_tuft:
+      color: yellow_blonde
+      shape: flame_like_crest
     legs:
       count: 4
-      thickness: medium
-      separation: tight
-    hands:
-      color: black
-      gloves: false
-    feet:
-      type: hoof
-      color: black
+      silhouette: stylized
+      proportion: slightly_longer_than_pisha
+      hands:
+        color: black
+        fingers: 3
+        gloves: false
+      feet:
+        type: hoof
+        color: black
     tail:
       type: flame
       length: short
-    tuft:
-      color: yellow
-      shape: flame
     scarf:
       color: green
+      shade: adaptable
       knot: front
+    feminine_mark:
+      type: vulvar_marker
+      representation: optional_contextual
+      stylized_variant: x_shape
+      activation: gag_or_compositional_fit
   invariants:
+    - white_pelage
+    - yellow_blonde_flame_tuft
     - green_scarf
-    - yellow_tuft
     - black_hands
+    - three_finger_hands
     - black_hooves
     - short_flame_tail
+    - stylized_equine_hint
+  behavioral_grammar:
+    movement: fast_reactive_elastic
+    default_energy: very_high
+    pose_expression: exaggerated
 
-killo:
-  name: Killo
-  role: reactive_side
-  species_hint: bull_like_but_not_bull
+pisha:
+  name: Pisha
+  role: reactive_partner
+  species_hint: bovine_like_but_not_bull
+  presentation:
+    gender_expression: masculine_leaning
+    naming_wordplay: feminine_sounding_name_with_masculine_andalusian_reference
+  personality:
+    traits:
+      - apparently_calm
+      - innocent
+      - observant
+      - proud
+      - impulsive
+      - mischievous
+      - absent_minded
+      - tender
+    metaphor: "pequeño demonio con carita de niño de primera comunión"
   body:
     color: red
     shape: compact_round
-    head_dominance: medium
-    muzzle: simple
+    head_dominance: high
+    size_relative_to_xoxo: slightly_smaller
+    muzzle: simple_bovine_hint
     legs:
       count: 4
-      thickness: medium
-      separation: tight
-    hands:
-      color: black
-      gloves: false
-    feet:
-      type: hoof
-      color: black
-    tail:
-      type: short_simple
+      silhouette: stocky_short
+      proportion: shorter_than_xoxo
+      curvature: slight_panda_like_curve
+      hands:
+        color: black
+        fingers: 3
+        gloves: false
+      feet:
+        type: hoof
+        color: black
+    horns:
+      type: short_rounded
+      aggression: low
     spots:
       color: black
       count:
@@ -64,9 +110,33 @@ killo:
       type: clavel
       color: adaptable
       ear_position: fixed
+    male_mark:
+      type: testicular_marker
+      representation: optional_contextual
+      activation: gag_or_compositional_fit
   invariants:
+    - red_pelage
     - black_spots
     - clavel
-    - compact_shape
+    - compact_round_shape
+    - short_rounded_horns
     - black_hands
+    - three_finger_hands
     - black_hooves
+    - bovine_hint
+  behavioral_grammar:
+    movement: contained_then_explosive
+    default_energy: moderate
+    pose_expression: innocent_with_escalation
+
+relationship:
+  type: inseparable_companions
+  dynamics:
+    - mutual_trust
+    - mutual_teasing
+    - mutual_protection
+    - shared_mischief
+    - situational_role_switching
+  protagonist_balance: dynamic
+  conflict_style: playful_not_malicious
+  loyalty: immediate_and_fundamental
