@@ -1,11 +1,12 @@
-# Index
+# Index · Arsa & Pisha
 
 ## Start here
 1. `README.md` — visión general del sistema.
-2. `docs/CANON_100.md` — reglas inmutables.
-3. `docs/BIBLIA_2_0.md` — filosofía y tono del universo.
+2. `docs/CANON_100.md` — reglas inmutables del canon actual.
+3. `docs/BIBLIA_2_0.md` — filosofía, identidad y tono del universo.
 4. `docs/PIPELINE.md` — flujo de producción.
 5. `docs/VALIDACION.md` — criterios de aceptación.
+6. `docs/AI_HANDOFF.md` — estado durable y hoja de ruta técnica/artística.
 
 ## Núcleo creativo
 - `docs/CULTURAL_ENGINE.md`
@@ -15,9 +16,11 @@
 - `prompts/gag.md`
 - `prompts/model-sheet.md`
 
-## Personajes
-- `model-sheets/illo.md`
-- `model-sheets/killo.md`
+## Personajes actuales
+- `model-sheets/arsa.md`
+- `model-sheets/pisha.md`
+- `data/characters.yaml`
+- `data/relationships.yaml`
 
 ## Biblioteca
 - `assets/objetos.md`
@@ -31,6 +34,9 @@
 - `workflows/workflow_merchandising.md`
 - `workflows/workflow_3d.md`
 
-## Referencias canónicas
-- `gags/001_jamon.md`
-- `gags/002_pesca.md`
+## Gags actuales
+- `gags/001_jamon.md` — especificación semántica actual del Gag 001; su antigua imagen no se considera referencia canónica actual.
+
+## Histórico de desarrollo
+- `history/creative-corpus/` — imágenes y piezas anteriores de Arsa & Pisha Origins y Killo & Illo, preservadas como corpus de evolución, no como canon.
+- `history/` — origen, evolución, hitos y legado del proyecto.
