@@ -13,7 +13,7 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
         result = evaluate_structural(
             "green_scarf",
             {"scarf": {"color": "green"}},
-            **self._constraint("characters", "illo", "green_scarf"),
+            **self._constraint("characters", "xoxo", "green_scarf"),
         )
         self.assertEqual(result.decision, "pass")
 
@@ -21,39 +21,41 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
         result = evaluate_structural(
             "green_scarf",
             {"scarf": {"color": "red"}},
-            **self._constraint("characters", "illo", "green_scarf"),
+            **self._constraint("characters", "xoxo", "green_scarf"),
         )
         self.assertEqual(result.decision, "fail")
 
     def test_black_hooves_require_all_canonical_parts(self):
         result = evaluate_structural(
             "black_hooves",
-            {"feet": {"type": "hoof", "color": "black"}},
-            **self._constraint("characters", "illo", "black_hooves"),
+            {"legs": {"feet": {"type": "hoof", "color": "black"}}},
+            **self._constraint("characters", "xoxo", "black_hooves"),
         )
         self.assertEqual(result.decision, "pass")
 
     def test_black_hooves_partial_observation_is_unknown(self):
         result = evaluate_structural(
             "black_hooves",
-            {"feet": {"type": "hoof"}},
-            **self._constraint("characters", "illo", "black_hooves"),
+            {"legs": {"feet": {"type": "hoof"}}},
+            **self._constraint("characters", "xoxo", "black_hooves"),
         )
         self.assertEqual(result.decision, "unknown")
 
     def test_missing_constraint_is_not_inferred(self):
         self.assertIsNone(
             load_structural_constraint(
-                self.ROOT, "characters", "illo", "invented_structure"
+                self.ROOT, "characters", "xoxo", "invented_structure"
             )
         )
 
-    def test_real_repository_catalog_remains_unchanged(self):
+    def test_real_repository_catalog_is_migrated_to_xoxo(self):
         knowledge = load_repository(self.ROOT)
         self.assertEqual(
-            knowledge.data["characters"]["illo"]["invariants"][0],
-            "green_scarf",
+            knowledge.data["characters"]["xoxo"]["invariants"][0],
+            "white_pelage",
         )
+        self.assertNotIn("illo", knowledge.data["characters"])
+        self.assertNotIn("killo", knowledge.data["characters"])
 
     def _constraint(self, catalog, entry, invariant):
         required_paths, expected = load_structural_constraint(
