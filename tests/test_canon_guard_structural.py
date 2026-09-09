@@ -11,10 +11,10 @@ class CanonGuardStructuralTests(unittest.TestCase):
     def setUp(self):
         self.knowledge = load_repository(self.ROOT)
 
-    def _xoxo_element(self, **overrides):
+    def _arsa_element(self, **overrides):
         element = {
             "library": "characters",
-            "id": "xoxo",
+            "id": "arsa",
             "body": {"color": "white"},
             "muzzle": "equine_hint_integrated",
             "mane_tuft": {"color": "yellow_blonde", "shape": "flame_like_crest"},
@@ -46,12 +46,12 @@ class CanonGuardStructuralTests(unittest.TestCase):
         return element
 
     def test_character_structural_invariants_pass_against_real_canon(self):
-        result = validate_piece({"elements": [self._xoxo_element()]}, self.knowledge)
+        result = validate_piece({"elements": [self._arsa_element()]}, self.knowledge)
         self.assertTrue(result.valid)
 
     def test_character_structural_mismatch_fails(self):
         result = validate_piece(
-            {"elements": [self._xoxo_element(scarf={"color": "red"})]},
+            {"elements": [self._arsa_element(scarf={"color": "red"})]},
             self.knowledge,
         )
         self.assertFalse(result.valid)
@@ -62,7 +62,7 @@ class CanonGuardStructuralTests(unittest.TestCase):
         self.assertFalse(result.requires_human_review)
 
     def test_character_structural_missing_path_requires_human_review(self):
-        element = self._xoxo_element()
+        element = self._arsa_element()
         del element["tail"]
         result = validate_piece({"elements": [element]}, self.knowledge)
         self.assertFalse(result.valid)
@@ -94,7 +94,7 @@ class CanonGuardStructuralTests(unittest.TestCase):
         )
 
     def test_unclassified_field_is_not_inferred(self):
-        element = self._xoxo_element()
+        element = self._arsa_element()
         element["invented_structure"] = {"color": "purple"}
         result = validate_piece({"elements": [element]}, self.knowledge)
         self.assertTrue(result.valid)
