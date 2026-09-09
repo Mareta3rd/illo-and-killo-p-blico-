@@ -66,7 +66,7 @@ class EvidenceContractIntegrationTests(unittest.TestCase):
             evaluate_evidence_contract(
                 self.ROOT,
                 "characters",
-                "killo",
+                "pisha",
                 "clavel",
                 claim,
             )
