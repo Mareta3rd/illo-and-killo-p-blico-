@@ -51,25 +51,33 @@ def _canonical_invariants(
     return result
 
 
-def _gag_files(gags_dir: Path) -> tuple[Path, ...]:
-    if not gags_dir.exists():
+def _gag_files(directory: Path) -> tuple[Path, ...]:
+    if not directory.exists():
         return ()
 
     return tuple(
         sorted(
             path
-            for path in gags_dir.iterdir()
-            if path.is_file() and path.suffix.lower() == ".md"
+            for path in directory.rglob("*.md")
+            if path.is_file()
         )
     )
 
 
-def _gag_history(gags_dir: Path) -> tuple[str, ...]:
-    return tuple(path.name for path in _gag_files(gags_dir))
+def _gag_history(root: Path) -> tuple[str, ...]:
+    """Collect active and historical gag documentation without changing status.
+
+    The returned names are repository-history evidence only. A gag appearing
+    here is not thereby promoted to current canon.
+    """
+
+    files = list(_gag_files(root / "gags"))
+    files.extend(_gag_files(root / "history" / "gags"))
+    return tuple(sorted({path.name for path in files}))
 
 
-def _historical_assets(gags_dir: Path) -> tuple[str, ...]:
-    """Detect explicitly named assets in existing gag documentation.
+def _historical_assets(root: Path) -> tuple[str, ...]:
+    """Detect explicitly named assets in current and historical gag text.
 
     This is historical evidence only. It does not promote an asset
     to canon and does not infer that the asset should be reused.
@@ -86,7 +94,10 @@ def _historical_assets(gags_dir: Path) -> tuple[str, ...]:
 
     found: set[str] = set()
 
-    for path in _gag_files(gags_dir):
+    gag_paths = list(_gag_files(root / "gags"))
+    gag_paths.extend(_gag_files(root / "history" / "gags"))
+
+    for path in gag_paths:
         text = path.read_text(encoding="utf-8").lower()
 
         for asset in known_assets:
@@ -103,6 +114,6 @@ def build_evidence(root: Path) -> Evidence:
 
     return Evidence(
         canonical_invariants=_canonical_invariants(characters),
-        gag_history=_gag_history(root / "gags"),
-        historical_assets=_historical_assets(root / "gags"),
+        gag_history=_gag_history(root),
+        historical_assets=_historical_assets(root),
     )
