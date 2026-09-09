@@ -1,12 +1,16 @@
-# Prompt de gag
+# Prompt de gag · Arsa & Pisha
 
-Crea un gag ilustrado de Illo & Killo respetando el canon. El gag debe parecer inevitable, simple y coleccionable.
+Crea un gag ilustrado de **Arsa & Pisha** respetando el canon vigente. Debe resultar simple, inevitable una vez visto, reconocible y coleccionable.
 
 ## Reglas
-- Un solo gag por imagen.
-- El humor debe ser amable, travieso y de doble lectura.
-- El fondo debe apoyar, nunca competir.
-- Usar objetos oficiales cuando existan.
-- Si hace falta patrimonio o fauna, usar la versión simplificada del canon.
-- Añadir sólo un detalle de segunda lectura si aporta valor.
-- No introducir elementos que rompan la identidad visual.
+- Un solo gag principal por imagen.
+- La primera lectura debe ser inmediata y visualmente comprensible.
+- Puede existir una segunda lectura con sorpresa, ironía, picardía o detalle contextual cuando aporte valor.
+- El humor debe ser travieso y afectuoso, no cruel ni retorcido.
+- La situación manda; el texto sólo remata cuando sea necesario.
+- El fondo debe apoyar la acción y no competir con ella.
+- Los objetos, fauna y patrimonio se introducen sólo cuando tengan intención narrativa, cómica, contextual o compositiva.
+- Arsa y Pisha pueden intercambiar funciones de iniciativa, reacción y escalada; no existe un protagonista permanente.
+- Brazos/manos y piernas/pezuñas deben conservar su distinción anatómica.
+- No convertir rasgos históricos de Illo & Killo, ni terminología intermedia como Xoxo, en identidad activa.
+- El acabado debe ser contemporáneo, limpio y de vanguardia; un toque vintage/tebeo puede aportar alma, pero nunca debe convertir la pieza en una recreación retro.
