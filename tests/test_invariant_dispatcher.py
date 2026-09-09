@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class InvariantDispatcherTests(unittest.TestCase):
     def test_deterministic_invariant_routes_to_deterministic_boundary(self):
-        route = dispatch_invariant(ROOT, "characters", "xoxo", "green_scarf")
+        route = dispatch_invariant(ROOT, "characters", "arsa", "green_scarf")
         self.assertEqual(route.family, "structural")
         self.assertEqual(route.mechanism, "deterministic_structure")
         self.assertEqual(route.mode, "deterministic")
