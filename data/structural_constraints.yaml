@@ -22,11 +22,11 @@ structural:
             value: green
       black_hands:
         expected:
-          - path: [legs, hands, color]
+          - path: [arms, hands, color]
             value: black
       three_finger_hands:
         expected:
-          - path: [legs, hands, fingers]
+          - path: [arms, hands, fingers]
             value: 3
       black_hooves:
         expected:
@@ -67,11 +67,11 @@ structural:
             value: short_rounded
       black_hands:
         expected:
-          - path: [legs, hands, color]
+          - path: [arms, hands, color]
             value: black
       three_finger_hands:
         expected:
-          - path: [legs, hands, fingers]
+          - path: [arms, hands, fingers]
             value: 3
       black_hooves:
         expected:
