@@ -63,7 +63,7 @@ class EvidenceFullChainTests(unittest.TestCase):
             evaluate_evidence_contract(
                 self.ROOT,
                 "characters",
-                "killo",
+                "pisha",
                 "clavel",
                 assess_claim("wrong deterministic claim", ["source"]),
             )
