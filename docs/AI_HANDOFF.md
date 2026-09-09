@@ -16,9 +16,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `6150ce6aaedde5e501f07964aafc35d1991ff15e` (`align evidence history test with legacy gag path`).
+Current repository checkpoint: `293317daa0d42d47f2d573d0309b34c48c86becb` (`add work-block closure guardrail script`).
 
-The most recent local verification reported before this final test-alignment commit was **541 passed, 49 subtests passed, 1 failed**. The remaining failure was the historical-gag filename assertion; that test has now been aligned with the actual archived path `002_pesca_legacy.md`. The next local action is therefore to pull this commit and rerun the complete suite. Do not record the suite as green until that run actually completes successfully.
+The most recent local verification reported before the final test-alignment commit was **541 passed, 49 subtests passed, 1 failed**. The remaining failure was the historical-gag filename assertion; it was aligned with the actual archived path `002_pesca_legacy.md`. The test suite must now be rerun after the Codespace pulls the current branch. Do not record the suite as green until that run actually completes successfully.
 
 The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon. Earlier Xoxo terminology is historical/intermediate and must not be treated as the active name.
 
@@ -156,10 +156,12 @@ Every meaningful block should end in the same deterministic sequence:
 
 A block is not considered closed while a failing test, undocumented architectural change, unresolved canon ambiguity, or unrecorded next direction remains.
 
+The repository now includes `docs/WORK_BLOCK_PROTOCOL.md` and `scripts/close_work_block.sh` as practical guardrails for this cycle. The script runs the complete suite, `git diff --check`, working-tree/diff inspection and reports the current checkpoint; it intentionally does **not** commit, push or edit the handoff automatically, because those operations still require an explicit judgment about what is being saved.
+
 A new session should begin by reading this handoff, checking the branch/worktree and rerunning the relevant verification before making changes. The conversation is context; this file is the durable state.
 
 ## Next implementation sequence
-1. Pull commit `6150ce6aaedde5e501f07964aafc35d1991ff15e` into the Codespace and run `PYTHONPATH=. pytest -q`.
+1. Pull the current `feature/semantic-model` branch into the Codespace and run `PYTHONPATH=. pytest -q`.
 2. Once the suite is green, verify active-root references no longer point to the removed legacy Gag 001 raster; historical experiment scripts may explicitly reference archived material when that is their purpose.
 3. Finish reviewing any remaining current-facing Illo/Killo/Xoxo references; preserve only those that are explicitly historical.
 4. Verify the 10-image historical corpus in `history/creative-corpus/` and classify/rename it semantically while retaining each original generation ID.
