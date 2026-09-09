@@ -2,8 +2,8 @@ version: "0.1"
 
 # Provider-neutral relationship knowledge kept outside character catalog entries.
 relationships:
-  xoxo_pisha:
-    participants: [xoxo, pisha]
+  arsa_pisha:
+    participants: [arsa, pisha]
     type: inseparable_companions
     dynamics:
       - mutual_trust
