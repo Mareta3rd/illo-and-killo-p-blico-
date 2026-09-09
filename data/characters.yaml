@@ -1,5 +1,5 @@
-xoxo:
-  name: Xoxo
+arsa:
+  name: Arsa
   role: co_lead
   species_hint: equine_like_but_not_horse
   presentation:
@@ -86,12 +86,12 @@ pisha:
     color: red
     shape: compact_round
     head_dominance: high
-    size_relative_to_xoxo: slightly_smaller
+    size_relative_to_arsa: slightly_smaller
     muzzle: simple_bovine_hint
     legs:
       count: 4
       silhouette: stocky_short
-      proportion: shorter_than_xoxo
+      proportion: shorter_than_arsa
       curvature: slight_panda_like_curve
       feet:
         type: hoof
