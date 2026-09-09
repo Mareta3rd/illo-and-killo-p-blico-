@@ -16,8 +16,8 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `9c424a9`.
-Latest full-suite result confirmed in the current working session: **542 passed, 49 subtests passed**.
+Current repository checkpoint: `68e5025`.
+Latest full-suite result confirmed before the documentation/corpus cleanup block: **542 passed, 49 subtests passed**.
 
 The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon. Earlier Xoxo terminology is also historical/intermediate and must not be treated as the active name.
 
@@ -29,53 +29,66 @@ The structured character catalog defines:
 Important mature design decisions to preserve:
 - Arms/hands and legs/hooves are distinct anatomical systems and must not collapse into the same visual treatment.
 - Black three-finger hands and black hooves are deliberate recognition devices, not interchangeable anatomy.
-- The characters are stylized and deliberately non-realistic; animal identity remains suggestive rather than literal.
-- The visual language is contemporary and high-quality, with a **small, controlled vintage/print-comic soul** where useful. Vintage is a seasoning, not a period imitation: the target remains modern, contemporary and forward-looking, never deliberately old-fashioned.
+- Animal identity remains suggestive rather than literal; Arsa is not a horse and Pisha is not a bull.
+- The visual language is contemporary, high-quality and forward-looking, with a **small, controlled vintage/print-comic soul** where useful. Vintage is a seasoning, not a period imitation: never deliberately old-fashioned or viejuno.
 - Anatomical comic markers are contextual and optional; their absence is not a canon failure.
 
 Their relationship is explicitly modeled as inseparable companions with mutual trust, teasing, protection and shared mischief, with situational role switching and tenderness underneath the mischief. Neither is a permanent protagonist or helper.
 
 ## Current visual / humor canon
-The canonical universe is defined as contemporary, Andalusian in attitude and behavior rather than tourist decoration, playful, irreverent but affectionate, exportable and visually legible.
+- One primary gag per illustration.
+- Immediate first-read visual comprehension.
+- Optional second-read surprise, irony, picardía or contextual detail.
+- Absurd escalation from recognizable everyday logic.
+- Physical, facial and gestural comedy that can work without dialogue.
+- Conflict is playful rather than cruel.
+- Tenderness remains protected even in acidic, obscene or black humor when context warrants it.
+- Remove details that do not improve gag, reading, personality or composition.
 
-Core humor rules include:
-- one primary gag per illustration;
-- immediate first-read visual comprehension;
-- optional second-read surprise, irony, picardía or contextual detail;
-- absurd escalation from recognizable everyday logic;
-- physical, facial and gestural comedy that can work without dialogue;
-- conflict that is playful rather than cruel;
-- tenderness remains protected even in acidic, obscene or black humor when context warrants it;
-- economy: remove details that do not improve gag, reading, personality or composition.
+Andalusia is layered as: structural/behavioral first, environmental second, ornamental third. Environmental and ornamental references support the gag rather than turning the universe into a tourist postcard.
 
-Andalusia is layered as: structural/behavioral first, environmental second, ornamental third. Environmental and ornamental references must support the gag rather than turn the universe into a tourist postcard.
+## Current Gag 001
+The current canonical object is the **semantic gag concept**, not the old raster image.
 
-## Canon Gag 001
-The accepted canonical visual material remains **Gag 001 · Jamón**.
-
-Its current semantic claim keys are:
+Current claim keys:
 - `gag/001/composition/arsa_primary`
 - `gag/001/composition/ham_primary`
 - `gag/001/characters/pisha_reaction`
 
-Old Illo/Killo or Xoxo naming in historical material must not be used as the active interpretation of these claims.
+`gags/001_jamon.md` now documents the current Arsa/Pisha semantic version. The former `gags/images/001_jamon.png` was removed from the active tree because it belongs to the previous visual base. A new current raster can be canonized later through deliberate review.
+
+Gag 002 · Pesca is not current canon and its specification has been moved to historical material.
 
 ## Historical creative corpus
 Previously developed material supplied during earlier creative work is intentionally preserved as **historical development corpus**, not canon.
 
-The currently recovered corpus consists of two small image groups:
+Recovered image groups:
 
 ### Arsa & Pisha Origins
-Eight historical images covering early gag/composition experiments including fishing/sea, parody-cover treatment, guitar/dance, motorbike/action, jamón impact, title/identity exploration, guitar confrontation and title variants. These are useful for studying evolution of composition, timing, silhouettes, expressions, typography and early character treatment.
+Eight historical images covering early gag/composition experiments including fishing/sea, parody-cover treatment, guitar/dance, motorbike/action, jamón impact, title/identity exploration, guitar confrontation and title variants.
 
 ### Killo & Illo
-Two historical images covering an espeto/fishing scene and a jamón/mosquito gag. These are especially useful for studying earlier Andalusian environmental recognition, secondary-detail jokes, composition and gag density.
+Two historical images covering an espeto/fishing scene and a jamón/mosquito gag.
 
-These images are **not** current reference sheets and do not override `data/characters.yaml`, current model sheets, current palette, current humor rules or canonical gag claims. Historical anatomy, proportions, names, typography, palette details, props and exact designs must not be reintroduced automatically.
+These images are not current reference sheets and do not override `data/characters.yaml`, the current model sheets, current palette, current humor rules or canonical claims. Historical names, anatomy, proportions, typography, palette details and exact designs must not be reintroduced automatically.
 
-A repository manifest has been added at `history/creative-corpus/MANIFEST.md`. The binary image files themselves are prepared in an external transfer package because the available repository write interface is text-only; they still need to be copied into the corresponding `history/creative-corpus/` directories from the prepared package.
+The historical corpus is documented under `history/creative-corpus/` and is intended for extraction of successful mechanisms, lessons and reusable ideas only after revalidation against current canon.
 
-The corpus may be mined for successful mechanisms, learned lessons and reusable ideas only after revalidation against current canon.
+## Repository cleanup completed in the current block
+Current-facing roots have been evolved to Arsa & Pisha, including:
+- `model-sheets/arsa.md`
+- `model-sheets/pisha.md`
+- `prompts/maestro.md`
+- `prompts/gag.md`
+- `prompts/model-sheet.md`
+- `docs/CANON_100.md`
+- `docs/SEMANTIC_MODEL.md`
+- `docs/INDEX.md`
+- `.github/agents/semantic-boundary-engineer.agent.md`
+
+Obsolete `model-sheets/illo.md`, `model-sheets/killo.md` and current `gags/002_pesca.md` were removed from active roots. `docs/SESSION_HANDOFF.md` is now explicitly historical/superseded and points to this file as the durable source of continuity.
+
+The GitHub repository slug itself still contains the historical name because renaming the remote repository is a separate GitHub administration action; do not rename or recreate the repository implicitly during development.
 
 ## Validated architecture
 The project has tested boundaries for:
@@ -87,9 +100,9 @@ Earlier gateway/registry/orchestrator, regression, semantic-audit and execution-
 ## Gemini
 Gemini is a validated external evidence provider. Its provider-specific transport and adapter enter through the common observation/snapshot path.
 
-Previously validated live configuration included a real Gemini run against `gags/images/001_jamon.png`, with evidence entering Core and a final Core decision of `accept`. The provider supplied evidence; Core supplied the decision.
+Previously validated live configuration included real runs against the earlier Gag 001 image, with evidence entering Core and a final Core decision of `accept`. Those experiments remain historical evidence of the provider integration; the old image is no longer the current canonical raster.
 
-The Gemini stability/composition tests and experiment scripts are aligned with the current Arsa-based Gag 001 claim keys.
+Gemini stability/composition tests and experiment scripts use the current Arsa-based claim keys.
 
 ## OpenAI
 OpenAI Phase A exists as a provider-specific transport/adapter implementation, but its earlier real connectivity attempt returned `429 insufficient_quota`. Do not treat OpenAI as the next mandatory phase merely because older handoff text says so.
@@ -97,9 +110,9 @@ OpenAI Phase A exists as a provider-specific transport/adapter implementation, b
 Any future live OpenAI work must verify the current SDK/API surface and model availability before implementation assumptions are made.
 
 ## Groq/Qwen
-Groq/Qwen is already validated through the provider-neutral evidence path with a real multimodal Qwen 3.8 27B experiment using `gags/images/001_jamon.png`.
+Groq/Qwen is already validated through the provider-neutral evidence path with a real multimodal Qwen 3.8 27B experiment using the earlier Gag 001 image.
 
-The candidate-generation path also exists through:
+The candidate-generation path exists through:
 - `core/groq_qwen_candidate_executor.py`
 - `core/groq_qwen_candidate_transport.py`
 - `scripts/run_groq_qwen_candidate.py`
@@ -130,21 +143,23 @@ The target context should make available, as relevant to the route/task:
 The compiler remains a transformation layer. It must not invent missing semantics, mutate canon, or let the provider decide which material is canonical.
 
 ## Next implementation sequence
-1. Complete incorporation of the prepared historical image package into `history/creative-corpus/` in the Codespace.
-2. Inspect the existing Core knowledge-loading path and identify the authoritative structured sources already available to `PipelineContext`.
-3. Extend `CompiledPrompt` with a deterministic semantic-context representation or an equivalent provider-neutral structure.
-4. Build that context from authoritative current data, with route/task relevance and bounded size.
-5. Add focused tests proving that Arsa/Pisha semantics are present and historical Illo/Killo/Xoxo content is not treated as active identity.
-6. Keep the Groq/Qwen transport unchanged except where the new compiled representation requires a deliberate rendering adjustment.
-7. Run the complete suite.
-8. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
+1. Copy the prepared historical image package into `history/creative-corpus/` in the Codespace and verify filenames against its manifest.
+2. Verify active-root references no longer point to the removed legacy Gag 001 raster; historical experiment scripts may explicitly reference archived material when that is their purpose.
+3. Finish reviewing any remaining current-facing Illo/Killo/Xoxo references; preserve only those that are explicitly historical.
+4. Extend `CompiledPrompt` with a deterministic semantic-context representation or equivalent provider-neutral structure.
+5. Build that context from authoritative current data, with route/task relevance and bounded size.
+6. Add focused tests proving Arsa/Pisha semantics are present and historical identity is not activated by the context builder.
+7. Keep the Groq/Qwen transport unchanged unless the new compiled representation requires a deliberate rendering adjustment.
+8. Run the complete suite.
+9. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
+10. Update this handoff again at the end of that block.
 
 ## Documentation discipline
 `docs/BIBLIA_2_0.md` is the canonical narrative reference for the current universe and explicitly distinguishes historical Illo & Killo material from Arsa & Pisha canon.
 
-`README.md`, `docs/HUMOR.md`, and `docs/PALETA.md` are current-facing documents and describe Arsa & Pisha. Historical references should remain only where their historical status is explicit and useful.
+`README.md`, `docs/HUMOR.md`, `docs/PALETA.md`, `docs/CANON_100.md`, `docs/SEMANTIC_MODEL.md`, the model sheets and prompts are current-facing and must describe Arsa & Pisha.
 
-Do not blindly mass-replace `Illo`, `Killo`, or `Xoxo`: historical archives and tests can legitimately retain legacy terminology when they are explicitly preserving historical material. Conversely, any current-facing canon, prompt context or real experiment must use Arsa & Pisha.
+Do not blindly mass-replace `Illo`, `Killo`, or `Xoxo`: historical archives can legitimately retain legacy terminology when their historical status is explicit and useful. Conversely, any current-facing canon, prompt context or real current experiment must use Arsa & Pisha.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
