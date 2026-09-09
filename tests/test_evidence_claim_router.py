@@ -35,7 +35,7 @@ class EvidenceClaimRouterTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate_canonical_evidence_claims(
                 self.ROOT,
-                {"characters/killo/clavel": claim},
+                {"characters/pisha/clavel": claim},
             )
 
     def test_unknown_invariant_is_not_invented(self):
