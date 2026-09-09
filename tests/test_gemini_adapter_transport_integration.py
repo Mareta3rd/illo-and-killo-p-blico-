@@ -63,9 +63,7 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
             image_bytes=b"image",
             mime_type="image/png",
         )
-
         records = adapter.collect((KEY,))
-
         self.assertEqual(len(records), 1)
         self.assertEqual(records[0].claim_key, KEY)
         self.assertEqual(records[0].state, EvidenceState.CONFIRMED)
@@ -79,9 +77,7 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
             image_bytes=b"image",
             mime_type="image/png",
         )
-
         record = adapter.collect((KEY,))[0]
-
         self.assertEqual(record.state, EvidenceState.UNKNOWN)
         self.assertEqual(record.supporting_sources, ())
         self.assertEqual(record.contradicting_sources, ())
@@ -94,10 +90,8 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
             image_bytes=b"image-bytes",
             mime_type="image/jpeg",
         )
-
         adapter.collect((KEY,))
         call = client.interactions.calls[0]
-
         self.assertEqual(call["input"][0]["data"], base64.b64encode(b"image-bytes").decode("utf-8"))
         self.assertEqual(call["input"][0]["mime_type"], "image/jpeg")
         self.assertIn(KEY, call["input"][1]["text"])
@@ -110,10 +104,8 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
             image_bytes=b"image",
             mime_type="image/png",
         )
-
         adapter.collect((KEY,))
         required = client.interactions.calls[0]["response_format"]["schema"]["properties"]["observations"]["items"]["required"]
-
         self.assertEqual(
             required,
             ["claim_key", "verdict", "statement", "supporting_sources", "contradicting_sources"],
@@ -131,9 +123,8 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
         self.assertFalse(hasattr(adapter, "accept"))
 
     def test_gag001_gemini_adapter_reaches_observation_and_snapshot(self):
-        claim = load_claim("gag/001/composition/illo_primary")
+        claim = load_claim("gag/001/composition/xoxo_primary")
         client = FakeClient(Response(json.dumps(payload("unknown", claim.key))))
-
         observation, snapshot = collect_gag001_observation(
             client,
             model="gemini-test",
@@ -142,7 +133,6 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
             claim=claim,
             run_id="run-gag001-test",
         )
-
         self.assertEqual(observation.provider, "gemini")
         self.assertEqual(observation.run_id, "run-gag001-test")
         self.assertIsInstance(snapshot, EvidenceSnapshot)
@@ -153,8 +143,7 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
 
     def test_gag001_gemini_provider_error_does_not_create_partial_snapshot(self):
         client = ErrorClient()
-        claim = load_claim("gag/001/composition/illo_primary")
-
+        claim = load_claim("gag/001/composition/xoxo_primary")
         with self.assertRaises(RealEvidenceProviderError):
             collect_gag001_observation(
                 client,
@@ -166,13 +155,12 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
             )
 
     def test_gag001_gemini_states_and_sources_reach_snapshot_unchanged(self):
-        claim = load_claim("gag/001/composition/illo_primary")
+        claim = load_claim("gag/001/composition/xoxo_primary")
         cases = (
             ("confirmed", EvidenceState.CONFIRMED, ("gemini",), ()),
             ("unknown", EvidenceState.UNKNOWN, (), ()),
             ("contradicted", EvidenceState.CONTRADICTED, (), ("gemini",)),
         )
-
         for verdict, state, supporting, contradicting in cases:
             with self.subTest(verdict=verdict):
                 client = FakeClient(Response(json.dumps(payload(verdict, claim.key))))
@@ -184,7 +172,6 @@ class GeminiAdapterTransportIntegrationTests(unittest.TestCase):
                     claim=claim,
                     run_id=f"run-gag001-{verdict}",
                 )
-
                 record = observation.records[0]
                 observed = snapshot.get(claim.key)
                 self.assertEqual(record.state, state)
