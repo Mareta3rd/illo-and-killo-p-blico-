@@ -25,8 +25,8 @@ _KEYWORDS: dict[Route, tuple[str, ...]] = {
         "personaje",
         "personajes",
         "character",
-        "illo",
-        "killo",
+        "xoxo",
+        "pisha",
     ),
     "gag": (
         "gag",
@@ -61,7 +61,7 @@ _KEYWORDS: dict[Route, tuple[str, ...]] = {
 
 
 # Algunas rutas expresan una intención explícita.
-# Tienen prioridad sobre coincidencias secundarias como "illo" o "killo".
+# Tienen prioridad sobre coincidencias secundarias como "xoxo" o "pisha".
 _EXPLICIT_ROUTE_PRIORITY: tuple[Route, ...] = (
     "gag",
     "parody",
