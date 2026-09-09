@@ -7,16 +7,20 @@ class RouterTests(unittest.TestCase):
 
     def test_gag_route(self):
         decision = route_idea(
-            "Crear un gag nuevo de Illo y Killo"
+            "Crear un gag nuevo de Xoxo y Pisha"
         )
         self.assertEqual(decision.route, "gag")
         self.assertFalse(decision.requires_human_review)
 
     def test_parody_route(self):
         decision = route_idea(
-            "Illo y Killo en una parodia de Peaky Blinders"
+            "Xoxo y Pisha en una parodia de Peaky Blinders"
         )
         self.assertEqual(decision.route, "parody")
+
+    def test_character_keywords_route_to_character(self):
+        self.assertEqual(route_idea("Diseñar a Xoxo").route, "character")
+        self.assertEqual(route_idea("Revisar a Pisha").route, "character")
 
     def test_merchandising_route(self):
         decision = route_idea(
