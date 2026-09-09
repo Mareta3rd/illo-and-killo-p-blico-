@@ -1,10 +1,10 @@
 xoxo:
   name: Xoxo
-  role: impulsive_lead
+  role: co_lead
   species_hint: equine_like_but_not_horse
   presentation:
     gender_expression: feminine_leaning
-    naming_wordplay: masculine_name_with_feminine_andalusian_reference
+    naming_wordplay: explicit_andalusian_masculine_reference_with_feminine_character
   personality:
     traits:
       - mischievous
@@ -60,14 +60,15 @@ xoxo:
     movement: fast_reactive_elastic
     default_energy: very_high
     pose_expression: exaggerated
+    gag_role: initiates_or_escalates_without_required_leadership
 
 pisha:
   name: Pisha
-  role: reactive_partner
+  role: co_lead
   species_hint: bovine_like_but_not_bull
   presentation:
     gender_expression: masculine_leaning
-    naming_wordplay: feminine_sounding_name_with_masculine_andalusian_reference
+    naming_wordplay: explicit_andalusian_masculine_reference_with_feminine_sounding_name
   personality:
     traits:
       - apparently_calm
@@ -128,3 +129,17 @@ pisha:
     movement: contained_then_explosive
     default_energy: moderate
     pose_expression: innocent_with_escalation
+    gag_role: observes_reacts_or_escalates_without_required_secondary_status
+
+relationship:
+  type: inseparable_companions
+  dynamics:
+    - mutual_trust
+    - mutual_teasing
+    - mutual_protection
+    - shared_mischief
+    - situational_role_switching
+  protagonist_balance: dynamic
+  conflict_style: playful_not_malicious
+  loyalty: immediate_and_fundamental
+  tonal_rule: tenderness_under_gamemischief
