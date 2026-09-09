@@ -30,13 +30,18 @@ from core.provider_evidence_observation import (
 from core.evidence_snapshot import EvidenceSnapshot
 
 CLAIMS_PATH = REPO_ROOT / "data" / "gag_001_claims.json"
+CANONICAL_CLAIM_KEYS = (
+    "gag/001/composition/xoxo_primary",
+    "gag/001/composition/ham_primary",
+    "gag/001/characters/pisha_reaction",
+)
 
 
 def load_claim(claim_key: str) -> CanonicalClaim:
     data = json.loads(CLAIMS_PATH.read_text(encoding="utf-8"))
     item = data.get(claim_key)
     if not isinstance(item, dict):
-        raise SystemExit(f"Unknown canonical claim: {claim_key}")
+        raise SystemExit(f"Unknown canonical claim: {claim_key}. Choose one of: {', '.join(CANONICAL_CLAIM_KEYS)}")
     try:
         return CanonicalClaim(
             key=claim_key,
@@ -78,11 +83,7 @@ def collect_gag001_observation(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run a real Gemini experiment for Gag 001")
     parser.add_argument("image", type=Path)
-    parser.add_argument("claim_key", choices=(
-        "gag/001/composition/illo_primary",
-        "gag/001/composition/ham_primary",
-        "gag/001/characters/killo_reaction",
-    ))
+    parser.add_argument("claim_key", choices=CANONICAL_CLAIM_KEYS)
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--model", default=os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"))
     parser.add_argument("--artifact-path", type=Path, help="Write the execution artifact JSON to PATH")
@@ -138,31 +139,21 @@ def main() -> int:
                 "records": [
                     {
                         "claim_key": record.claim_key,
-                        "statement": record.statement,
                         "state": record.state.value,
                         "supporting_sources": list(record.supporting_sources),
                         "contradicting_sources": list(record.contradicting_sources),
                     }
                     for record in observation.records
                 ],
-                "snapshot": {
-                    "claim_keys": list(snapshot.claims),
-                    "contract_evaluations": [
-                        {
-                            "catalog": evaluation.catalog,
-                            "entry": evaluation.entry,
-                            "invariant": evaluation.invariant,
-                            "decision": evaluation.evaluation.decision,
-                        }
-                        for evaluation in snapshot.canonical_evaluations
-                    ],
-                },
             },
             ensure_ascii=False,
             indent=2,
         )
     )
     return 0
+
+
+__all__ = ["CANONICAL_CLAIM_KEYS", "load_claim", "collect_gag001_observation", "main"]
 
 
 if __name__ == "__main__":
