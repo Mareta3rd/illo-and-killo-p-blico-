@@ -11,14 +11,18 @@ class CanonGuardStructuralTests(unittest.TestCase):
     def setUp(self):
         self.knowledge = load_repository(self.ROOT)
 
-    def _illo_element(self, **overrides):
+    def _xoxo_element(self, **overrides):
         element = {
             "library": "characters",
-            "id": "illo",
+            "id": "xoxo",
+            "body": {"color": "white"},
+            "muzzle": "equine_hint_integrated",
+            "mane_tuft": {"color": "yellow_blonde", "shape": "flame_like_crest"},
+            "legs": {
+                "hands": {"color": "black", "fingers": 3},
+                "feet": {"type": "hoof", "color": "black"},
+            },
             "scarf": {"color": "green"},
-            "tuft": {"color": "yellow"},
-            "hands": {"color": "black"},
-            "feet": {"type": "hoof", "color": "black"},
             "tail": {"type": "flame", "length": "short"},
             "intention": "character_identity",
         }
@@ -26,15 +30,19 @@ class CanonGuardStructuralTests(unittest.TestCase):
             element[key] = value
         return element
 
-    def _killo_element(self, **overrides):
+    def _pisha_element(self, **overrides):
         element = {
             "library": "characters",
-            "id": "killo",
+            "id": "pisha",
+            "body": {"color": "red", "shape": "compact_round"},
+            "muzzle": "simple_bovine_hint",
             "spots": {"color": "black"},
             "flower": {"type": "clavel"},
-            "body": {"shape": "compact_round"},
-            "hands": {"color": "black"},
-            "feet": {"type": "hoof", "color": "black"},
+            "horns": {"type": "short_rounded"},
+            "legs": {
+                "hands": {"color": "black", "fingers": 3},
+                "feet": {"type": "hoof", "color": "black"},
+            },
             "intention": "character_identity",
         }
         for key, value in overrides.items():
@@ -42,12 +50,12 @@ class CanonGuardStructuralTests(unittest.TestCase):
         return element
 
     def test_character_structural_invariants_pass_against_real_canon(self):
-        result = validate_piece({"elements": [self._illo_element()]}, self.knowledge)
+        result = validate_piece({"elements": [self._xoxo_element()]}, self.knowledge)
         self.assertTrue(result.valid)
 
     def test_character_structural_mismatch_fails(self):
         result = validate_piece(
-            {"elements": [self._illo_element(scarf={"color": "red"})]},
+            {"elements": [self._xoxo_element(scarf={"color": "red"})]},
             self.knowledge,
         )
         self.assertFalse(result.valid)
@@ -58,7 +66,7 @@ class CanonGuardStructuralTests(unittest.TestCase):
         self.assertFalse(result.requires_human_review)
 
     def test_character_structural_missing_path_requires_human_review(self):
-        element = self._illo_element()
+        element = self._xoxo_element()
         del element["tail"]
         result = validate_piece({"elements": [element]}, self.knowledge)
         self.assertFalse(result.valid)
@@ -69,14 +77,19 @@ class CanonGuardStructuralTests(unittest.TestCase):
         )
 
     def test_multi_path_structural_invariant_passes(self):
-        result = validate_piece({"elements": [self._killo_element()]}, self.knowledge)
+        result = validate_piece({"elements": [self._pisha_element()]}, self.knowledge)
         self.assertTrue(result.valid)
 
     def test_multi_path_structural_mismatch_fails(self):
         result = validate_piece(
             {
                 "elements": [
-                    self._killo_element(feet={"type": "hoof", "color": "red"})
+                    self._pisha_element(
+                        legs={
+                            "hands": {"color": "black", "fingers": 3},
+                            "feet": {"type": "hoof", "color": "red"},
+                        }
+                    )
                 ]
             },
             self.knowledge,
@@ -88,7 +101,7 @@ class CanonGuardStructuralTests(unittest.TestCase):
         )
 
     def test_unclassified_field_is_not_inferred(self):
-        element = self._illo_element()
+        element = self._xoxo_element()
         element["invented_structure"] = {"color": "purple"}
         result = validate_piece({"elements": [element]}, self.knowledge)
         self.assertTrue(result.valid)
