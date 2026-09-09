@@ -1,757 +1,202 @@
-# Semantic Model v1
+# Semantic Model v2 · Arsa & Pisha
 
-## Purpose
+## Propósito
 
-This document defines the semantic model used by the Illo & Killo Core to distinguish canonical identity, permitted adaptation, contextual variation, recurring elements, required conditions, and evidence states.
+Este documento define el modelo semántico usado por Core para distinguir identidad canónica, adaptación permitida, variación, recurrencia, condiciones requeridas, contexto, affordances, intención y evidencia.
 
-The purpose of this model is to prevent two opposite failures:
+El modelo protege significado e identidad; no exige reproducción pixel a pixel.
 
-1. treating every characteristic as an immutable rule;
-2. allowing creative variation to silently alter canon.
+## 1. Prioridad
 
-The model is semantic rather than purely visual. The system must protect meaning and identity, not demand pixel-level reproduction.
+Cuando varias reglas se solapen, Core debe aplicar este orden:
 
----
+1. Decisión canónica explícita y documentada.
+2. Invariantes canónicos.
+3. Restricciones contextuales o de producción explícitas.
+4. Condiciones requeridas.
+5. Adaptaciones permitidas.
+6. Propiedades variables.
+7. Preferencias estilísticas o compositivas.
 
-## 1. Core Principle
+Una preferencia inferior no puede sobrescribir una regla superior.
 
-The Core must distinguish between:
+## 2. Invariante
 
-- what defines canonical identity;
-- what may legitimately adapt;
-- what may vary freely;
-- what may recur without being mandatory;
-- what is required only under specific conditions;
-- what is contextual;
-- what an element is allowed to be used for;
-- what can actually be established from available evidence.
+Un invariante es una propiedad cuya alteración amenaza la identidad o el canon establecido.
 
-The absence of evidence is not evidence of absence.
+Ejemplos actuales:
 
-The inability to confirm a property must not automatically be treated as a violation.
+### Arsa
+- pelaje blanco;
+- mechón/cresta rubio-amarillo en forma de llama;
+- pañuelo verde;
+- manos negras de tres dedos;
+- pezuñas negras;
+- cola corta con forma de llama;
+- rasgos equinos reconocibles sin ser caballo literal.
 
----
+### Pisha
+- pelaje rojo;
+- lunares negros dentro del rango definido;
+- clavel;
+- cuernos cortos y redondeados;
+- manos negras de tres dedos;
+- pezuñas negras;
+- rasgos bovinos reconocibles sin ser toro literal.
 
-# 2. Canonical Property Classes
+Brazos/manos y piernas/pezuñas son sistemas anatómicos diferentes. No deben colapsarse en una sola categoría visual.
 
-Canonical properties are divided into three primary levels.
+Un invariante protege el significado canónico, no una geometría idéntica en todas las poses.
 
-## Level A — Invariant
+## 3. Adaptable
 
-An invariant is a canonical property whose alteration changes or risks changing the identity or established canon of an element.
+Una propiedad adaptable puede transformarse intencionadamente mientras conserve la identidad.
 
-An invariant must not be silently changed.
+Ejemplos: vestuario contextual, profesión, periodo histórico, escenario, utilería y presentación específica de una parodia.
 
-An explicit and documented decision is required to introduce a canonical exception.
+Adaptable no significa ilimitado.
 
-Examples:
+## 4. Variable
 
-- Killo has black spots.
-- Killo has a clavel.
-- Killo has black hands.
-- Killo has black hooves.
-- Illo has a green scarf.
-- Illo has a yellow tuft.
-- Illo has a short flame tail.
+Una propiedad variable puede cambiar sin constituir por sí misma una alteración de canon, dentro de sus restricciones aplicables.
 
-An invariant protects semantic identity, not literal geometry.
+Ejemplos: pose, expresión, fondo, atmósfera, composición, distribución visual y número de lunares cuando se mantenga dentro del rango canónico.
 
-### Important rule
+La variabilidad no elimina requisitos de legibilidad, coherencia o producción.
 
-An invariant does not necessarily mean that every attribute associated with it is fixed.
+## 5. Recurrente
 
-Example:
+La recurrencia crea coherencia esperada, no obligación de presencia.
 
-Killo's canonical property `black_spots` is invariant, while the number of spots may remain variable within an explicitly defined range.
+Fauna, objetos, detalles cómicos o recursos gráficos pueden reaparecer cuando tengan una intención natural. No deben insertarse mecánicamente porque existan en el repositorio.
 
-Therefore:
+## 6. Required / Requerido
 
-    invariant meaning
-        !=
-    fixed visual representation
+`Required` describe una condición bajo la cual una propiedad debe estar presente.
 
----
+Ejemplo: si Pisha está representado y el encuadre permite valorar sus rasgos identitarios, sus lunares y clavel son esperables salvo excepción documentada. Si una característica está completamente oculta por pose o encuadre, la ausencia visible no demuestra su ausencia real.
 
-## Level B — Adaptable
+## 7. Contextual
 
-An adaptable property may be intentionally transformed to fit a context while preserving the underlying identity of the character, object, reference, or element.
+Una regla contextual depende de las circunstancias: gag, parodia, escena, medio, escala, producción, composición o intención.
 
-Examples include:
+Los marcadores anatómicos cómicos de Arsa y Pisha son contextuales y opcionales. Su ausencia no constituye una violación.
 
-- clothing;
-- profession;
-- historical period;
-- contextual props;
-- stylistic reinterpretation;
-- parody-specific presentation.
+## 8. Affordance
 
-Adaptable does not mean unrestricted.
+Una affordance define una función o uso permitido de un elemento, no una obligación identitaria.
 
-An adaptation is valid only while it remains compatible with the canonical identity and any applicable constraints.
+Ejemplo: un jamón puede sostener un gag de boxeo. Esa capacidad no obliga a que el jamón aparezca ni a que todos los gags sean de boxeo.
 
-Example:
+Identidad y uso permitido son conceptos diferentes.
 
-Killo may wear historical clothing in a period parody.
+## 9. Intención
 
-This does not permit replacing Killo's canonical identifying characteristics.
+La intención explica por qué un elemento está presente: narrativa, cómica, contextual, estilística, compositiva o de producción.
 
----
+Una intención válida no autoriza por sí sola una violación de canon.
 
-## Level C — Variable
+## 10. Identidad frente a representación
 
-A variable property may change without constituting a canonical alteration, provided it remains within other applicable constraints.
+Core debe proteger identidad semántica, no exigir reproducción literal.
 
-Examples:
+Son compatibles con canon, según contexto:
+- cambios de pose y perspectiva;
+- expresiones diferentes;
+- iluminación y variación perceptiva del color;
+- oclusiones parciales;
+- vestuario contextual;
+- escenarios y composiciones diferentes.
 
-- background;
-- scene details;
-- secondary characters;
-- atmosphere;
-- typography when not otherwise constrained;
-- pose;
-- expression;
-- number of canonical spots when explicitly defined as variable;
-- visual distribution of adaptable features.
+La pregunta correcta es si la diferencia contradice un significado protegido.
 
-Variable does not mean unconstrained.
+## 11. Evidencia
 
-A variable property may still be subject to:
+Las observaciones semánticas deben distinguir:
 
-- collection rules;
-- production requirements;
-- contextual rules;
-- readability requirements;
-- stylistic coherence;
-- explicit user intent.
+`CONFIRMED` — la evidencia apoya la propiedad.
 
----
+`CONTRADICTED` — la evidencia demuestra una contradicción.
 
-# 3. Recurring Elements
+`UNKNOWN` — la evidencia es insuficiente.
 
-Recurring is not a fourth canonical level.
+`UNKNOWN` nunca debe transformarse silenciosamente en falso.
 
-A recurring element is an element that may reappear across works because it belongs to the established visual or narrative language of the universe.
+Cuando una decisión necesaria depende de información desconocida, Core puede escalar a revisión humana.
 
-Recurrence does not make presence mandatory.
+## 12. Validación
 
-Examples:
+Core debe distinguir al menos:
 
-- recurring fauna;
-- recurring comic props;
-- recurring gags;
-- recurring secondary details.
+`VALID`
+`VIOLATION`
+`UNKNOWN`
+`HUMAN_REVIEW`
 
-A recurring element may be used when it contributes naturally to the piece.
+La validación nunca repara silenciosamente una propuesta.
 
-Repeated use must not become mechanical.
+No debe:
+- añadir rasgos que faltan;
+- reescribir la intención del usuario;
+- sustituir elementos prohibidos;
+- alterar el conocimiento canónico;
+- inventar evidencia.
 
-## Recurrence Principle
+## 13. Rangos
 
-> Recurrence creates an expectation of coherence, not an obligation of presence.
+Una variable puede tener límites explícitos.
 
-A recurring element should not be inserted into every piece merely because it exists in the repository.
+Ejemplo actual: los lunares negros de Pisha tienen un rango canónico de 2 a 8.
 
-When a recurring asset is introduced, its use may require an explicit narrative, comic, contextual, or stylistic intention according to the applicable rules.
+Cumplir el rango no garantiza por sí solo adecuación visual: tamaño, distribución, escala y composición siguen siendo relevantes.
 
----
+## 14. Adecuación visual
 
-# 4. Required
+Validez canónica y adecuación visual son conceptos diferentes.
 
-Required is not a canonical property class.
+Una elección puede cumplir un invariante y resultar visualmente inadecuada por saturación, escala, legibilidad o jerarquía.
 
-Required describes a condition under which something must be present or satisfied.
+## 15. Parodia
 
-Example:
+La parodia transforma una referencia externa o cultural dentro del universo Arsa & Pisha.
 
-Killo's clavel is an invariant.
+Debe conservar suficiente estructura o reconocimiento para que la referencia resulte legible, pero adaptarse a la identidad propia del universo.
 
-When Killo is present in a representation where his identifying features are expected to be represented, the clavel is required unless an explicit documented exception applies.
+No puede utilizarse como excusa para modificar silenciosamente invariantes.
 
-Therefore:
+## 16. Gag
 
-    invariant
-        =
-    what is canonically stable
+El gag es una unidad principal de lectura cómica.
 
-while:
+Reglas operativas actuales:
+- un gag principal por ilustración;
+- primera lectura inmediata;
+- segunda lectura sólo cuando aporte valor;
+- escalada absurda desde una lógica reconocible;
+- humor físico y gestual capaz de funcionar sin diálogo;
+- conflicto lúdico, no malicioso;
+- ternura protegida;
+- economía compositiva.
 
-    required
-        =
-    what must be present when a condition activates the obligation
+## 17. Lenguaje visual
 
-A character-specific requirement must not be interpreted as a universal requirement for the entire composition.
+La identidad visual actual es contemporánea y de vanguardia, con simplificación gráfica, deformación caricaturesca controlada y una posible pequeña capa vintage/tebeo.
 
-Example:
+El vintage debe aportar alma sin convertirse en estética retro dominante ni viejuna.
 
-If Killo is absent, Killo's clavel is not required.
+## 18. Histórico de desarrollo
 
----
+Illo & Killo y las denominaciones intermedias anteriores son patrimonio histórico del desarrollo. Sus imágenes, gags, soluciones y errores pueden utilizarse como material de aprendizaje y comparación, pero no son canon actual.
 
-# 5. Contextual
+El corpus histórico debe permanecer explícitamente separado del conocimiento canónico vigente.
 
-Contextual describes a property or rule whose application depends on circumstances.
+## 19. Regla final
 
-Context may include:
+El objetivo del modelo semántico es:
 
-- narrative situation;
-- parody;
-- collection;
-- medium;
-- production format;
-- historical setting;
-- scene;
-- user intention;
-- composition;
-- visual scale.
-
-Contextual is therefore a condition of application, not necessarily a fourth property level.
-
-Examples:
-
-- a recurring mosquito associated with summer;
-- a shark fin shown only when needed;
-- clothing adapted to a historical parody;
-- a production constraint requiring a white background;
-- a recurring gag used only when it fits naturally.
-
-A contextual rule must state, explicitly or through a well-defined contract, the circumstances in which it applies.
-
----
-
-# 6. Affordance / Permitted Use
-
-An affordance describes a permitted function, use, or narrative capability of an element.
-
-An affordance is not necessarily an identity invariant.
-
-Examples:
-
-- a jamón may support a boxing gag;
-- a chorizo may work as bait;
-- an object may serve a particular comic function;
-- a recurring prop may be used in a defined narrative role.
-
-The existence of an affordance does not require that the affordance be used.
-
-Likewise, failure to use an affordance is not a canon violation.
-
-Therefore:
-
-    identity
-        !=
-    permitted use
-
-This distinction prevents functional or narrative capabilities from being incorrectly enforced as visual invariants.
-
----
-
-# 7. Semantic Identity vs Representation
-
-The Core protects semantic identity rather than pixel-level similarity.
-
-A canonical property may have multiple valid visual representations.
-
-Examples:
-
-- a flame tail may be stylized;
-- a character may be viewed from different angles;
-- perspective may alter apparent proportions;
-- a pose may temporarily change the visible silhouette;
-- lighting may alter perceived colour;
-- a canonical feature may be partially obscured.
-
-A representation is valid when the underlying canonical meaning remains intact.
-
-## Representation Principle
-
-> The Guard protects semantic properties, not pixels.
-
-A visual difference must not automatically be classified as a canon violation.
-
-The system should ask whether the difference constitutes a meaningful contradiction.
-
----
-
-# 8. Occlusion and Missing Visibility
-
-The absence of a visible feature does not prove that the feature is absent.
-
-Examples:
-
-- a hand hidden behind the body;
-- a hoof outside the frame;
-- a scarf knot obscured by pose;
-- a tail hidden behind another element;
-- a canonical spot hidden by composition.
-
-In these situations the correct state may be:
-
-    UNKNOWN
-
-rather than:
-
-    VIOLATION
-
-The system must not infer absence from lack of visibility.
-
----
-
-# 9. Evidence States
-
-When evaluating a semantic property, the available evidence should be interpreted using three fundamental states.
-
-## CONFIRMED
-
-The available evidence supports the property.
-
-Example:
-
-Killo is explicitly present and the proposal contains a canonical clavel.
-
-Result:
-
-    CONFIRMED
-
----
-
-## CONTRADICTED
-
-The available evidence explicitly demonstrates that the property has been violated.
-
-Example:
-
-Killo is clearly shown without black spots when black spots are a canonical invariant.
-
-Result:
-
-    CONTRADICTED
-
----
-
-## UNKNOWN
-
-The available evidence is insufficient to determine whether the property is satisfied or violated.
-
-Examples:
-
-- a canonical feature is completely occluded;
-- the representation is too ambiguous;
-- the proposal does not contain enough information;
-- the visual evidence cannot reliably establish the property.
-
-Result:
-
-    UNKNOWN
-
-UNKNOWN must not be silently converted into FALSE.
-
-When an UNKNOWN state affects a required canonical decision, the appropriate response may be HUMAN_REVIEW.
-
----
-
-# 10. Validation States
-
-Semantic evaluation should distinguish at least:
-
-    VALID
-    VIOLATION
-    UNKNOWN
-    HUMAN_REVIEW
-
-These states have different meanings.
-
-## VALID
-
-The available evidence supports compatibility with canon.
-
-## VIOLATION
-
-The available evidence demonstrates a contradiction with canon.
-
-## UNKNOWN
-
-There is insufficient evidence for a reliable determination.
-
-## HUMAN_REVIEW
-
-The system cannot safely resolve the situation automatically, or the situation requires an explicit human decision.
-
-The system must not use HUMAN_REVIEW as a generic replacement for reasoning.
-
----
-
-# 11. Range-Constrained Variables
-
-A variable property may have explicit boundaries.
-
-Example:
-
-Killo's canonical black spots:
-
-    color: black
-    count: variable
-
-The current semantic decision establishes:
-
-    minimum count: 2
-    maximum count: 8
-
-Therefore:
-
-- 2 black spots is valid;
-- 3 black spots is valid;
-- 8 black spots is valid;
-- 1 black spot violates the defined range;
-- 9 black spots violates the defined range.
-
-The number of spots may vary within the range.
-
-However, numerical validity does not automatically guarantee visual adequacy.
-
----
-
-# 12. Visual Adequacy
-
-Visual adequacy is separate from canonical validity.
-
-A value can be inside a canonical range while still being unsuitable for a particular representation.
-
-Examples:
-
-- eight spots may technically be allowed but visually overcrowded;
-- two spots may technically be allowed but become visually dominant if excessively large;
-- spots may technically satisfy colour requirements but become unreadable at production scale.
-
-Therefore:
-
-    canonical validity
-        !=
-    visual adequacy
-
-Visual adequacy may depend on:
-
-- spot size;
-- distribution;
-- composition;
-- output scale;
-- medium;
-- stylistic treatment;
-- intended visual emphasis.
-
-A stylistic or visual intention may justify a particular choice within the allowed canonical space, but intention alone does not override an invariant.
-
----
-
-# 13. Intention
-
-Intention explains why an element or decision exists in a proposal.
-
-Intention may be:
-
-- narrative;
-- comic;
-- contextual;
-- stylistic;
-- compositional;
-- production-related.
-
-Intention must not be confused with canon.
-
-A valid intention does not automatically authorize a canon violation.
-
-Example:
-
-A parody may intentionally exaggerate a character.
-
-That does not automatically authorize changing an invariant.
-
-A deliberate canon exception requires an explicit documented decision.
-
----
-
-# 14. Parody
-
-Parody is an adaptable transformation of an external or cultural reference into the Illo & Killo universe.
-
-A successful parody should preserve enough structural or semantic identity for the source reference to remain recognizable while becoming part of the Illo & Killo universe.
-
-Parody may adapt:
-
-- titles;
-- typography;
-- names;
-- credits;
-- clothing;
-- setting;
-- props;
-- visual language;
-- narrative framing;
-- comic interpretation.
-
-Parody must not silently rewrite established Illo & Killo canon.
-
-The parody principle is:
-
-    recognizable source structure
-        +
-    Illo & Killo reinterpretation
-        =
-    coherent parody
-
----
-
-# 15. Organic Recurring Gags
-
-Recurring comic details may appear when they contribute naturally to the composition, narrative, or humour.
-
-They should not be forced into every representation.
-
-A recurring gag should preferably satisfy:
-
-- contextual relevance;
-- natural visual integration;
-- comic or narrative usefulness;
-- compatibility with canon;
-- proportionality to the rest of the composition.
-
-The system should prefer:
-
-    natural recurrence
-
-over:
-
-    mechanical recurrence
-
-The absence of a recurring gag is not a canon violation.
-
----
-
-# 16. Explicit Exceptions
-
-A canon exception must be explicit and documented.
-
-The system must not infer an exception merely because:
-
-- a user requested something unusual;
-- a parody is being created;
-- the result would be funnier;
-- a model generated a different interpretation;
-- an invariant is inconvenient;
-- the evidence is incomplete.
-
-An exception should identify:
-
-- the affected canon element;
-- the requested change;
-- the reason;
-- the scope;
-- the authority or decision responsible;
-- the resulting canonical status.
-
-Until an exception is documented, the existing canon remains authoritative.
-
----
-
-# 17. Decision Priority
-
-When semantic rules overlap, the system should use the following priority order:
-
-1. Explicit documented canon decision.
-2. Canonical invariants.
-3. Explicit contextual or production constraints.
-4. Required conditions.
-5. Permitted adaptations.
-6. Variable properties.
-7. Stylistic or compositional preference.
-
-A lower-priority preference must not silently override a higher-priority canonical rule.
-
----
-
-# 18. No Silent Repair
-
-Validation must not silently repair a proposal.
-
-If a proposal violates canon, the validator should:
-
-- report the violation;
-- preserve the original proposal;
-- preserve the original knowledge;
-- stop or escalate according to the pipeline rules.
-
-The validator must not:
-
-- add missing canonical elements;
-- rewrite user intent;
-- silently replace forbidden elements;
-- alter repository knowledge;
-- invent evidence.
-
-Generation and validation remain separate responsibilities.
-
----
-
-# 19. General Decision Model
-
-For a proposed property:
-
-    proposal
-        |
-        v
-    identify property
-        |
-        v
-    determine semantic class
-        |
-        v
-    determine whether the rule applies
-        |
-        +---- NO ----------> no violation
-        |
-        +---- UNKNOWN -----> UNKNOWN / HUMAN_REVIEW
-        |
-        +---- YES
-               |
-               v
-        evaluate evidence
-               |
-          +----+----+
-          |         |
-       supports   contradicts
-          |         |
-          v         v
-        VALID    VIOLATION
-
-The system must never turn insufficient evidence into a fabricated negative fact.
-
----
-
-# 20. Examples
-
-## Killo — clavel
-
-    invariant:
-        clavel
-
-If Killo is present and the clavel is clearly absent:
-
-    VIOLATION
-
-If the relevant ear is completely hidden:
-
-    UNKNOWN
-
-If the clavel is present with an adaptable colour:
-
-    VALID
-
-If the clavel is replaced with another flower:
-
-    VIOLATION
-
----
-
-## Killo — black spots
-
-    invariant:
-        black_spots
-
-    count:
-        variable
-
-    allowed range:
-        2..8
-
-    colour:
-        black
-
-The number may vary within the range.
-
-The exact size and distribution may vary subject to visual adequacy.
-
-A different colour contradicts the canonical property.
-
----
-
-## Illo — flame tail
-
-    invariant:
-        short_flame_tail
-
-A stylized flame tail may be valid.
-
-A tail partially hidden by pose is not evidence of absence.
-
-A clearly long non-flame tail contradicts the canonical property.
-
----
-
-## Recurring mosquito
-
-The mosquito may recur.
-
-Its recurrence does not make it mandatory.
-
-Its inclusion should have an appropriate intention and remain compatible with the applicable contextual rules.
-
----
-
-## Jamón as comic prop
-
-The jamón may support a boxing gag.
-
-The ability to support that gag is an affordance.
-
-The gag does not have to occur whenever the jamón appears.
-
----
-
-# 21. Semantic Model Summary
-
-The model can be summarized as:
-
-    INVARIANT
-        what must remain canonically stable
-
-    ADAPTABLE
-        what may intentionally transform while preserving identity
-
-    VARIABLE
-        what may vary without changing canon
-
-    RECURRENT
-        what may return without being mandatory
-
-    REQUIRED
-        what must be present when a condition activates the obligation
-
-    CONTEXTUAL
-        what depends on circumstances
-
-    AFFORDANCE
-        what an element is permitted or able to do
-
-    INTENTION
-        why a choice or element is present
-
-    EVIDENCE
-        what can actually be established
-
-    UNKNOWN
-        insufficient evidence, not falsehood
-
-The Core should protect canon without suppressing legitimate creative variation.
-
-The goal is not maximum rigidity.
-
-The goal is:
-
-    stable identity
-        +
-    controlled adaptation
-        +
-    contextual intelligence
-        +
-    explicit evidence
-        +
-    human escalation when necessary
+    identidad estable
+      + adaptación controlada
+      + contexto
+      + evidencia explícita
+      + revisión humana cuando sea necesaria
+      = creatividad amplia sin pérdida de identidad
