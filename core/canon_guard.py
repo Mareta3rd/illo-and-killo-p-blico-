@@ -54,12 +54,12 @@ def _data_from_knowledge(knowledge: RepositoryKnowledge | dict[str, Any]) -> dic
     return knowledge
 
 
-def _validate_killo(
+def _validate_pisha(
     proposal: dict[str, Any],
-    killo: dict[str, Any],
+    pisha: dict[str, Any],
     issues: list[ValidationIssue],
 ) -> None:
-    invariants = set(killo.get("invariants", ()))
+    invariants = set(pisha.get("invariants", ()))
     elements = proposal.get("elements", ())
     has_clavel = any(
         isinstance(element, dict) and element.get("id") == "clavel"
@@ -67,15 +67,15 @@ def _validate_killo(
     )
     exception = proposal.get("documented_exceptions", ())
 
-    if "clavel" in invariants and not has_clavel and "killo_clavel" not in exception:
+    if "clavel" in invariants and not has_clavel and "pisha_clavel" not in exception:
         issues.append(
             ValidationIssue(
-                code="CANON_KILLO_CLAVEL_MISSING",
-                message="Killo está presente pero falta su clavel canónico.",
+                code="CANON_PISHA_CLAVEL_MISSING",
+                message="Pisha está presente pero falta su clavel canónico.",
             )
         )
 
-    body = killo.get("body", {})
+    body = pisha.get("body", {})
     spots_rule = body.get("spots", {}) if isinstance(body, dict) else {}
     count_rule = spots_rule.get("count", {}) if isinstance(spots_rule, dict) else {}
     black_spots = next(
@@ -90,8 +90,8 @@ def _validate_killo(
     if "black_spots" in invariants and black_spots is None:
         issues.append(
             ValidationIssue(
-                code="CANON_KILLO_SPOTS_MISSING",
-                message="Killo está presente pero faltan sus manchas negras canónicas.",
+                code="CANON_PISHA_SPOTS_MISSING",
+                message="Pisha está presente pero faltan sus manchas negras canónicas.",
             )
         )
 
@@ -106,8 +106,8 @@ def _validate_killo(
         if evaluation.decision == "fail":
             issues.append(
                 ValidationIssue(
-                    code="CANON_KILLO_SPOTS_OUT_OF_RANGE",
-                    message=f"Killo tiene {spot_count} manchas negras; {evaluation.reason}.",
+                    code="CANON_PISHA_SPOTS_OUT_OF_RANGE",
+                    message=f"Pisha tiene {spot_count} manchas negras; {evaluation.reason}.",
                 )
             )
 
@@ -120,9 +120,9 @@ def _validate_killo(
         ):
             issues.append(
                 ValidationIssue(
-                    code="CANON_KILLO_SPOTS_COLOR_INVALID",
+                    code="CANON_PISHA_SPOTS_COLOR_INVALID",
                     message=(
-                        f"Killo tiene manchas negras de color {actual_color}; "
+                        f"Pisha tiene manchas negras de color {actual_color}; "
                         f"el color canónico permitido es {expected_color}."
                     ),
                 )
@@ -245,9 +245,9 @@ def validate_piece(
     data = _data_from_knowledge(knowledge)
     characters = data.get("characters", {})
 
-    if _character_present(proposal, "killo"):
-        killo = characters.get("killo", {})
-        _validate_killo(proposal, killo, issues)
+    if _character_present(proposal, "pisha"):
+        pisha = characters.get("pisha", {})
+        _validate_pisha(proposal, pisha, issues)
 
     library_issues = validate_library_elements(proposal.get("elements", ()), knowledge)
     issues.extend(
@@ -292,8 +292,8 @@ def validate_piece(
 
     requires_human_review = any(
         issue.code in {
-            "CANON_KILLO_CLAVEL_MISSING",
-            "CANON_KILLO_SPOTS_MISSING",
+            "CANON_PISHA_CLAVEL_MISSING",
+            "CANON_PISHA_SPOTS_MISSING",
             "REUSE_WITHOUT_INTENTION",
             "LIBRARY_INVALID",
             "LIBRARY_ID_MISSING",
@@ -310,4 +310,3 @@ def validate_piece(
         requires_human_review=requires_human_review,
         issues=tuple(issues),
     )
-       
