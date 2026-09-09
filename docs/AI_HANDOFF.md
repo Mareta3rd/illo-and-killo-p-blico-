@@ -16,8 +16,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `493a855`.
-Latest full-suite result confirmed before the current documentation/corpus cleanup block: **542 passed, 49 subtests passed**.
+Current repository checkpoint: `6150ce6aaedde5e501f07964aafc35d1991ff15e` (`align evidence history test with legacy gag path`).
+
+The most recent local verification reported before this final test-alignment commit was **541 passed, 49 subtests passed, 1 failed**. The remaining failure was the historical-gag filename assertion; that test has now been aligned with the actual archived path `002_pesca_legacy.md`. The next local action is therefore to pull this commit and rerun the complete suite. Do not record the suite as green until that run actually completes successfully.
 
 The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon. Earlier Xoxo terminology is historical/intermediate and must not be treated as the active name.
 
@@ -65,16 +66,14 @@ Previously developed material supplied during earlier creative work is intention
 Recovered image groups:
 
 ### Arsa & Pisha Origins
-Eight historical images covering early gag/composition experiments including fishing/sea, parody-cover treatment, guitar/dance, motorbike/action, jamón impact, title/identity exploration, guitar confrontation and title variants.
+Eight historical images. This is the first development stage: it is historically related to the project but is **not an early canonical version of current Arsa & Pisha**. In that stage the characters were a horse and a bull and several later decisions were discarded. Use these images only to study visual/gag mechanisms and evolution.
 
-### Killo & Illo
-Two historical images covering an espeto/fishing scene and a jamón/mosquito gag.
+### Illo & Killo
+Two historical images covering an espeto/fishing scene and a jamón/mosquito gag. This is the immediately previous development stage before current Arsa & Pisha. It may supply useful mechanisms and lessons, but it is not current canon.
 
-These images are not current reference sheets and do not override `data/characters.yaml`, the current model sheets, current palette, current humor rules or canonical claims. Historical names, anatomy, proportions, typography, palette details and exact designs must not be reintroduced automatically.
+The historical corpus is documented under `history/creative-corpus/` and is intended for extraction of successful mechanisms, lessons and reusable ideas only after revalidation against current canon. The image filenames currently preserve their numeric generation IDs; semantic filenames may be introduced after image-by-image classification, while retaining the generation ID in the filename for traceability.
 
-The historical corpus is documented under `history/creative-corpus/` and is intended for extraction of successful mechanisms, lessons and reusable ideas only after revalidation against current canon.
-
-The complete prepared transfer package is available as `Arsa_Pisha_historical_creative_corpus_COMPLETE.zip`. The earlier transfer package was incomplete; use the COMPLETE package instead.
+Historical naming/classification rule: classify by **content + gag/mechanism**, not by guessed chronology. Examples of useful semantic categories include fishing/pesca, jamón, fiesta, Vespino/fuga/action, parody-cover, guitar/dance/confrontation, and other distinct gag mechanisms discovered during review. Do not assign a title solely from a filename or memory when the image itself has not been checked.
 
 ## Repository cleanup completed in the current block
 Current-facing roots have been evolved to Arsa & Pisha, including:
@@ -144,17 +143,33 @@ The target context should make available, as relevant to the route/task:
 
 The compiler remains a transformation layer. It must not invent missing semantics, mutate canon, or let the provider decide which material is canonical.
 
+## Work-block closure protocol
+Every meaningful block should end in the same deterministic sequence:
+
+1. **Solve** the declared problem completely enough to have a coherent architectural state.
+2. **Verify** with focused tests and then the complete suite for integration work.
+3. **Inspect** the working tree and ensure no accidental files, generated artifacts or secrets have slipped in.
+4. **Save** the work with a descriptive commit and push the active branch when the block is ready to preserve.
+5. **Record** the new checkpoint, test result, decisions, unresolved gaps and exact next step in this handoff.
+6. **Mark direction**: state one next implementation target, and explicitly state what is out of scope until that target is closed.
+7. **Stop** at a stable checkpoint rather than starting an unrelated improvement merely because the session is still open.
+
+A block is not considered closed while a failing test, undocumented architectural change, unresolved canon ambiguity, or unrecorded next direction remains.
+
+A new session should begin by reading this handoff, checking the branch/worktree and rerunning the relevant verification before making changes. The conversation is context; this file is the durable state.
+
 ## Next implementation sequence
-1. Copy the **COMPLETE** historical image package into `history/creative-corpus/` in the Codespace and verify filenames against its manifest.
-2. Verify active-root references no longer point to the removed legacy Gag 001 raster; historical experiment scripts may explicitly reference archived material when that is their purpose.
+1. Pull commit `6150ce6aaedde5e501f07964aafc35d1991ff15e` into the Codespace and run `PYTHONPATH=. pytest -q`.
+2. Once the suite is green, verify active-root references no longer point to the removed legacy Gag 001 raster; historical experiment scripts may explicitly reference archived material when that is their purpose.
 3. Finish reviewing any remaining current-facing Illo/Killo/Xoxo references; preserve only those that are explicitly historical.
-4. Extend `CompiledPrompt` with a deterministic semantic-context representation or equivalent provider-neutral structure.
-5. Build that context from authoritative current data, with route/task relevance and bounded size.
-6. Add focused tests proving Arsa/Pisha semantics are present and historical identity is not activated by the context builder.
-7. Keep the Groq/Qwen transport unchanged unless the new compiled representation requires a deliberate rendering adjustment.
-8. Run the complete suite after the cleanup and context changes.
-9. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
-10. Update this handoff again at the end of that block.
+4. Verify the 10-image historical corpus in `history/creative-corpus/` and classify/rename it semantically while retaining each original generation ID.
+5. Extend `CompiledPrompt` with a deterministic semantic-context representation or equivalent provider-neutral structure.
+6. Build that context from authoritative current data, with route/task relevance and bounded size.
+7. Add focused tests proving Arsa/Pisha semantics are present and historical identity is not activated by the context builder.
+8. Keep the Groq/Qwen transport unchanged unless the new compiled representation requires a deliberate rendering adjustment.
+9. Run the complete suite after the cleanup and context changes.
+10. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
+11. Update this handoff again at the end of that block.
 
 ## Documentation discipline
 `docs/BIBLIA_2_0.md` is the canonical narrative reference for the current universe and explicitly distinguishes historical Illo & Killo material from Arsa & Pisha canon.
