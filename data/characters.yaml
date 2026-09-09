@@ -28,13 +28,15 @@ xoxo:
       count: 4
       silhouette: stylized
       proportion: slightly_longer_than_pisha
+      feet:
+        type: hoof
+        color: black
+    arms:
+      count: 2
       hands:
         color: black
         fingers: 3
         gloves: false
-      feet:
-        type: hoof
-        color: black
     tail:
       type: flame
       length: short
@@ -91,13 +93,15 @@ pisha:
       silhouette: stocky_short
       proportion: shorter_than_xoxo
       curvature: slight_panda_like_curve
+      feet:
+        type: hoof
+        color: black
+    arms:
+      count: 2
       hands:
         color: black
         fingers: 3
         gloves: false
-      feet:
-        type: hoof
-        color: black
     horns:
       type: short_rounded
       aggression: low
@@ -130,16 +134,3 @@ pisha:
     default_energy: moderate
     pose_expression: innocent_with_escalation
     gag_role: observes_reacts_or_escalates_without_required_secondary_status
-
-relationship:
-  type: inseparable_companions
-  dynamics:
-    - mutual_trust
-    - mutual_teasing
-    - mutual_protection
-    - shared_mischief
-    - situational_role_switching
-  protagonist_balance: dynamic
-  conflict_style: playful_not_malicious
-  loyalty: immediate_and_fundamental
-  tonal_rule: tenderness_under_gamemischief
