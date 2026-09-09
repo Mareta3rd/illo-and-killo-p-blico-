@@ -1,18 +1,18 @@
-# Paleta oficial · XOXO & PISHA
+# Paleta oficial · Arsa & Pisha
 
 ## Principio
-Los colores no describen la realidad: describen el universo XOXO & PISHA.
+Los colores no describen la realidad: describen el universo **Arsa & Pisha**.
 
 La paleta debe ser intensa, limpia y contrastada sin depender de modas cromáticas. El universo puede utilizar colores ácidos o fluorescentes como acentos, pero no debe convertirse en una estética permanentemente neón.
 
 ## Base de personajes
-- **Xoxo:** blanco limpio como color dominante del pelaje.
-- **Mechón/cresta de Xoxo:** amarillo rubio intenso, heredero del amarillo ácido del diseño anterior.
+- **Arsa:** blanco limpio como color dominante del pelaje.
+- **Mechón/cresta de Arsa:** amarillo rubio intenso, heredero del amarillo ácido del diseño anterior.
 - **Pisha:** rojo fuerte, con una familia cromática roja/coral capaz de desplazarse ligeramente según composición y soporte sin perder su identidad.
 - **Lunares de Pisha:** negro.
 - **Manos de ambos:** negro.
 - **Pezuñas de ambos:** negro.
-- **Pañuelo de Xoxo:** verde; el matiz exacto del verde es intercambiable dentro de una gama coherente.
+- **Pañuelo de Arsa:** verde; el matiz exacto del verde es intercambiable dentro de una gama coherente.
 
 ## Acentos
 Turquesa, cian, lima, amarillo ácido, magenta u otros tonos intensos pueden utilizarse como acentos cuando mejoren el gag, la jerarquía visual o el lenguaje gráfico.
