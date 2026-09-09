@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `b7bb51c`.
+Current repository checkpoint: `9c424a9`.
 Latest full-suite result confirmed in the current working session: **542 passed, 49 subtests passed**.
 
 The repository currently has **Arsa & Pisha as the active creative canon**. Illo & Killo are historical development material, not current character canon. Earlier Xoxo terminology is also historical/intermediate and must not be treated as the active name.
@@ -73,7 +73,9 @@ Two historical images covering an espeto/fishing scene and a jamón/mosquito gag
 
 These images are **not** current reference sheets and do not override `data/characters.yaml`, current model sheets, current palette, current humor rules or canonical gag claims. Historical anatomy, proportions, names, typography, palette details, props and exact designs must not be reintroduced automatically.
 
-The working repository path for this corpus is intended to remain under `history/creative-corpus/` with an explicit manifest. The corpus may be mined for successful mechanisms, learned lessons and reusable ideas only after revalidation against current canon.
+A repository manifest has been added at `history/creative-corpus/MANIFEST.md`. The binary image files themselves are prepared in an external transfer package because the available repository write interface is text-only; they still need to be copied into the corresponding `history/creative-corpus/` directories from the prepared package.
+
+The corpus may be mined for successful mechanisms, learned lessons and reusable ideas only after revalidation against current canon.
 
 ## Validated architecture
 The project has tested boundaries for:
@@ -128,13 +130,14 @@ The target context should make available, as relevant to the route/task:
 The compiler remains a transformation layer. It must not invent missing semantics, mutate canon, or let the provider decide which material is canonical.
 
 ## Next implementation sequence
-1. Inspect the existing Core knowledge-loading path and identify the authoritative structured sources already available to `PipelineContext`.
-2. Extend `CompiledPrompt` with a deterministic semantic-context representation or an equivalent provider-neutral structure.
-3. Build that context from authoritative current data, with route/task relevance and bounded size.
-4. Add focused tests proving that Arsa/Pisha semantics are present and historical Illo/Killo/Xoxo content is not treated as active identity.
-5. Keep the Groq/Qwen transport unchanged except where the new compiled representation requires a deliberate rendering adjustment.
-6. Run the complete suite.
-7. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
+1. Complete incorporation of the prepared historical image package into `history/creative-corpus/` in the Codespace.
+2. Inspect the existing Core knowledge-loading path and identify the authoritative structured sources already available to `PipelineContext`.
+3. Extend `CompiledPrompt` with a deterministic semantic-context representation or an equivalent provider-neutral structure.
+4. Build that context from authoritative current data, with route/task relevance and bounded size.
+5. Add focused tests proving that Arsa/Pisha semantics are present and historical Illo/Killo/Xoxo content is not treated as active identity.
+6. Keep the Groq/Qwen transport unchanged except where the new compiled representation requires a deliberate rendering adjustment.
+7. Run the complete suite.
+8. Only then perform the next real Qwen candidate-generation experiment, recording the actual prompt/context and candidate so the result is auditable.
 
 ## Documentation discipline
 `docs/BIBLIA_2_0.md` is the canonical narrative reference for the current universe and explicitly distinguishes historical Illo & Killo material from Arsa & Pisha canon.
