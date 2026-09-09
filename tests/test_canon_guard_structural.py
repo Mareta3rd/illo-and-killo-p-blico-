@@ -18,10 +18,8 @@ class CanonGuardStructuralTests(unittest.TestCase):
             "body": {"color": "white"},
             "muzzle": "equine_hint_integrated",
             "mane_tuft": {"color": "yellow_blonde", "shape": "flame_like_crest"},
-            "legs": {
-                "hands": {"color": "black", "fingers": 3},
-                "feet": {"type": "hoof", "color": "black"},
-            },
+            "legs": {"feet": {"type": "hoof", "color": "black"}},
+            "arms": {"hands": {"color": "black", "fingers": 3}},
             "scarf": {"color": "green"},
             "tail": {"type": "flame", "length": "short"},
             "intention": "character_identity",
@@ -39,10 +37,8 @@ class CanonGuardStructuralTests(unittest.TestCase):
             "spots": {"color": "black"},
             "flower": {"type": "clavel"},
             "horns": {"type": "short_rounded"},
-            "legs": {
-                "hands": {"color": "black", "fingers": 3},
-                "feet": {"type": "hoof", "color": "black"},
-            },
+            "legs": {"feet": {"type": "hoof", "color": "black"}},
+            "arms": {"hands": {"color": "black", "fingers": 3}},
             "intention": "character_identity",
         }
         for key, value in overrides.items():
@@ -85,10 +81,7 @@ class CanonGuardStructuralTests(unittest.TestCase):
             {
                 "elements": [
                     self._pisha_element(
-                        legs={
-                            "hands": {"color": "black", "fingers": 3},
-                            "feet": {"type": "hoof", "color": "red"},
-                        }
+                        legs={"feet": {"type": "hoof", "color": "red"}}
                     )
                 ]
             },
