@@ -9,12 +9,12 @@ from scripts.run_gemini_stability_experiment import VARIANTS, load_claim
 
 
 class RealGeminiStabilityRegressionTests(unittest.TestCase):
-    def test_gag001_xoxo_primary_is_canonical_and_three_variants_exist(self):
-        claim = load_claim("gag/001/composition/xoxo_primary")
-        self.assertEqual(claim.key, "gag/001/composition/xoxo_primary")
+    def test_gag001_arsa_primary_is_canonical_and_three_variants_exist(self):
+        claim = load_claim("gag/001/composition/arsa_primary")
+        self.assertEqual(claim.key, "gag/001/composition/arsa_primary")
         self.assertEqual(
             claim.statement,
-            "Xoxo is the primary visual and narrative subject of the gag.",
+            "Arsa is the primary visual and narrative subject of the gag.",
         )
         self.assertEqual(
             tuple(VARIANTS),
