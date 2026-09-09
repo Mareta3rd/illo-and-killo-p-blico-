@@ -48,11 +48,15 @@ class StructuralEvaluatorIntegrationTests(unittest.TestCase):
             )
         )
 
-    def test_real_repository_catalog_is_migrated_to_xoxo(self):
+    def test_real_repository_catalog_is_migrated_to_xoxo_pisha(self):
         knowledge = load_repository(self.ROOT)
         self.assertEqual(
             knowledge.data["characters"]["xoxo"]["invariants"][0],
             "white_pelage",
+        )
+        self.assertEqual(
+            knowledge.data["characters"]["pisha"]["invariants"][0],
+            "red_pelage",
         )
         self.assertNotIn("illo", knowledge.data["characters"])
         self.assertNotIn("killo", knowledge.data["characters"])
