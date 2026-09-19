@@ -222,7 +222,7 @@ Recommended first live experiment after verification:
 - inspect the audit before interpreting the generated candidate;
 - do not commit generated run artifacts unless deliberately chosen as historical experimental evidence.
 
-Suggested invocation now that the test gate is green:
+Suggested invocation after the test gate returns green:
 ```bash
 python scripts/run_groq_qwen_candidate.py \
   "Crear un gag nuevo de Arsa y Pisha alrededor de un jamón, con un gag principal inmediato, escalada absurda desde una lógica reconocible y ternura entre ambos." \
