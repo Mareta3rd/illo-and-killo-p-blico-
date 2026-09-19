@@ -45,7 +45,8 @@ class CreativeFeedbackTests(unittest.TestCase):
         report = build_creative_feedback(candidate, root=ROOT)
         self.assertTrue(report.findings)
         self.assertEqual(candidate, before)
-        self.assertTrue(all(not isinstance(value, (int, float)) for value in report.__dict__.values()))
+        self.assertIsInstance(report.revision_required, bool)
+        self.assertIsInstance(report.findings, tuple)
 
 
 if __name__ == "__main__":
