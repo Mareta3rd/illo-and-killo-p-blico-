@@ -49,8 +49,6 @@ class CompiledPrompt:
         if self.iteration_guidance:
             sections.extend(["CREATIVE ITERATION GUIDANCE:", *[f"- {item}" for item in self.iteration_guidance]])
         return "\n".join(sections)
-        ]
-        return "\n".join(sections)
 
 
 _ROUTE_TASKS = {
