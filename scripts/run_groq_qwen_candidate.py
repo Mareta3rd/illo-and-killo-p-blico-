@@ -27,6 +27,10 @@ from openai import OpenAI
 from core.application import ApplicationRequest, run_application
 from core.evidence_state import EvidenceState
 from core.external_evidence_adapter import ExternalEvidenceRecord
+from core.candidate_execution_artifact import (
+    build_candidate_execution_artifact,
+    write_candidate_execution_artifact,
+)
 from core.groq_qwen_candidate_executor import GroqQwenCandidateExecutor
 from core.groq_qwen_candidate_transport import (
     DEFAULT_GROQ_BASE_URL,
@@ -111,7 +115,12 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--artifact-path",
         type=Path,
-        help="Optional path for the execution artifact JSON file.",
+        help="Optional path for the evidence execution artifact JSON file.",
+    )
+    parser.add_argument(
+        "--candidate-audit-path",
+        type=Path,
+        help="Optional path for the candidate-generation audit JSON file.",
     )
     parser.add_argument(
         "--image",
@@ -165,6 +174,43 @@ def _safe_result_summary(result: Any) -> dict[str, Any]:
     iteration_count = 0
     stop_reason = result.stop_reason if hasattr(result, "stop_reason") else None
 
+    if args.candidate_audit_path is not None:
+        core = getattr(result, "core", None)
+        compiled = getattr(getattr(core, "pipeline", None), "compiled_prompt", None)
+        if core is None or compiled is None:
+            raise SystemExit(
+                "candidate audit requested but Core produced no compiled prompt"
+            )
+
+        route = getattr(core.pipeline.context.route, "value", core.pipeline.context.route)
+        loop = core.loop
+        iterations = loop.iterations if loop is not None else ()
+        final_status = loop.status if loop is not None else "stopped_before_loop"
+        core_decision = None
+        if iterations:
+            core_decision = iterations[-1].evaluation.decision
+        elif getattr(core.pipeline, "evaluation", None) is not None:
+            core_decision = core.pipeline.evaluation.evaluation.decision
+
+        candidate_artifact = build_candidate_execution_artifact(
+            run_id=request.run_id,
+            provider=request.provider_name,
+            model=request.model,
+            image=request.image,
+            idea=request.idea,
+            route=str(route),
+            compiled_prompt=compiled,
+            loop_iterations=iterations,
+            initial_candidate=request.proposal,
+            final_status=final_status,
+            stop_reason=getattr(result, "stop_reason", None),
+            core_decision=core_decision,
+        )
+        write_candidate_execution_artifact(
+            args.candidate_audit_path,
+            candidate_artifact,
+        )
+
     if getattr(result, "core", None) is not None:
         core = result.core
         if getattr(core, "loop", None) is not None and getattr(core.loop, "iterations", None):
@@ -182,6 +228,7 @@ def _safe_result_summary(result: Any) -> dict[str, Any]:
         "iterations": iteration_count,
         "artifact": bool(getattr(result, "artifact", None) is not None),
         "attention": None,
+        "candidate_audit": bool(args.candidate_audit_path is not None),
     }
 
 

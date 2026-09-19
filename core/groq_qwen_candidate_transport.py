@@ -205,7 +205,7 @@ def build_groq_qwen_candidate_client(
     return OpenAI(api_key=api_key, base_url=base_url, max_retries=0)
 
 
-def _build_candidate_request_prompt(
+def build_candidate_request_prompt(
     compiled: CompiledPrompt,
     iteration: int,
     previous: dict[str, Any] | None,
@@ -333,7 +333,7 @@ def build_groq_qwen_responses_transport(
         previous: dict[str, Any] | None,
     ) -> dict[str, Any]:
         """Request candidate from Groq/Qwen with structured output."""
-        prompt_text = _build_candidate_request_prompt(compiled, iteration, previous)
+        prompt_text = build_candidate_request_prompt(compiled, iteration, previous)
 
         try:
             response = client.chat.completions.create(
@@ -373,6 +373,7 @@ def build_groq_qwen_responses_transport(
 __all__ = [
     "build_groq_qwen_candidate_client",
     "build_groq_qwen_responses_transport",
+    "build_candidate_request_prompt",
     "parse_groq_qwen_candidate",
     "get_groq_qwen_candidate_model_profile",
     "GROQ_QWEN_CANDIDATE_SCHEMA",
