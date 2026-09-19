@@ -26,6 +26,7 @@ class CompiledPrompt:
     checks: tuple[str, ...]
     context_summary: tuple[str, ...]
     semantic_context: SemanticContext | None = None
+    iteration_guidance: tuple[str, ...] = ()
 
     def render(self) -> str:
         """Render the package as plain text without adding creative content."""
@@ -45,6 +46,10 @@ class CompiledPrompt:
             "CONTEXT:",
             *[f"- {item}" for item in context_lines],
         ]
+        if self.iteration_guidance:
+            sections.extend(["CREATIVE ITERATION GUIDANCE:", *[f"- {item}" for item in self.iteration_guidance]])
+        return "\n".join(sections)
+        ]
         return "\n".join(sections)
 
 
@@ -63,6 +68,9 @@ _BASE_CONSTRAINTS = (
     "Do not add recurring assets without an explicit narrative or comic intention.",
     "Preserve fixed character invariants unless a documented exception is present.",
     "Do not modify repository knowledge as part of execution.",
+    "Use canon as a boundary, not as a template.",
+    "For a new gag, do not fake novelty by merely swapping a noun or prop while preserving the same causal mechanism.",
+    "Search for a coherent, specific alternative: the system provides rules and resources, not a fixed recipe.",
 )
 
 
