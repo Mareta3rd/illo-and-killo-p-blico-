@@ -59,10 +59,10 @@ GROQ_QWEN_CANDIDATE_SCHEMA = {
                 "type": "object",
                 "additionalProperties": False,
                 "properties": {
-                    "id": {"type": "string", "minLength": 1},
-                    "intention": {"type": "string", "minLength": 1},
+                    "id": {"type": "string"},
+                    "intention": {"type": "string"},
                     "library": {"type": ["string", "null"]},
-                    "count": {"type": ["integer", "null"], "minimum": 0},
+                    "count": {"type": ["integer", "null"]},
                     "color": {"type": ["string", "null"]},
                     "very_small": {"type": ["boolean", "null"]},
                     "role": {"type": ["string", "null"]},
