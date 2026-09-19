@@ -190,7 +190,22 @@ Illo & Killo y las denominaciones intermedias anteriores son patrimonio históri
 
 El corpus histórico debe permanecer explícitamente separado del conocimiento canónico vigente.
 
-## 19. Regla final
+## 19. Contrato de candidato externo
+
+Un candidato generado por un proveedor externo no es texto libre para Core. Debe conservar una forma estructurada compatible con la validación determinista.
+
+Campos principales:
+- `content`: propuesta creativa.
+- `characters`: identificadores de personajes.
+- `roles`: relaciones o funciones de los personajes.
+- `elements`: objetos estructurados. Cada elemento necesita `id` e `intention` y puede declarar `library`, `count`, `color`, `very_small` y `role`. Los campos no aplicables se expresan como `null`.
+- `checks`: las comprobaciones explícitas `intention`, `canon`, `coherence` y `reuse_intention`.
+
+El transporte externo puede exigir un esquema más estricto, pero no debe ser más permisivo que el contrato que Core necesita para validar sin adivinar. Un elemento como una cadena aislada (`"clavel"`) no es equivalente a un elemento estructurado.
+
+El proveedor puede proponer estructura y comprobaciones, pero la interpretación de esas comprobaciones y la decisión final siguen perteneciendo a Core.
+
+## 20. Regla final
 
 El objetivo del modelo semántico es:
 
