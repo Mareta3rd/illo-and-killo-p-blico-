@@ -191,9 +191,11 @@ Architectural boundary:
 - evidence remains in the existing evidence artifact/path and candidate audit remains a separate closed record.
 
 Verification state:
-- The new audit scaffold has **not yet been run through the Codespace test suite** after implementation.
-- No claim of green status should be made until the user pulls the current branch and runs the complete suite.
+- The Codespace complete suite is now **GREEN: 552 passed, 49 subtests passed**.
+- `bash scripts/close_work_block.sh` completed successfully; whitespace, working-tree and diff checks were clean.
+- The new audit scaffold is therefore verified by the complete regression suite.
 - No live Qwen result has yet been generated for this block.
+- The earlier bare `pytest -q` failure was an invocation/environment issue: this repository's closure script correctly uses `PYTHONPATH=.`, after which the same complete suite passed.
 
 Recommended first live experiment after verification:
 - textual-only Qwen candidate run;
@@ -203,7 +205,7 @@ Recommended first live experiment after verification:
 - inspect the audit before interpreting the generated candidate;
 - do not commit generated run artifacts unless deliberately chosen as historical experimental evidence.
 
-Suggested invocation after the test gate is green:
+Suggested invocation now that the test gate is green:
 ```bash
 python scripts/run_groq_qwen_candidate.py \
   "Crear un gag nuevo de Arsa y Pisha alrededor de un jamón, con un gag principal inmediato, escalada absurda desde una lógica reconocible y ternura entre ambos." \
