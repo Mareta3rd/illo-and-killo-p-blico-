@@ -54,8 +54,29 @@ GROQ_QWEN_CANDIDATE_SCHEMA = {
         },
         "elements": {
             "type": "array",
-            "items": {"type": "string"},
-            "description": "Narrative elements or objects",
+            "description": "Structured elements introduced by the candidate. Never use bare strings.",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "id": {"type": "string", "minLength": 1},
+                    "intention": {"type": "string", "minLength": 1},
+                    "library": {"type": ["string", "null"]},
+                    "count": {"type": ["integer", "null"], "minimum": 0},
+                    "color": {"type": ["string", "null"]},
+                    "very_small": {"type": ["boolean", "null"]},
+                    "role": {"type": ["string", "null"]},
+                },
+                "required": [
+                    "id",
+                    "intention",
+                    "library",
+                    "count",
+                    "color",
+                    "very_small",
+                    "role",
+                ],
+            },
         },
         "checks": {
             "type": "object",
@@ -221,7 +242,16 @@ def build_candidate_request_prompt(
         sections.append("")
 
     sections.append(f"ITERATION: {iteration}")
-    sections.append("Return a valid JSON object with required and optional fields as documented.")
+    sections.append(
+        "CANDIDATE CONTRACT: elements must be objects with id, intention, library, count, color, "
+        "very_small, and role. Use null for non-applicable element fields. Never emit a bare "
+        "string inside elements."
+    )
+    sections.append(
+        'ELEMENT FORMAT: {"id":"...","intention":"...","library":null,"count":null,'
+        '"color":null,"very_small":null,"role":null}'
+    )
+    sections.append("Return a JSON object that matches the strict schema exactly.")
 
     return "\n".join(sections)
 
@@ -258,50 +288,122 @@ def parse_groq_qwen_candidate(payload: Any) -> dict[str, Any]:
             f"groq qwen candidate response is not a dict (got {type(data).__name__})"
         )
 
-    # Validate required field
-    if "content" not in data:
-        raise InvalidCandidateError("groq qwen candidate missing required field: content")
-
-    # Validate content type
-    if not isinstance(data.get("content"), str):
+    required_fields = {"content", "characters", "roles", "elements", "checks"}
+    missing = required_fields - set(data)
+    if missing:
         raise InvalidCandidateError(
-            f"groq qwen candidate 'content' must be string (got {type(data.get('content')).__name__})"
+            f"groq qwen candidate missing required fields: {', '.join(sorted(missing))}"
         )
 
-    # Reject forbidden fields (Core decisions, Evidence)
     for forbidden in _FORBIDDEN_CANDIDATE_FIELDS:
         if forbidden in data:
             raise InvalidCandidateError(
                 f"groq qwen candidate contains forbidden field: {forbidden}"
             )
 
-    # Reject unknown fields (schema additionalProperties=False)
-    allowed_fields = {"content", "characters", "roles", "elements", "checks"}
-    unknown = set(data.keys()) - allowed_fields
+    unknown = set(data) - required_fields
     if unknown:
         raise InvalidCandidateError(
             f"groq qwen candidate contains unknown fields: {', '.join(sorted(unknown))}"
         )
 
-    # Validate checks structure if present
-    if "checks" in data:
-        checks = data["checks"]
-        if not isinstance(checks, dict):
-            raise InvalidCandidateError(
-                f"groq qwen candidate 'checks' must be dict or absent (got {type(checks).__name__})"
-            )
-        # Allow checks dict; Core evaluator will normalize
+    if not isinstance(data["content"], str):
+        raise InvalidCandidateError("groq qwen candidate 'content' must be string")
 
-    # Validate array fields
-    for field in ("characters", "roles", "elements"):
-        if field in data:
-            value = data[field]
-            if not isinstance(value, list):
-                raise InvalidCandidateError(
-                    f"groq qwen candidate '{field}' must be array or absent (got {type(value).__name__})"
-                )
-            if not all(isinstance(item, str) for item in value):
-                raise InvalidCandidateError(f"groq qwen candidate '{field}' must contain only strings")
+    for field in ("characters", "roles"):
+        value = data[field]
+        if not isinstance(value, list):
+            raise InvalidCandidateError(f"groq qwen candidate '{field}' must be an array")
+        if not all(isinstance(item, str) and item.strip() for item in value):
+            raise InvalidCandidateError(
+                f"groq qwen candidate '{field}' must contain only non-empty strings"
+            )
+
+    elements = data["elements"]
+    if not isinstance(elements, list):
+        raise InvalidCandidateError("groq qwen candidate 'elements' must be an array")
+    element_fields = {
+        "id", "intention", "library", "count", "color", "very_small", "role"
+    }
+    for index, element in enumerate(elements):
+        if not isinstance(element, dict):
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} must be an object"
+            )
+        if set(element) != element_fields:
+            missing_element = element_fields - set(element)
+            unknown_element = set(element) - element_fields
+            detail = []
+            if missing_element:
+                detail.append("missing=" + ",".join(sorted(missing_element)))
+            if unknown_element:
+                detail.append("unknown=" + ",".join(sorted(unknown_element)))
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} fields invalid ({'; '.join(detail)})"
+            )
+        if not isinstance(element["id"], str) or not element["id"].strip():
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} 'id' must be a non-empty string"
+            )
+        if not isinstance(element["intention"], str) or not element["intention"].strip():
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} 'intention' must be a non-empty string"
+            )
+        if element["library"] is not None and not isinstance(element["library"], str):
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} 'library' must be string or null"
+            )
+        if element["count"] is not None and (
+            not isinstance(element["count"], int)
+            or isinstance(element["count"], bool)
+            or element["count"] < 0
+        ):
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} 'count' must be a non-negative integer or null"
+            )
+        if element["color"] is not None and not isinstance(element["color"], str):
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} 'color' must be string or null"
+            )
+        if element["very_small"] is not None and not isinstance(element["very_small"], bool):
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} 'very_small' must be boolean or null"
+            )
+        if element["role"] is not None and not isinstance(element["role"], str):
+            raise InvalidCandidateError(
+                f"groq qwen candidate element {index} 'role' must be string or null"
+            )
+
+    checks = data["checks"]
+    if not isinstance(checks, dict):
+        raise InvalidCandidateError("groq qwen candidate 'checks' must be an object")
+    required_checks = {"intention", "canon", "coherence", "reuse_intention"}
+    if set(checks) != required_checks:
+        missing_checks = required_checks - set(checks)
+        unknown_checks = set(checks) - required_checks
+        detail = []
+        if missing_checks:
+            detail.append("missing=" + ",".join(sorted(missing_checks)))
+        if unknown_checks:
+            detail.append("unknown=" + ",".join(sorted(unknown_checks)))
+        raise InvalidCandidateError(
+            f"groq qwen candidate checks are invalid ({'; '.join(detail)})"
+        )
+    for name, value in checks.items():
+        if isinstance(value, bool):
+            continue
+        if not isinstance(value, dict) or set(value) != {"decision", "reason"}:
+            raise InvalidCandidateError(
+                f"groq qwen candidate check '{name}' must be boolean or decision/reason object"
+            )
+        if value["decision"] not in {"pass", "fail", "unknown"}:
+            raise InvalidCandidateError(
+                f"groq qwen candidate check '{name}' has an invalid decision"
+            )
+        if not isinstance(value["reason"], str):
+            raise InvalidCandidateError(
+                f"groq qwen candidate check '{name}' reason must be a string"
+            )
 
     return data
 

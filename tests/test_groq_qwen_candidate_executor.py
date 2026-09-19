@@ -226,6 +226,17 @@ class GroqQwenCandidateExecutorTests(unittest.TestCase):
         schema = GROQ_QWEN_CANDIDATE_SCHEMA
         self.assertFalse(schema["additionalProperties"])
 
+    def test_schema_requires_structured_element_objects(self):
+        schema = GROQ_QWEN_CANDIDATE_SCHEMA
+        item = schema["properties"]["elements"]["items"]
+        self.assertEqual(item["type"], "object")
+        self.assertFalse(item["additionalProperties"])
+        self.assertEqual(
+            item["required"],
+            ["id", "intention", "library", "count", "color", "very_small", "role"],
+        )
+
+
     # --- Requirement 7: Candidate valid → return dict ---
 
     def test_valid_candidate_returned(self):
@@ -522,21 +533,50 @@ class GroqQwenCandidateExecutorIntegrationTests(unittest.TestCase):
 class GroqQwenCandidateParsingTests(unittest.TestCase):
     """Test parse_groq_qwen_candidate validation in detail."""
 
-    def test_parse_valid_minimal_candidate(self):
-        """Valid minimal candidate with only 'content'."""
-        result = parse_groq_qwen_candidate({"content": "test"})
-        self.assertEqual(result, {"content": "test"})
-
-    def test_parse_valid_with_checks(self):
-        """Valid candidate with checks dict."""
-        result = parse_groq_qwen_candidate({
+    def valid_candidate(self):
+        return {
             "content": "test",
+            "characters": ["arsa", "pisha"],
+            "roles": ["primary", "secondary"],
+            "elements": [{
+                "id": "clavel",
+                "intention": "character_identity",
+                "library": None,
+                "count": None,
+                "color": None,
+                "very_small": None,
+                "role": None,
+            }],
             "checks": {
                 "intention": True,
-                "canon": {"decision": "pass", "reason": "looks good"},
-            }
-        })
-        self.assertIn("checks", result)
+                "canon": True,
+                "coherence": True,
+                "reuse_intention": True,
+            },
+        }
+
+    def test_parse_valid_candidate(self):
+        result = parse_groq_qwen_candidate(self.valid_candidate())
+        self.assertEqual(result["content"], "test")
+        self.assertEqual(result["elements"][0]["id"], "clavel")
+
+    def test_parse_bare_string_element_is_rejected(self):
+        candidate = self.valid_candidate()
+        candidate["elements"] = ["clavel"]
+        with self.assertRaises(InvalidCandidateError):
+            parse_groq_qwen_candidate(candidate)
+
+    def test_parse_missing_element_field_is_rejected(self):
+        candidate = self.valid_candidate()
+        del candidate["elements"][0]["intention"]
+        with self.assertRaises(InvalidCandidateError):
+            parse_groq_qwen_candidate(candidate)
+
+    def test_parse_incomplete_checks_are_rejected(self):
+        candidate = self.valid_candidate()
+        del candidate["checks"]["coherence"]
+        with self.assertRaises(InvalidCandidateError):
+            parse_groq_qwen_candidate(candidate)
 
     def test_parse_missing_required_content(self):
         """Candidate without 'content' field should fail."""
