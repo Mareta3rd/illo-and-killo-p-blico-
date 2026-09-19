@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import re
 import unicodedata
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping
 
 
 _MAX_ENTRIES = 32
@@ -23,11 +23,11 @@ _ROUTE_SECTIONS: dict[str, tuple[tuple[str, str, int], ...]] = {
         ("palette", "## Base de personajes", 6),
     ),
     "gag": (
-        ("humor", "## Principios", 5),
-        ("humor", "## Gramática del gag", 6),
-        ("humor", "## Andalucía", 6),
-        ("semantic", "## 16. Gag", 6),
-        ("semantic", "## 17. Lenguaje visual", 3),
+        ("humor", "## Principios", 3),
+        ("humor", "## Gramática del gag", 3),
+        ("humor", "## Andalucía", 4),
+        ("semantic", "## 16. Gag", 4),
+        ("semantic", "## 17. Lenguaje visual", 2),
     ),
     "parody": (
         ("humor", "## Principios", 3),
@@ -53,6 +53,15 @@ _ROUTE_SECTIONS: dict[str, tuple[tuple[str, str, int], ...]] = {
     ),
 }
 
+_ROUTE_DECISION_LIMITS = {
+    "character": 2,
+    "gag": 2,
+    "parody": 2,
+    "merchandising": 2,
+    "3d": 2,
+    "general": 3,
+}
+
 
 @dataclass(frozen=True)
 class SemanticContext:
@@ -75,7 +84,7 @@ def _normalize(value: str) -> str:
 def _tokens(value: str) -> set[str]:
     return {
         token
-        for token in re.findall(r"[a-z0-9_]+", _normalize(value))
+        for token in re.findall(r"[a-z0-9]+", _normalize(value))
         if len(token) >= 4
     }
 
@@ -104,7 +113,11 @@ def _extract_section(markdown: str, heading: str, limit: int) -> list[str]:
         stripped = line.strip()
         if stripped.startswith("## ") and stripped != heading:
             break
-        if stripped.startswith("- ") or stripped.startswith("**") or stripped.startswith("### "):
+        if (
+            stripped.startswith("- ")
+            or stripped.startswith("**")
+            or stripped.startswith("### ")
+        ):
             extracted.append(_compact(stripped))
         elif stripped and stripped.startswith("La "):
             extracted.append(_compact(stripped))
@@ -171,7 +184,7 @@ def _decision_entries(decisions: Mapping[str, Any], route: str) -> list[str]:
 
     route_topics = {
         "character": ("hands", "spots", "clavel"),
-        "gag": ("hands", "spots", "cultural"),
+        "gag": ("hands", "spots"),
         "parody": ("parody", "cultural"),
         "merchandising": ("hands", "spots", "cultural"),
         "3d": ("hands", "spots"),
@@ -192,7 +205,7 @@ def _decision_entries(decisions: Mapping[str, Any], route: str) -> list[str]:
             )
         )
 
-    return entries
+    return entries[: _ROUTE_DECISION_LIMITS.get(route, 3)]
 
 
 def _option_entries(data: Mapping[str, Any], key: str, limit: int) -> list[str]:
@@ -216,17 +229,33 @@ def _relevant_claim_entries(
     claims: Mapping[str, Any],
     idea: str,
     route: str,
+    objects: Mapping[str, Any],
 ) -> list[str]:
     if route != "gag" or not isinstance(claims, dict):
         return []
 
     idea_tokens = _tokens(idea)
+    relevance_tokens = set(idea_tokens)
+
+    if isinstance(objects, dict):
+        for object_key, value in objects.items():
+            value = value or {}
+            name = str(value.get("name", object_key))
+            object_tokens = _tokens(f"{object_key} {name}")
+            if idea_tokens & object_tokens:
+                affordances = value.get("affordances", [])
+                relevance_tokens.update(_tokens(" ".join(str(item) for item in affordances)))
+
     entries: list[tuple[int, str]] = []
 
     for key in sorted(claims):
         value = claims[key] or {}
-        source = f"{key} {value.get('statement', '')}" if isinstance(value, dict) else f"{key} {value}"
-        score = len(idea_tokens & _tokens(source))
+        source = (
+            f"{key} {value.get('statement', '')}"
+            if isinstance(value, dict)
+            else f"{key} {value}"
+        )
+        score = len(relevance_tokens & _tokens(source))
 
         explicit_id = _normalize(key).replace("_", "/") in _normalize(idea).replace("_", "/")
         if explicit_id:
@@ -268,21 +297,30 @@ def build_semantic_context(
 
     entries.extend(_decision_entries(data.get("decisions", {}), route))
 
-    if route in {"gag", "parody", "merchandising"}:
-        entries.extend(_option_entries(data, "objects", 8))
+    if route in {"gag", "merchandising"}:
+        entries.extend(_option_entries(data, "objects", 6))
 
-    if route in {"gag", "parody"}:
-        entries.extend(_option_entries(data, "heritage", 6))
+    if route == "parody":
+        entries.extend(_option_entries(data, "heritage", 5))
 
     if route == "gag":
-        entries.extend(_relevant_claim_entries(data.get("gag_001_claims", {}), idea, route))
+        entries.extend(
+            _relevant_claim_entries(
+                data.get("gag_001_claims", {}),
+                idea,
+                route,
+                data.get("objects", {}),
+            )
+        )
 
     section_map = _ROUTE_SECTIONS.get(route, _ROUTE_SECTIONS["general"])
     for source_name, heading, limit in section_map:
         document = markdown.get(
-            "HUMOR.md" if source_name == "humor" else
-            "PALETA.md" if source_name == "palette" else
-            "SEMANTIC_MODEL.md"
+            "HUMOR.md"
+            if source_name == "humor"
+            else "PALETA.md"
+            if source_name == "palette"
+            else "SEMANTIC_MODEL.md"
         )
         entries.extend(_extract_section(document or "", heading, limit))
 
@@ -299,5 +337,14 @@ def build_semantic_context(
         seen.add(normalized)
         unique.append(entry)
 
-    bounded = tuple(unique[:_MAX_ENTRIES])
-    return SemanticContext(entries=bounded)
+    # Reserve the final slot for the explicit historical boundary.
+    boundary = "historical_material=reference_only; excluded_from_active_canon"
+    bounded_entries = unique[: _MAX_ENTRIES - 1]
+    if boundary in unique:
+        bounded_entries = [
+            entry for entry in bounded_entries
+            if entry != boundary
+        ]
+        bounded_entries.append(boundary)
+
+    return SemanticContext(entries=tuple(bounded_entries))
