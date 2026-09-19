@@ -248,7 +248,7 @@ Implementation added:
 
 This layer is deliberately not a second canon system. It does not score taste, mutate candidates, or prescribe a fixed comic recipe. Its current detector is conservative and only requests revision for high-confidence mechanism overlap with explicitly recorded creative memory.
 
-The branch was last confirmed GREEN at 555 passed, 49 subtests passed on checkpoint abc39bb before this new block. The Creative Feedback block itself is not verified yet. Do not run another live Qwen experiment until the complete suite is GREEN again.
+The branch was last confirmed GREEN at 555 passed, 49 subtests passed on checkpoint abc39bb before this new block. The Creative Feedback block itself is not verified yet. The first verification run reported **560 passed, 1 failed, 49 subtests passed** because the direct jamón reuse regression test was too narrow. The detector has now been corrected to flag direct central-object reuse even when the prose does not contain two action keywords. Do not run another live Qwen experiment until the complete suite is GREEN again.
 
 The next target after verification is a new Qwen run using the same jamón brief, primarily to observe whether the structured feedback changes the second-pass generation away from noun substitution and toward a genuinely different causal mechanism.
 
