@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "mechanisms": [
+    {
+      "id": "gag_001_jamon_training_impact",
+      "status": "current",
+      "source": "gags/001_jamon.md",
+      "primary_character": "arsa",
+      "secondary_character": "pisha",
+      "central_object": "ham",
+      "action_family": "training_strike",
+      "action_terms": [
+        "training",
+        "boxing",
+        "punch",
+        "strike",
+        "impact"
+      ],
+      "relationship_role": "reaction_counterpoint"
+    }
+  ]
+}
