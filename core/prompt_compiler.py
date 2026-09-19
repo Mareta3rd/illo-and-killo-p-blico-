@@ -10,6 +10,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from .semantic_context import SemanticContext, build_semantic_context
+
 if TYPE_CHECKING:
     from .pipeline import PipelineResult
 
@@ -23,9 +25,15 @@ class CompiledPrompt:
     constraints: tuple[str, ...]
     checks: tuple[str, ...]
     context_summary: tuple[str, ...]
+    semantic_context: SemanticContext | None = None
 
     def render(self) -> str:
         """Render the package as plain text without adding creative content."""
+        context_lines = (
+            self.semantic_context.entries
+            if self.semantic_context is not None
+            else self.context_summary
+        )
         sections = [
             f"ROUTE: {self.route}",
             "TASK:",
@@ -35,7 +43,7 @@ class CompiledPrompt:
             "CHECKS BEFORE OUTPUT:",
             *[f"- {item}" for item in self.checks],
             "CONTEXT:",
-            *[f"- {item}" for item in self.context_summary],
+            *[f"- {item}" for item in context_lines],
         ]
         return "\n".join(sections)
 
@@ -56,6 +64,7 @@ _BASE_CONSTRAINTS = (
     "Preserve fixed character invariants unless a documented exception is present.",
     "Do not modify repository knowledge as part of execution.",
 )
+
 
 _BASE_CHECKS = (
     "Confirm that the requested route remains the active route.",
@@ -84,7 +93,13 @@ def compile_prompt(result: PipelineResult) -> CompiledPrompt:
         f"idea={result.context.idea}",
         f"confidence={result.context.confidence:.2f}",
         f"known_characters={','.join(character_names) if character_names else 'none'}",
-        f"repository_sections={','.join(sorted(data.keys()))}",
+    )
+
+    semantic_context = build_semantic_context(
+        idea=result.context.idea,
+        route=result.context.route,
+        data=data,
+        markdown=result.context.knowledge.markdown,
     )
 
     task = _ROUTE_TASKS.get(result.context.route, _ROUTE_TASKS["general"])
@@ -95,4 +110,5 @@ def compile_prompt(result: PipelineResult) -> CompiledPrompt:
         constraints=_BASE_CONSTRAINTS,
         checks=_BASE_CHECKS,
         context_summary=context_summary,
+        semantic_context=semantic_context,
     )
