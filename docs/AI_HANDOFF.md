@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `a222fa0` (`classify historical creative corpus`).
+Current repository checkpoint: `d49627c` (`avoid unrelated gag claims in generic contexts`).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -145,20 +145,24 @@ The default candidate model is `qwen/qwen3.8-27b`, and the transport requires st
 
 The candidate transport is intentionally provider-specific and returns a `Candidate`; it must not return Core decisions or evidence-contract decisions. Forbidden fields include `accept`, `decision`, `evidence`, and `claim_key`.
 
-## Current semantic-context gap — NEXT TARGET
-The next and only planned implementation target is to build a **small, deterministic semantic context** for `CompiledPrompt` from authoritative current repository data.
+## Current semantic-context block — IN PROGRESS / NOT YET GREEN
+The planned next target is now being implemented: a **small, deterministic semantic context** for `CompiledPrompt` derived from authoritative current repository data and selected current documentation.
 
-The target context should expose, only as relevant to the route/task:
-- current Arsa/Pisha identities and protected visual/behavioral invariants;
-- the distinction between arms/hands and legs/hooves;
-- Arsa/Pisha relationship grammar and dynamic role switching;
-- current humor grammar, especially one-gag-per-image, immediate readability, absurd escalation, non-malicious conflict and protected tenderness;
-- Andalusian structural/behavioral layer as primary, with environmental/ornamental references only when useful;
-- contemporary/vanguard visual finish with a restrained vintage soul, never retro imitation;
-- relevant documented decisions and current Gag 001 claims when applicable;
-- explicit separation between current canon and historical Illo/Killo/Xoxo material.
+Implementation now present on the branch:
+- `core/semantic_context.py` provides a bounded provider-neutral `SemanticContext` representation;
+- `core/loader.py` loads the canonical `data/gag_001_claims.json` mapping;
+- `core/prompt_compiler.py` attaches the semantic context while preserving the existing `context_summary` compatibility surface;
+- `tests/test_prompt_compiler.py` contains focused tests for route relevance, Arsa/Pisha semantics, historical-boundary exclusion, boundedness and determinism;
+- `tests/test_loader.py` verifies canonical Gag 001 claims are loaded.
 
-The semantic context must be deterministic, bounded, route/task-relevant and derived from authoritative sources. It must not duplicate canon into uncontrolled prompt prose, invent missing semantics, mutate canonical data, or allow the provider to decide what is canonical.
+The context is deliberately bounded and route-specific. Character entries are generated from the structured character catalog, including the separate hands/hooves anatomy; relationship entries come from the current relationship catalog; route-relevant decisions, objects, heritage, current gag claims and selected current documentation sections are included only where appropriate. An explicit boundary marks historical material as reference-only and excluded from active canon.
+
+Important verification state:
+- The last **verified green** full suite remains the historical-corpus checkpoint: **542 passed, 49 subtests passed**.
+- The semantic-context implementation commits above have **not yet been run through the full local suite in the Codespace after these changes**.
+- Therefore this block is **not closed** and must not be recorded as green until the Codespace runs the full suite successfully.
+
+The semantic context must remain deterministic, bounded, route/task-relevant and derived from authoritative sources. It must not invent missing semantics, mutate canonical data, or allow the provider to decide what is canonical.
 
 ### Deliberately out of scope until this target is closed
 - new provider integrations;
@@ -168,7 +172,15 @@ The semantic context must be deterministic, bounded, route/task-relevant and der
 - replacing or reinterpreting the historical corpus;
 - the next real Qwen candidate-generation experiment.
 
-The next session must start by reading this handoff, checking branch/worktree state, and rerunning the relevant verification before implementation. After the semantic-context target is solved and verified, the handoff must be updated again before starting the next experimental phase.
+### Next local verification
+Pull the current branch and run:
+
+```bash
+git pull --rebase origin feature/semantic-model
+PYTHONPATH=. pytest -q
+```
+
+If green, inspect the final diff and run `bash scripts/close_work_block.sh` before committing/pushing the closed block and updating this handoff again.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
