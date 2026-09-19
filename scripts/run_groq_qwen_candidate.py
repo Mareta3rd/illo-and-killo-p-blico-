@@ -174,43 +174,6 @@ def _safe_result_summary(result: Any) -> dict[str, Any]:
     iteration_count = 0
     stop_reason = result.stop_reason if hasattr(result, "stop_reason") else None
 
-    if args.candidate_audit_path is not None:
-        core = getattr(result, "core", None)
-        compiled = getattr(getattr(core, "pipeline", None), "compiled_prompt", None)
-        if core is None or compiled is None:
-            raise SystemExit(
-                "candidate audit requested but Core produced no compiled prompt"
-            )
-
-        route = getattr(core.pipeline.context.route, "value", core.pipeline.context.route)
-        loop = core.loop
-        iterations = loop.iterations if loop is not None else ()
-        final_status = loop.status if loop is not None else "stopped_before_loop"
-        core_decision = None
-        if iterations:
-            core_decision = iterations[-1].evaluation.decision
-        elif getattr(core.pipeline, "evaluation", None) is not None:
-            core_decision = core.pipeline.evaluation.evaluation.decision
-
-        candidate_artifact = build_candidate_execution_artifact(
-            run_id=request.run_id,
-            provider=request.provider_name,
-            model=request.model,
-            image=request.image,
-            idea=request.idea,
-            route=str(route),
-            compiled_prompt=compiled,
-            loop_iterations=iterations,
-            initial_candidate=request.proposal,
-            final_status=final_status,
-            stop_reason=getattr(result, "stop_reason", None),
-            core_decision=core_decision,
-        )
-        write_candidate_execution_artifact(
-            args.candidate_audit_path,
-            candidate_artifact,
-        )
-
     if getattr(result, "core", None) is not None:
         core = result.core
         if getattr(core, "loop", None) is not None and getattr(core.loop, "iterations", None):
@@ -257,6 +220,43 @@ def main(argv: Sequence[str] | None = None) -> int:
             client=client,
         )
         result = run_application(request)
+
+        if args.candidate_audit_path is not None:
+            core = getattr(result, "core", None)
+            compiled = getattr(getattr(core, "pipeline", None), "compiled_prompt", None)
+            if core is None or compiled is None:
+                raise SystemExit(
+                    "candidate audit requested but Core produced no compiled prompt"
+                )
+
+            route = getattr(core.pipeline.context.route, "value", core.pipeline.context.route)
+            loop = core.loop
+            iterations = loop.iterations if loop is not None else ()
+            final_status = loop.status if loop is not None else "stopped_before_loop"
+            core_decision = None
+            if iterations:
+                core_decision = iterations[-1].evaluation.decision
+            elif getattr(core.pipeline, "evaluation", None) is not None:
+                core_decision = core.pipeline.evaluation.evaluation.decision
+
+            candidate_artifact = build_candidate_execution_artifact(
+                run_id=request.run_id,
+                provider=request.provider_name,
+                model=request.model,
+                image=request.image,
+                idea=request.idea,
+                route=str(route),
+                compiled_prompt=compiled,
+                loop_iterations=iterations,
+                initial_candidate=request.proposal,
+                final_status=final_status,
+                stop_reason=getattr(result, "stop_reason", None),
+                core_decision=core_decision,
+            )
+            write_candidate_execution_artifact(
+                args.candidate_audit_path,
+                candidate_artifact,
+            )
     except Exception as exc:
         raise SystemExit(f"Groq Qwen candidate runner failed: {exc}") from exc
 
