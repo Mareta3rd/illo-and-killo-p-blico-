@@ -8,12 +8,13 @@ execution layer is injected rather than called from Core.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from .canon_guard import ValidationResult, validate_piece
 from .context import CoreContext, build_context
+from .creative_feedback import build_creative_feedback
 from .evidence_evaluator import evaluate_candidate_with_evidence
 from .evidence_snapshot import EvidenceSnapshot
 from .evidence_state import EvidenceClaim
@@ -106,7 +107,7 @@ def run_vertical_slice(
         return candidate
 
     def evaluate(candidate: Candidate, iteration: int) -> Evaluation:
-        nonlocal baseline_report
+        nonlocal baseline_report, prompt
 
         validation: ValidationResult = validate_piece(candidate, knowledge)
         report: EvaluationReport = evaluate_candidate_with_evidence(
@@ -127,6 +128,22 @@ def run_vertical_slice(
                     + ", ".join(regression.name for regression in regressions),
                 )
 
+        creative_feedback = build_creative_feedback(candidate, root=root)
+        if (
+            creative_feedback.revision_required
+            and decision.decision == "accept"
+        ):
+            decision = Evaluation(
+                "continue",
+                "creative feedback requests a new mechanism: "
+                + "; ".join(item.message for item in creative_feedback.findings),
+            )
+
+        prompt = replace(
+            prompt,
+            iteration_guidance=creative_feedback.guidance,
+        )
+
         if decision.decision == "accept":
             baseline_report = report
 
@@ -136,6 +153,7 @@ def run_vertical_slice(
                 candidate,
                 EvaluationReport(decision, report.checks),
                 regressions,
+                creative_feedback,
             )
         )
         return decision
