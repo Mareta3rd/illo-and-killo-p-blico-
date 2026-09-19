@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `793c70b` (`record candidate audit scaffold and next experiment`; verification pending).
+Current repository checkpoint: `1f432f5` (`align Qwen executor tests with structured candidate contract`; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -210,7 +210,9 @@ The repair now present on the branch:
 
 The repair is designed to stop malformed provider output at the provider boundary. It does not weaken Core validation or convert human review into acceptance.
 
-Verification of the repair is **pending**. The next required action is to pull the branch and run the complete suite before another live Qwen call.
+Verification of the repair remains **pending**. The first post-repair suite run exposed four test regressions: two parser-error-message expectations and two fake-provider fixtures that still returned the old minimal `{"content": ...}` payload. The parser was adjusted to reject forbidden provider-boundary fields before completeness checks, and the fake client default was updated to emit a complete structured candidate matching the current contract. The fixes are committed in `2e1f09a` and `1f432f5` on `feature/semantic-model`.
+
+The Codespace run that triggered this repair reported **551 passed, 4 failed, 49 subtests passed**; therefore it must not be treated as green yet. The next required action is to pull the latest branch and run the complete suite again before another live Qwen call.
 
 Recommended first live experiment after verification:
 - textual-only Qwen candidate run;
