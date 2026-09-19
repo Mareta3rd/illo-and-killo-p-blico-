@@ -201,10 +201,11 @@ def build_candidate_execution_artifact(
             )
         )
         creative_feedback = build_creative_feedback(candidate)
-        prompt_for_iteration = replace(
-            prompt_for_iteration,
-            iteration_guidance=creative_feedback.guidance,
-        )
+        if creative_feedback.guidance:
+            prompt_for_iteration = replace(
+                prompt_for_iteration,
+                iteration_guidance=creative_feedback.guidance,
+            )
         previous = candidate
 
     return CandidateExecutionArtifact(
