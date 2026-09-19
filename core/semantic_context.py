@@ -255,7 +255,22 @@ def _relevant_claim_entries(
             if isinstance(value, dict)
             else f"{key} {value}"
         )
-        score = len(relevance_tokens & _tokens(source))
+        generic_claim_tokens = {
+            "gag",
+            "composition",
+            "characters",
+            "character",
+            "primary",
+            "secondary",
+            "narrative",
+            "role",
+            "visual",
+            "salience",
+            "arsa",
+            "pisha",
+        }
+        claim_tokens = _tokens(source) - generic_claim_tokens
+        score = len(relevance_tokens & claim_tokens)
 
         explicit_id = _normalize(key).replace("_", "/") in _normalize(idea).replace("_", "/")
         if explicit_id:
