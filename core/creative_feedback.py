@@ -112,11 +112,7 @@ def build_creative_feedback(candidate: Mapping[str, Any], *, root: str | Path | 
 
     content_tokens = _tokens(str(candidate.get("content") or ""))
     findings: list[CreativeFinding] = []
-    guidance = [
-        "Use canon as a boundary, not as a template.",
-        "For a genuinely new gag, seek a new causal chain rather than swapping nouns or props.",
-        "Búscate la vida: use the available resources to find a coherent, specific solution the corpus has not already shown.",
-    ]
+    guidance: list[str] = []
 
     for mechanism in _load_memory(root):
         if not _character_match(candidate, mechanism):
@@ -138,7 +134,7 @@ def build_creative_feedback(candidate: Mapping[str, Any], *, root: str | Path | 
 
     return CreativeFeedbackReport(
         findings=tuple(findings),
-        guidance=tuple(guidance) + tuple(item.guidance for item in findings),
+        guidance=tuple(item.guidance for item in findings),
         revision_required=any(item.revision_required for item in findings),
     )
 
