@@ -9,10 +9,11 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
+from .creative_feedback import build_creative_feedback
 from .loop import IterationRecord
 from .prompt_compiler import CompiledPrompt
 
@@ -171,6 +172,7 @@ def build_candidate_execution_artifact(
     previous: dict[str, Any] | None = (
         dict(initial_candidate) if initial_candidate is not None else None
     )
+    prompt_for_iteration = compiled_prompt
     iterations: list[CandidateExecutionIteration] = []
 
     from .groq_qwen_candidate_transport import build_candidate_request_prompt
@@ -183,7 +185,7 @@ def build_candidate_execution_artifact(
             raise ValueError("loop candidate must be a dictionary")
         candidate_json = _canonical_json(candidate)
         request_prompt = build_candidate_request_prompt(
-            compiled_prompt,
+            prompt_for_iteration,
             record.iteration,
             previous,
         )
@@ -197,6 +199,11 @@ def build_candidate_execution_artifact(
                 decision=record.evaluation.decision,
                 reason=record.evaluation.reason,
             )
+        )
+        creative_feedback = build_creative_feedback(candidate)
+        prompt_for_iteration = replace(
+            prompt_for_iteration,
+            iteration_guidance=creative_feedback.guidance,
         )
         previous = candidate
 
