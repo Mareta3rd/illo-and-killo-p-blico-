@@ -93,6 +93,7 @@ def compile_prompt(result: PipelineResult) -> CompiledPrompt:
         f"idea={result.context.idea}",
         f"confidence={result.context.confidence:.2f}",
         f"known_characters={','.join(character_names) if character_names else 'none'}",
+        f"repository_sections={','.join(sorted(data.keys()))}",
     )
 
     semantic_context = build_semantic_context(
