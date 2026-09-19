@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `1f432f5` (`align Qwen executor tests with structured candidate contract`; verification pending).
+Current repository checkpoint: `7328187` (`document creative feedback philosophy and boundaries`; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -232,6 +232,25 @@ python scripts/run_groq_qwen_candidate.py \
 ```
 
 Do not treat the resulting model text as canon. The experiment is successful only as evidence about the behavior of the provider-neutral candidate path and the auditability of the compiled semantic context. Any creative candidate remains subject to Core evaluation and human review where required.
+
+## Creative Feedback Layer — IMPLEMENTED / VERIFICATION PENDING
+The first real Qwen candidate exposed a broader architectural requirement: a system that only enforces canon can become a deterministic template generator. The project therefore now distinguishes identity reuse from mechanism reuse.
+
+Implementation added:
+- data/creative_mechanisms.json stores a deliberately small, authoritative creative-memory record for the current semantic Gag 001 mechanism;
+- core/creative_feedback.py produces bounded, non-scoring feedback and high-confidence mechanism-reuse findings;
+- core/prompt_compiler.py states explicitly that canon is a boundary, not a template, and that prop substitution is not meaningful novelty;
+- core/orchestrator.py uses creative feedback as a soft iteration gate: a high-confidence mechanism reuse requests another candidate rather than accepting the derivative result, while hard canon validation remains separate;
+- core/semantic_audit.py records creative findings, guidance and whether another creative pass was requested;
+- core/candidate_execution_artifact.py reconstructs the exact iteration prompt including creative guidance so request digests remain auditable;
+- docs/CREATIVE_FEEDBACK.md documents the boundary and philosophy;
+- focused regression tests were added for feedback detection and iteration guidance.
+
+This layer is deliberately not a second canon system. It does not score taste, mutate candidates, or prescribe a fixed comic recipe. Its current detector is conservative and only requests revision for high-confidence mechanism overlap with explicitly recorded creative memory.
+
+The branch was last confirmed GREEN at 555 passed, 49 subtests passed on checkpoint abc39bb before this new block. The Creative Feedback block itself is not verified yet. Do not run another live Qwen experiment until the complete suite is GREEN again.
+
+The next target after verification is a new Qwen run using the same jamón brief, primarily to observe whether the structured feedback changes the second-pass generation away from noun substitution and toward a genuinely different causal mechanism.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
