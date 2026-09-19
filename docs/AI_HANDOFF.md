@@ -16,10 +16,11 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `d49627c` (`avoid unrelated gag claims in generic contexts`).
+Current repository checkpoint: `fe404c2` (`record semantic context block in progress`).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
+The semantic-context block is also **VERIFIED GREEN by the Codespace**, but has not yet been committed as a final closure checkpoint; the branch currently ends at `fe404c2` and the working tree was reported clean by `scripts/close_work_block.sh`.
 
 Confirmed in the Codespace immediately before closure:
 - historical corpus rename/classification completed;
@@ -158,9 +159,9 @@ Implementation now present on the branch:
 The context is deliberately bounded and route-specific. Character entries are generated from the structured character catalog, including the separate hands/hooves anatomy; relationship entries come from the current relationship catalog; route-relevant decisions, objects, heritage, current gag claims and selected current documentation sections are included only where appropriate. An explicit boundary marks historical material as reference-only and excluded from active canon.
 
 Important verification state:
-- The last **verified green** full suite remains the historical-corpus checkpoint: **542 passed, 49 subtests passed**.
-- The semantic-context implementation commits above have **not yet been run through the full local suite in the Codespace after these changes**.
-- Therefore this block is **not closed** and must not be recorded as green until the Codespace runs the full suite successfully.
+- The semantic-context implementation is now verified green in the Codespace: **546 passed, 49 subtests passed**.
+- `bash scripts/close_work_block.sh` also completed successfully, with `git diff --check` and working-tree/diff checks clean.
+- The implementation therefore satisfies the verification gate; the remaining closure work is to create/push the final descriptive commit for this block and then update this handoff with that final checkpoint.
 
 The semantic context must remain deterministic, bounded, route/task-relevant and derived from authoritative sources. It must not invent missing semantics, mutate canonical data, or allow the provider to decide what is canonical.
 
@@ -172,15 +173,10 @@ The semantic context must remain deterministic, bounded, route/task-relevant and
 - replacing or reinterpreting the historical corpus;
 - the next real Qwen candidate-generation experiment.
 
-### Next local verification
-Pull the current branch and run:
+### Final closure step
+The semantic-context block is verified green. Before beginning any new work, create and push the final descriptive commit for this block, update this handoff with that final commit SHA, and then stop.
 
-```bash
-git pull --rebase origin feature/semantic-model
-PYTHONPATH=. pytest -q
-```
-
-If green, inspect the final diff and run `bash scripts/close_work_block.sh` before committing/pushing the closed block and updating this handoff again.
+The next implementation target after closure is **the first auditable real Qwen candidate-generation experiment using the compiled semantic context**.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
