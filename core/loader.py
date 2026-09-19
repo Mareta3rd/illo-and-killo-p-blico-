@@ -7,6 +7,7 @@ not interpret, mutate, or invent canon.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 from pathlib import Path
 from typing import Any
 
@@ -31,10 +32,22 @@ DEFAULT_DATA_FILES = (
     "objects.yaml",
 )
 
+DEFAULT_JSON_FILES = (
+    "gag_001_claims.json",
+)
+
 
 def _load_yaml(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as handle:
         value = yaml.safe_load(handle) or {}
+    if not isinstance(value, dict):
+        raise ValueError(f"Expected a mapping in {path}")
+    return value
+
+
+def _load_json(path: Path) -> dict[str, Any]:
+    with path.open("r", encoding="utf-8") as handle:
+        value = json.load(handle) or {}
     if not isinstance(value, dict):
         raise ValueError(f"Expected a mapping in {path}")
     return value
@@ -53,7 +66,7 @@ def load_repository(root: str | Path) -> RepositoryKnowledge:
     """Load the v0.1 repository knowledge from *root*.
 
     Only existing canonical data files and Markdown documentation are read.
-    Missing optional data files are ignored; malformed YAML is reported.
+    Missing optional data files are ignored; malformed YAML/JSON is reported.
     """
 
     root = Path(root).resolve()
@@ -65,6 +78,11 @@ def load_repository(root: str | Path) -> RepositoryKnowledge:
         path = data_dir / filename
         if path.exists():
             data[path.stem] = _load_yaml(path)
+
+    for filename in DEFAULT_JSON_FILES:
+        path = data_dir / filename
+        if path.exists():
+            data[path.stem] = _load_json(path)
 
     return RepositoryKnowledge(
         data=data,
