@@ -94,6 +94,35 @@ class PromptCompilerTests(unittest.TestCase):
             "historical_material=reference_only; excluded_from_active_canon",
         )
 
+    def test_resourcefulness_constraints_are_present(self):
+        result = run_pipeline(
+            "Crear un gag nuevo de Arsa y Pisha",
+            ROOT,
+            self.VALID_PROPOSAL,
+        )
+
+        compiled = compile_prompt(result)
+        self.assertIn("Use canon as a boundary, not as a template.", compiled.constraints)
+        self.assertTrue(
+            any("swapping a noun or prop" in item for item in compiled.constraints)
+        )
+
+    def test_iteration_guidance_is_rendered_when_present(self):
+        result = run_pipeline(
+            "Crear un gag nuevo de Arsa y Pisha",
+            ROOT,
+            self.VALID_PROPOSAL,
+        )
+
+        compiled = compile_prompt(result)
+        guided = compiled.__class__(**{
+            **compiled.__dict__,
+            "iteration_guidance": ("Find a different causal chain.",),
+        })
+        rendered = guided.render()
+        self.assertIn("CREATIVE ITERATION GUIDANCE:", rendered)
+        self.assertIn("Find a different causal chain.", rendered)
+
     def test_compiler_does_not_repair_stopped_result(self):
         result = run_pipeline(
             "Crear un gag nuevo de Pisha",
