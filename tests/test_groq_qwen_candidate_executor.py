@@ -58,11 +58,37 @@ class FakeParsedResponse:
     choices: list[FakeParsedChoice]
 
 
+def make_valid_fake_candidate() -> dict[str, Any]:
+    """Return a complete candidate that satisfies the current provider contract."""
+    return {
+        "content": "fake candidate",
+        "characters": ["arsa", "pisha"],
+        "roles": ["primary", "secondary"],
+        "elements": [{
+            "id": "clavel",
+            "intention": "character_identity",
+            "library": None,
+            "count": None,
+            "color": None,
+            "very_small": None,
+            "role": None,
+        }],
+        "checks": {
+            "intention": True,
+            "canon": True,
+            "coherence": True,
+            "reuse_intention": True,
+        },
+    }
+
+
 class FakeParsedClient:
     """Fake OpenAI client for testing without network."""
 
     def __init__(self, response_data: dict[str, Any] | None = None):
-        self.response_data = response_data or {"content": "fake candidate"}
+        self.response_data = (
+            response_data if response_data is not None else make_valid_fake_candidate()
+        )
         self.last_request = None
         self.call_count = 0
         self.chat = MagicMock()
