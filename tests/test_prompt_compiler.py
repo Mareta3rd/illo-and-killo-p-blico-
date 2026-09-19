@@ -68,7 +68,7 @@ class PromptCompilerTests(unittest.TestCase):
             self.VALID_PROPOSAL,
         )
 
-        entries = compiled_entries = compile_prompt(result).semantic_context.entries
+        entries = compile_prompt(result).semantic_context.entries
         joined = " ".join(entries).lower()
 
         self.assertIn("historical_material=reference_only", joined)
@@ -89,6 +89,10 @@ class PromptCompilerTests(unittest.TestCase):
         self.assertLessEqual(len(first.entries), 32)
         self.assertTrue(all(len(entry) <= 260 for entry in first.entries))
         self.assertEqual(first.entries, second.entries)
+        self.assertEqual(
+            first.entries[-1],
+            "historical_material=reference_only; excluded_from_active_canon",
+        )
 
     def test_compiler_does_not_repair_stopped_result(self):
         result = run_pipeline(
