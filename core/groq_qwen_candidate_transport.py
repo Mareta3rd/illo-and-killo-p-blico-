@@ -288,18 +288,21 @@ def parse_groq_qwen_candidate(payload: Any) -> dict[str, Any]:
             f"groq qwen candidate response is not a dict (got {type(data).__name__})"
         )
 
+    # Reject fields that cross the provider/Core boundary before checking
+    # completeness, so the error identifies the more specific contract
+    # violation even when the candidate is otherwise malformed.
+    for forbidden in _FORBIDDEN_CANDIDATE_FIELDS:
+        if forbidden in data:
+            raise InvalidCandidateError(
+                f"groq qwen candidate contains forbidden field: {forbidden}"
+            )
+
     required_fields = {"content", "characters", "roles", "elements", "checks"}
     missing = required_fields - set(data)
     if missing:
         raise InvalidCandidateError(
             f"groq qwen candidate missing required fields: {', '.join(sorted(missing))}"
         )
-
-    for forbidden in _FORBIDDEN_CANDIDATE_FIELDS:
-        if forbidden in data:
-            raise InvalidCandidateError(
-                f"groq qwen candidate contains forbidden field: {forbidden}"
-            )
 
     unknown = set(data) - required_fields
     if unknown:
