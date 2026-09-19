@@ -175,7 +175,7 @@ The semantic context must remain deterministic, bounded, route/task-relevant and
 
 The next implementation target is **the first auditable real Qwen candidate-generation experiment using the compiled semantic context**.
 
-## Candidate-generation audit scaffold — IMPLEMENTED / VERIFICATION PENDING
+## Candidate-generation audit scaffold — CONTRACT REPAIR / VERIFICATION PENDING
 A preparatory audit layer has now been added on top of the closed semantic-context block.
 
 Implementation now present on the branch:
@@ -196,6 +196,21 @@ Verification state:
 - The new audit scaffold is therefore verified by the complete regression suite.
 - No live Qwen result has yet been generated for this block.
 - The earlier bare `pytest -q` failure was an invocation/environment issue: this repository's closure script correctly uses `PYTHONPATH=.`, after which the same complete suite passed.
+
+### First live-run finding and contract repair
+
+The first real Qwen run reached the external provider and Core successfully, then stopped at `human_review` with `canon validation requires human review`. The captured candidate used bare strings in `elements` even though Core's canonical candidate representation uses structured element objects with explicit intentions and optional structured fields.
+
+The repair now present on the branch:
+- strict Qwen schema requires element objects with `id`, `intention`, `library`, `count`, `color`, `very_small` and `role`, using `null` for non-applicable fields;
+- the request prompt states that contract explicitly and forbids bare strings;
+- the provider parser now mirrors the strict contract instead of accepting partial candidates;
+- the schema was kept within the currently documented strict Structured Outputs subset rather than adding unnecessary constraints;
+- `docs/SEMANTIC_MODEL.md` now documents the external candidate contract.
+
+The repair is designed to stop malformed provider output at the provider boundary. It does not weaken Core validation or convert human review into acceptance.
+
+Verification of the repair is **pending**. The next required action is to pull the branch and run the complete suite before another live Qwen call.
 
 Recommended first live experiment after verification:
 - textual-only Qwen candidate run;
