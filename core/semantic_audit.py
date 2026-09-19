@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from .creative_feedback import CreativeFeedbackReport
 from .evaluator import EvaluationReport
 from .semantic_regression import SemanticRegression
 
@@ -18,6 +19,9 @@ class SemanticAuditRecord:
     decision: str
     reason: str
     regressions: tuple[SemanticRegression, ...]
+    creative_findings: tuple[str, ...] = ()
+    creative_guidance: tuple[str, ...] = ()
+    creative_revision_required: bool = False
 
 
 def _stable_repr(value: Any) -> str:
@@ -44,6 +48,7 @@ def build_semantic_audit_record(
     candidate: Mapping[str, Any],
     report: EvaluationReport,
     regressions: tuple[SemanticRegression, ...] = (),
+    creative_feedback: CreativeFeedbackReport | None = None,
 ) -> SemanticAuditRecord:
     """Build one immutable audit record without mutating inputs."""
     return SemanticAuditRecord(
@@ -52,4 +57,14 @@ def build_semantic_audit_record(
         decision=report.evaluation.decision,
         reason=report.evaluation.reason,
         regressions=tuple(regressions),
+        creative_findings=tuple(
+            finding.message
+            for finding in (creative_feedback.findings if creative_feedback else ())
+        ),
+        creative_guidance=tuple(
+            creative_feedback.guidance if creative_feedback else ()
+        ),
+        creative_revision_required=(
+            creative_feedback.revision_required if creative_feedback else False
+        ),
     )
