@@ -139,10 +139,11 @@ def run_vertical_slice(
                 + "; ".join(item.message for item in creative_feedback.findings),
             )
 
-        prompt = replace(
-            prompt,
-            iteration_guidance=creative_feedback.guidance,
-        )
+        if creative_feedback.guidance:
+            prompt = replace(
+                prompt,
+                iteration_guidance=creative_feedback.guidance,
+            )
 
         if decision.decision == "accept":
             baseline_report = report
