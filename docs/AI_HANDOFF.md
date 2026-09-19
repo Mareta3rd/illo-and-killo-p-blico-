@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `fe404c2` (`record semantic context block in progress`).
+Current repository checkpoint: `9f75f00` (candidate-audit runner wiring prepared; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -146,7 +146,7 @@ The default candidate model is `qwen/qwen3.8-27b`, and the transport requires st
 
 The candidate transport is intentionally provider-specific and returns a `Candidate`; it must not return Core decisions or evidence-contract decisions. Forbidden fields include `accept`, `decision`, `evidence`, and `claim_key`.
 
-## Current semantic-context block — IN PROGRESS / NOT YET GREEN
+## Current semantic-context block — CLOSED AND GREEN
 The planned next target is now being implemented: a **small, deterministic semantic context** for `CompiledPrompt` derived from authoritative current repository data and selected current documentation.
 
 Implementation now present on the branch:
@@ -159,24 +159,60 @@ Implementation now present on the branch:
 The context is deliberately bounded and route-specific. Character entries are generated from the structured character catalog, including the separate hands/hooves anatomy; relationship entries come from the current relationship catalog; route-relevant decisions, objects, heritage, current gag claims and selected current documentation sections are included only where appropriate. An explicit boundary marks historical material as reference-only and excluded from active canon.
 
 Important verification state:
-- The semantic-context implementation is now verified green in the Codespace: **546 passed, 49 subtests passed**.
-- `bash scripts/close_work_block.sh` also completed successfully, with `git diff --check` and working-tree/diff checks clean.
-- The implementation therefore satisfies the verification gate; the remaining closure work is to create/push the final descriptive commit for this block and then update this handoff with that final checkpoint.
+- The semantic-context implementation was verified green in the Codespace: **546 passed, 49 subtests passed**.
+- `bash scripts/close_work_block.sh` completed successfully, with `git diff --check` and working-tree/diff checks clean.
+- Final semantic-context checkpoint: `562826c` (`record semantic context verification`).
+- This block is closed. Do not reopen or modify it merely to support the next candidate experiment unless a new failing requirement is discovered.
 
 The semantic context must remain deterministic, bounded, route/task-relevant and derived from authoritative sources. It must not invent missing semantics, mutate canonical data, or allow the provider to decide what is canonical.
 
-### Deliberately out of scope until this target is closed
+### Deliberately out of scope for the closed semantic-context block
 - new provider integrations;
 - live OpenAI work;
 - automatic provider fallback;
 - new creative-canon changes;
-- replacing or reinterpreting the historical corpus;
-- the next real Qwen candidate-generation experiment.
+- replacing or reinterpreting the historical corpus.
 
-### Final closure step
-The semantic-context block is verified green. Before beginning any new work, create and push the final descriptive commit for this block, update this handoff with that final commit SHA, and then stop.
+The next implementation target is **the first auditable real Qwen candidate-generation experiment using the compiled semantic context**.
 
-The next implementation target after closure is **the first auditable real Qwen candidate-generation experiment using the compiled semantic context**.
+## Candidate-generation audit scaffold — IMPLEMENTED / VERIFICATION PENDING
+A preparatory audit layer has now been added on top of the closed semantic-context block.
+
+Implementation now present on the branch:
+- `core/candidate_execution_artifact.py` records the exact compiled prompt, its digest, the bounded semantic-context entries, each exact provider request prompt, each returned candidate as canonical JSON, candidate digests, Core evaluation decisions/reasons, final status and stop reason;
+- `core/groq_qwen_candidate_transport.py` exposes the exact request-prompt builder used by the transport so the audit record does not duplicate prompt construction logic;
+- `scripts/run_groq_qwen_candidate.py` accepts `--candidate-audit-path` and writes the candidate-generation audit after a real run;
+- `tests/test_candidate_execution_artifact.py` covers exact-context capture, per-iteration prompt/candidate digests, deterministic round-trip serialization, persistence and tamper/schema rejection.
+
+Architectural boundary:
+- the audit artifact is observational only;
+- it records what the provider received and returned plus what Core evaluated;
+- it does not create, mutate or reinterpret canon or Core decisions;
+- evidence remains in the existing evidence artifact/path and candidate audit remains a separate closed record.
+
+Verification state:
+- The new audit scaffold has **not yet been run through the Codespace test suite** after implementation.
+- No claim of green status should be made until the user pulls the current branch and runs the complete suite.
+- No live Qwen result has yet been generated for this block.
+
+Recommended first live experiment after verification:
+- textual-only Qwen candidate run;
+- model `qwen/qwen3.8-27b`;
+- new gag idea involving Arsa, Pisha and jamón so the compiled semantic context has a concrete relevance signal for the current Gag 001 claim set;
+- write both the existing evidence artifact and the new candidate audit to a local temporary/output path;
+- inspect the audit before interpreting the generated candidate;
+- do not commit generated run artifacts unless deliberately chosen as historical experimental evidence.
+
+Suggested invocation after the test gate is green:
+```bash
+python scripts/run_groq_qwen_candidate.py \
+  "Crear un gag nuevo de Arsa y Pisha alrededor de un jamón, con un gag principal inmediato, escalada absurda desde una lógica reconocible y ternura entre ambos." \
+  --run-id qwen-semantic-context-001 \
+  --artifact-path /tmp/qwen-semantic-context-001.evidence.json \
+  --candidate-audit-path /tmp/qwen-semantic-context-001.candidate-audit.json
+```
+
+Do not treat the resulting model text as canon. The experiment is successful only as evidence about the behavior of the provider-neutral candidate path and the auditability of the compiled semantic context. Any creative candidate remains subject to Core evaluation and human review where required.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
