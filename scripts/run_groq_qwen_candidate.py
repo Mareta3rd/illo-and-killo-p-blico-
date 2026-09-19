@@ -191,7 +191,6 @@ def _safe_result_summary(result: Any) -> dict[str, Any]:
         "iterations": iteration_count,
         "artifact": bool(getattr(result, "artifact", None) is not None),
         "attention": None,
-        "candidate_audit": bool(args.candidate_audit_path is not None),
     }
 
 
