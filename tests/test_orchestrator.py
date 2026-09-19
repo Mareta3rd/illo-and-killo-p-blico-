@@ -104,6 +104,58 @@ class OrchestratorTests(unittest.TestCase):
         self.assertEqual(previous_values[0], INITIAL)
         self.assertEqual(previous_values[1]["elements"][1]["count"], 1)
 
+    def test_creative_feedback_requests_new_mechanism(self):
+        prompts = []
+
+        first = {
+            "content": "Arsa uses a chorizo like a boxing target, Pisha reacts to the punch.",
+            "characters": ["arsa", "pisha"],
+            "elements": [
+                {"id": "chorizo", "intention": "comedic_prop_target", "role": "primary_comedic_object"},
+                {"id": "pisha_reaction", "intention": "reaction", "role": "secondary"},
+                {"id": "clavel", "intention": "character_identity"},
+                {"id": "black_spots", "count": 2, "intention": "character_identity"},
+            ],
+            "checks": {
+                "intention": True,
+                "canon": True,
+                "coherence": True,
+                "reuse_intention": True,
+            },
+        }
+        second = {
+            "characters": ["arsa", "pisha"],
+            "elements": [
+                {"id": "clavel", "intention": "character_identity"},
+                {"id": "black_spots", "count": 2, "intention": "character_identity"},
+            ],
+            "checks": {
+                "intention": True,
+                "canon": True,
+                "coherence": True,
+                "reuse_intention": True,
+            },
+        }
+
+        def executor(prompt, iteration, previous):
+            prompts.append(prompt)
+            return first if iteration == 1 else second
+
+        result = run_vertical_slice(
+            "Crear un gag nuevo de Arsa y Pisha alrededor de un jamón",
+            ROOT,
+            executor,
+            evidence_claims=COMPLETE_EVIDENCE,
+            initial_candidate=second,
+            max_iterations=2,
+        )
+
+        self.assertEqual(result.loop.status, "accepted")
+        self.assertEqual(len(result.loop.iterations), 2)
+        self.assertNotEqual(prompts[0].render(), prompts[1].render())
+        self.assertIn("CREATIVE ITERATION GUIDANCE:", prompts[1].render())
+        self.assertTrue(result.audit_trail[0].creative_revision_required)
+
     def test_missing_evidence_blocks_before_loop(self):
         evidence = dict(COMPLETE_EVIDENCE)
         evidence.pop("reuse_intention")
