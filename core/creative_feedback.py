@@ -84,7 +84,7 @@ def _character_match(candidate: Mapping[str, Any], mechanism: Mapping[str, Any])
 def _build_finding(mechanism: Mapping[str, Any], *, object_match: bool, action_overlap: set[str]) -> CreativeFinding | None:
     mechanism_id = str(mechanism.get("id", "unknown"))
     central_object = str(mechanism.get("central_object", "")).lower()
-    if len(action_overlap) < 2:
+    if len(action_overlap) < 1:
         return None
     if object_match:
         return CreativeFinding(
@@ -124,10 +124,12 @@ def build_creative_feedback(candidate: Mapping[str, Any], *, root: str | Path | 
             for token in _tokens(term)
         }
         action_overlap = content_tokens & action_terms
-        if len(action_overlap) < 2:
-            continue
         central_object = str(mechanism.get("central_object", "")).lower()
         object_match = central_object in _candidate_object_ids(candidate)
+        if object_match and not action_overlap:
+            action_overlap = {"central_object"}
+        if len(action_overlap) < 1:
+            continue
         finding = _build_finding(mechanism, object_match=object_match, action_overlap=action_overlap)
         if finding is not None:
             findings.append(finding)
