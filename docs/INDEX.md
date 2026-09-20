@@ -34,6 +34,10 @@
 - `workflows/workflow_merchandising.md`
 - `workflows/workflow_3d.md`
 
+## Evaluación multimodal
+- `docs/VISUAL_CRITIQUE.md` — contrato y arquitectura del revisor visual.
+- `core/gemini_visual_reviewer.py` — adaptador Gemini multimodal (provider boundary; verification pending).
+
 ## Gags actuales
 - `gags/001_jamon.md` — especificación semántica actual del Gag 001; su antigua imagen no se considera referencia canónica actual.
 
