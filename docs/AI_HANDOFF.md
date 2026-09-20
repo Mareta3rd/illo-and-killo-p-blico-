@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `cee61d8` (fix Gemini visual transport to return its request function; verification pending).
+Current repository checkpoint: `3639a258` (Codex task contract + execution-scope validation; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -278,6 +278,25 @@ Experience from SinergYa product design is now recorded as soft environmental gu
 
 ### Naming
 Arsa remains the canonical code identifier for now. Arza is a naming candidate that currently has stronger artistic resonance for the user, but no repository-wide rename has been authorized yet.
+
+## Codex Task Contract — IMPLEMENTED / VERIFICATION PENDING
+A first controlled executor boundary has been implemented for using Codex as a governed work agent rather than a Core authority.
+
+Implementation now present:
+- `core/codex_task.py` defines `CodexTask` and `CodexTaskResult` with closed deterministic JSON serialization;
+- task modes cover `analysis`, `implementation`, `repair` and `improvement`;
+- each task records issuer, objective/context, allowed paths, protected paths, constraints, acceptance criteria, verification commands, base ref/commit, fixed `execution_only` authority and mandatory human approval;
+- `validate_codex_task_result()` verifies task identity, digest, protected-path exclusion, allowed-scope containment and the read-only nature of analysis tasks;
+- `tests/test_codex_task.py` covers round-tripping, closed schemas, authority protection and execution-scope enforcement;
+- `docs/CODEX_TASK_CONTRACT.md` documents the intended agent boundary and future execution bridge.
+
+Architectural intent:
+- Codex may improve generators, prompts, adapters, evaluators, orchestration and tooling when those paths are explicitly authorized by the task;
+- Codex may also be tasked to diagnose or audit the system without making changes;
+- Codex results never become Core decisions and are not integrated merely because the result status is `completed`;
+- canon and other protected semantics remain outside the executor's authority unless a separate human-approved canon task is deliberately introduced.
+
+This block intentionally does not call a Codex service from Python Core or auto-merge changes. The next target after verification is a small execution bridge or manually exercised task, using a real bounded maintenance task against the repository.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
