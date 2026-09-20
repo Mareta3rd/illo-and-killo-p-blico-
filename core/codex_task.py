@@ -251,6 +251,27 @@ def deserialize_codex_task(payload: str | bytes) -> CodexTask:
     )
 
 
+def validate_codex_task_result(task: CodexTask, result: CodexTaskResult) -> None:
+    """Ensure an execution result stayed inside the task's authority and scope."""
+    if not isinstance(task, CodexTask):
+        raise TypeError("task must be a CodexTask")
+    if not isinstance(result, CodexTaskResult):
+        raise TypeError("result must be a CodexTaskResult")
+    if result.task_id != task.task_id:
+        raise ValueError("result task_id does not match task")
+    if result.task_digest != task.digest():
+        raise ValueError("result task_digest does not match task")
+
+    for changed_path in result.changed_files:
+        if any(_path_covers(protected, changed_path) for protected in task.protected_paths):
+            raise ValueError(f"Codex result changed protected path: {changed_path!r}")
+        if not any(_path_covers(allowed, changed_path) for allowed in task.allowed_paths):
+            raise ValueError(f"Codex result changed path outside allowed scope: {changed_path!r}")
+
+    if task.mode == "analysis" and result.changed_files:
+        raise ValueError("analysis tasks must not report changed files")
+
+
 def serialize_codex_task_result(result: CodexTaskResult) -> str:
     """Serialize a Codex result deterministically."""
     if not isinstance(result, CodexTaskResult):
@@ -338,4 +359,5 @@ __all__ = [
     "deserialize_codex_task_result",
     "serialize_codex_task",
     "serialize_codex_task_result",
+    "validate_codex_task_result",
 ]
