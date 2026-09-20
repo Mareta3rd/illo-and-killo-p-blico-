@@ -18,6 +18,7 @@ from .real_evidence_provider import RealEvidenceProviderError
 
 
 DEFAULT_GROQ_QWEN_CANDIDATE_MODEL = "qwen/qwen3.8-27b"
+DEFAULT_GROQ_QWEN_MAX_TOKENS = 900
 DEFAULT_GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
 
@@ -443,6 +444,7 @@ def build_groq_qwen_responses_transport(
         try:
             response = client.chat.completions.create(
                 model=model,
+                max_tokens=DEFAULT_GROQ_QWEN_MAX_TOKENS,
                 messages=[
                     {
                         "role": "user",
