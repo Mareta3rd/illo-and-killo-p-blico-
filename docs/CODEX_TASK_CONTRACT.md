@@ -110,6 +110,8 @@ The task contract also fixes `authority="execution_only"` and
 - blockers;
 - optional diff digest.
 
+The repository also exposes `validate_codex_task_result(task, result)`. It verifies the task identity/digest, rejects changes to protected paths, rejects changes outside the allowed scope, and rejects any file changes from an `analysis` task.
+
 This matters because **Codex must report what it actually did**, not what the task hoped it would do.
 
 A result of `completed` is not itself an integration decision. The repository still requires
