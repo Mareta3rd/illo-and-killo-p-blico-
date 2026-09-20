@@ -32,7 +32,7 @@ Codex may change code within `allowed_paths`. It must not modify anything under
 
 The task contract explicitly records:
 
-- **issuer** — human, Core, orchestrator or reviewer;
+- **issuer** — human, Core, orchestrator, reviewer or the digital_ricard interface;
 - **mode** — analysis, implementation, repair or improvement;
 - **objective/context** — the actual problem to solve;
 - **allowed_paths** — repository scope where changes are permitted;
@@ -109,6 +109,8 @@ The task contract also fixes `authority="execution_only"` and
 - tests actually run;
 - blockers;
 - optional diff digest.
+
+digital_ricard is a controlled human-facing architectural role, not an additional decision authority. A task issued through it still requires human approval and retains authority="execution_only".
 
 The repository also exposes `validate_codex_task_result(task, result)`. It verifies the task identity/digest, rejects changes to protected paths, rejects changes outside the allowed scope, and rejects any file changes from an `analysis` task.
 
