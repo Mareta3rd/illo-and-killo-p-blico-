@@ -1,8 +1,9 @@
-"""Provider-neutral visual critique contract for generated creative artifacts."""
+"""Provider-neutral visual critique contract for generated creative artifacts.
 
 The critique layer does not generate images, score taste, or decide canon. It
 normalizes observations from a future multimodal reviewer into auditable
 dimensions that Core and a creative feedback layer can consume.
+"""
 
 from __future__ import annotations
 
