@@ -1,4 +1,4 @@
-"""Provider-neutral visual critique contract for generated creative artifacts.""
+"""Provider-neutral visual critique contract for generated creative artifacts."""
 
 The critique layer does not generate images, score taste, or decide canon. It
 normalizes observations from a future multimodal reviewer into auditable
@@ -59,9 +59,9 @@ def build_visual_critique(
     for index, raw in enumerate(findings):
         if not isinstance(raw, Mapping):
             raise ValueError(f"visual finding {index} must be an object")
-        required = {"dimension", "state", "observation", "evidence", "confidence"}
+        required = {"dimension", "state", "observation", "evidence", "confidence", "guidance"}
         missing = required - set(raw)
-        unknown = set(raw) - required - {"guidance"}
+        unknown = set(raw) - required
         if missing or unknown:
             detail = []
             if missing:
@@ -75,6 +75,8 @@ def build_visual_critique(
         dimension = raw["dimension"]
         state = raw["state"]
         confidence = raw["confidence"]
+        if not all(isinstance(value, str) for value in (dimension, state, confidence)):
+            raise ValueError(f"visual finding {index} dimension/state/confidence must be strings")
         if dimension not in VISUAL_DIMENSIONS:
             raise ValueError(f"unsupported visual dimension: {dimension}")
         if dimension in seen:
@@ -85,7 +87,7 @@ def build_visual_critique(
             raise ValueError(f"unsupported visual confidence: {confidence}")
 
         for key in ("observation", "evidence", "guidance"):
-            value = raw.get(key, "")
+            value = raw[key]
             if not isinstance(value, str):
                 raise ValueError(f"visual finding {index} '{key}' must be a string")
 
