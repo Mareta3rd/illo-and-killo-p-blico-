@@ -17,7 +17,7 @@ from typing import Any, Sequence
 SCHEMA_VERSION = 1
 TASK_MODES = {"analysis", "implementation", "repair", "improvement"}
 RESULT_STATUSES = {"completed", "needs_review", "blocked", "failed"}
-ISSUERS = {"human", "core", "orchestrator", "reviewer"}
+ISSUERS = {"human", "core", "orchestrator", "reviewer", "digital_ricard"}
 REQUIRED_AUTHORITY = "execution_only"
 
 
