@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `4bfdbdb` (`align cultural engine with current Arsa and Pisha canon`; verification pending).
+Current repository checkpoint: `6f95779` (`record Qwen output budget and Andalusian motif guidance`; verified green).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -256,6 +256,7 @@ The next target is a new Qwen run using the same jamón brief, primarily to obse
 The next Qwen run did not reach candidate generation. Groq rejected the request before execution because the requested expected output exceeded the observed on-demand Output Tokens Per Minute limit: 1000, with the request estimated at 1047. The provider returned HTTP 429 rate_limit_exceeded. This is a transport-budget issue, not a candidate-quality or Core-validation failure.
 
 The transport has now been changed to request `max_tokens=900` for qwen/qwen3.8-27b, with a regression test protecting that ceiling.
+The transport-budget/motif block is now also **VERIFIED GREEN: 562 passed, 49 subtests passed in 29.24s**, with clean whitespace and working-tree checks at checkpoint `6f95779`.
 
 ### Recurrent Andalusian ambient motifs
 Experience from SinergYa product design is now recorded as soft environmental guidance: a simple Andalusian streetlamp, a small pot with carnations, and a present-but-not-dominant bougainvillea are recurring optional motifs. They are not canon invariants and should never appear together by default; selection depends on context, composition and gag.
