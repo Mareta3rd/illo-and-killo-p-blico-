@@ -225,6 +225,18 @@ class GroqQwenCandidateExecutorTests(unittest.TestCase):
 
     # --- Requirement 5: Endpoint correct ---
 
+    def test_candidate_request_bounds_output_tokens(self):
+        """Candidate generation should stay below the observed Groq OTPM cap."""
+        fake_client = FakeParsedClient()
+        executor = GroqQwenCandidateExecutor.from_client(
+            fake_client,
+            model="qwen/qwen3.8-27b",
+        )
+        executor.execute(self.compiled, 1, None)
+
+        self.assertIn("max_tokens", fake_client.last_request)
+        self.assertLessEqual(fake_client.last_request["max_tokens"], 900)
+
     def test_client_uses_correct_groq_endpoint(self):
         """Client should default to https://api.groq.com/openai/v1."""
         client = build_groq_qwen_candidate_client(api_key=None)
