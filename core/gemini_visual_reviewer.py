@@ -126,6 +126,7 @@ def build_gemini_visual_review_transport(
 ) -> Callable[[dict[str, Any]], Any]:
     """Build an injected Gemini Interactions API request function."""
     def request(payload: dict[str, Any]) -> Any:
+        """Send one image-review request through the injected Gemini client."""
         try:
             interaction = client.interactions.create(
                 model=model,
@@ -194,6 +195,8 @@ def build_gemini_visual_review_transport(
                 "gemini visual review response contained no structured text"
             )
         return text
+
+    return request
 
 
 @dataclass(frozen=True)
