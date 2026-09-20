@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `f89004b` (Gemini multimodal visual reviewer implementation, regression tests, documentation and index; verification pending).
+Current repository checkpoint: `cee61d8` (fix Gemini visual transport to return its request function; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -271,7 +271,7 @@ The reviewer is deliberately observational only. It returns VisualCritiqueReport
 
 The purpose is to let the future system say not merely whether an image obeys canon, but what it concretely observes about character treatment, gag readability, movement, hierarchy, style coherence, Andalusian integration and production suitability, while leaving taste and canon decisions in their proper layers.
 
-The first Codespace verification failed during test collection because `core/visual_critique.py` contained a malformed module docstring. No tests executed. The complete header was subsequently corrected in `9300805`. The branch now also contains the first Gemini reviewer adapter and its tests; complete closure is still the required verification gate before the visual block can be marked green.
+The first Codespace verification failed during test collection because `core/visual_critique.py` contained a malformed module docstring. No tests executed. The complete header was subsequently corrected in `9300805`. The branch now also contains the first Gemini reviewer adapter and its tests. The first closure run exposed a transport-builder bug (`None` instead of the request callable); `cee61d8` adds the missing `return request`. Complete closure is still the required verification gate before the visual block can be marked green.
 
 ### Recurrent Andalusian ambient motifs
 Experience from SinergYa product design is now recorded as soft environmental guidance: a simple Andalusian streetlamp, a small pot with carnations, and a present-but-not-dominant bougainvillea are recurring optional motifs. They are not canon invariants and should never appear together by default; selection depends on context, composition and gag.
