@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `b5aea86` (`record creative feedback regression fix status`; Creative Feedback block verified green).
+Current repository checkpoint: `4bfdbdb` (`align cultural engine with current Arsa and Pisha canon`; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -251,6 +251,17 @@ This layer is deliberately not a second canon system. It does not score taste, m
 The branch was last confirmed GREEN at **561 passed, 49 subtests passed in 17.81s** on checkpoint `b5aea86`. The Creative Feedback block is now **VERIFIED GREEN**. The first verification run exposed an overly narrow direct-jamón reuse test (560 passed, 1 failed); the detector was corrected to flag direct central-object reuse even when the prose does not contain two action keywords, and the complete suite then passed at 561/561.
 
 The next target is a new Qwen run using the same jamón brief, primarily to observe whether the structured feedback changes the second-pass generation away from noun substitution and toward a genuinely different causal mechanism. Do not modify the Core canon rules merely to force that experiment to pass.
+
+### Subsequent live-run observation: Groq OTPM boundary
+The next Qwen run did not reach candidate generation. Groq rejected the request before execution because the requested expected output exceeded the observed on-demand Output Tokens Per Minute limit: 1000, with the request estimated at 1047. The provider returned HTTP 429 rate_limit_exceeded. This is a transport-budget issue, not a candidate-quality or Core-validation failure.
+
+The transport has now been changed to request `max_tokens=900` for qwen/qwen3.8-27b, with a regression test protecting that ceiling.
+
+### Recurrent Andalusian ambient motifs
+Experience from SinergYa product design is now recorded as soft environmental guidance: a simple Andalusian streetlamp, a small pot with carnations, and a present-but-not-dominant bougainvillea are recurring optional motifs. They are not canon invariants and should never appear together by default; selection depends on context, composition and gag.
+
+### Naming
+Arsa remains the canonical code identifier for now. Arza is a naming candidate that currently has stronger artistic resonance for the user, but no repository-wide rename has been authorized yet.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
