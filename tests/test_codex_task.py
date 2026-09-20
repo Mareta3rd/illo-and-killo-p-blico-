@@ -10,6 +10,7 @@ from core.codex_task import (
     deserialize_codex_task_result,
     serialize_codex_task,
     serialize_codex_task_result,
+    validate_codex_task_result,
 )
 
 
@@ -107,6 +108,66 @@ class CodexTaskTests(unittest.TestCase):
         )
         self.assertEqual(result.status, "blocked")
         self.assertEqual(result.changed_files, ())
+
+    def test_result_must_match_task_identity_and_digest(self):
+        task = build_task()
+        result = CodexTaskResult(
+            task_id=task.task_id,
+            task_digest=task.digest(),
+            status="completed",
+            summary="done",
+            changed_files=("core/adapter.py",),
+            tests_run=("PYTHONPATH=. pytest -q",),
+        )
+        validate_codex_task_result(task, result)
+
+        mismatched = CodexTaskResult(
+            task_id="other",
+            task_digest=task.digest(),
+            status="completed",
+            summary="done",
+            changed_files=("core/adapter.py",),
+            tests_run=("PYTHONPATH=. pytest -q",),
+        )
+        with self.assertRaises(ValueError):
+            validate_codex_task_result(task, mismatched)
+
+    def test_result_scope_protects_changes(self):
+        task = build_task()
+        protected = CodexTaskResult(
+            task_id=task.task_id,
+            task_digest=task.digest(),
+            status="completed",
+            summary="changed protected file",
+            changed_files=("data/characters.yaml",),
+            tests_run=("PYTHONPATH=. pytest -q",),
+        )
+        with self.assertRaises(ValueError):
+            validate_codex_task_result(task, protected)
+
+        outside = CodexTaskResult(
+            task_id=task.task_id,
+            task_digest=task.digest(),
+            status="completed",
+            summary="changed outside scope",
+            changed_files=("scripts/hack.py",),
+            tests_run=("PYTHONPATH=. pytest -q",),
+        )
+        with self.assertRaises(ValueError):
+            validate_codex_task_result(task, outside)
+
+    def test_analysis_result_cannot_change_files(self):
+        task = build_task(mode="analysis", allowed_paths=("core/",))
+        result = CodexTaskResult(
+            task_id=task.task_id,
+            task_digest=task.digest(),
+            status="completed",
+            summary="analysis complete",
+            changed_files=("core/adapter.py",),
+            tests_run=("PYTHONPATH=. pytest -q",),
+        )
+        with self.assertRaises(ValueError):
+            validate_codex_task_result(task, result)
 
     def test_result_rejects_unknown_status(self):
         with self.assertRaises(ValueError):
