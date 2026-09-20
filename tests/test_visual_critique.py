@@ -42,6 +42,29 @@ class VisualCritiqueTests(unittest.TestCase):
         self.assertEqual(finding.confidence, "low")
         self.assertNotIn("score", finding.__dict__)
 
+    def test_missing_guidance_is_rejected(self):
+        finding = {
+            "dimension": "gag_readability",
+            "state": "observed",
+            "observation": "reads immediately",
+            "evidence": "primary action is clear",
+            "confidence": "high",
+        }
+        with self.assertRaises(ValueError):
+            build_visual_critique([finding])
+
+    def test_non_string_dimension_state_confidence_are_rejected(self):
+        finding = {
+            "dimension": ["gag_readability"],
+            "state": "observed",
+            "observation": "reads immediately",
+            "evidence": "primary action is clear",
+            "confidence": "high",
+            "guidance": "",
+        }
+        with self.assertRaises(ValueError):
+            build_visual_critique([finding])
+
     def test_contract_is_closed(self):
         schema = visual_critique_contract()
         self.assertFalse(schema["additionalProperties"])
