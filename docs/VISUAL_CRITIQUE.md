@@ -47,8 +47,13 @@ request another generation, while ambiguous aesthetic judgements remain soft.
 
 ## Current implementation
 
-`core/visual_critique.py` now defines the provider-neutral contract and closed
-schema. No external visual model is connected by this block yet. The next
-implementation block should connect one real multimodal reviewer and test the
-contract against an actual image, using the Andalucía shield prototype or a
-future Arsa & Pisha candidate as the first controlled experiment.
+`core/visual_critique.py` defines the provider-neutral contract and closed schema.
+`core/gemini_visual_reviewer.py` now provides the first concrete multimodal
+reviewer adapter: it sends the supplied image to Gemini with a structured visual
+review schema, requires one finding for every requested dimension, and returns
+only a `VisualCritiqueReport`.
+
+The adapter is observational and does not score taste or make Core decisions.
+The next controlled experiment is a real review of an Arsa & Pisha image,
+starting with a deliberately bounded test artifact before any integration into
+the creative-feedback loop.
