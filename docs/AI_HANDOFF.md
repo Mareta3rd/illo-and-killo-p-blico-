@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `6f95779` (`record Qwen output budget and Andalusian motif guidance`; verified green).
+Current repository checkpoint: `6551d87` (`index visual critique documentation`; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -257,6 +257,17 @@ The next Qwen run did not reach candidate generation. Groq rejected the request 
 
 The transport has now been changed to request `max_tokens=900` for qwen/qwen3.8-27b, with a regression test protecting that ceiling.
 The transport-budget/motif block is now also **VERIFIED GREEN: 562 passed, 49 subtests passed in 29.24s**, with clean whitespace and working-tree checks at checkpoint `6f95779`.
+
+## Visual Critique Layer — CONTRACT IMPLEMENTED / VERIFICATION PENDING
+A new provider-neutral visual critique contract has been added as the next small step toward the multimodal reviewer/artist team:
+- core/visual_critique.py defines closed observations for character fidelity, gag readability, composition hierarchy, motion/pose, style coherence, cultural integration and production fit;
+- observations use state (observed/uncertain/not_applicable) and independent confidence (high/medium/low), with no aesthetic score;
+- docs/VISUAL_CRITIQUE.md documents the architecture and boundary;
+- tests/test_visual_critique.py covers deterministic normalization, closed-schema behavior and input validation.
+
+This block deliberately does not connect an external visual model yet. The next implementation step after a green verification is to connect one real multimodal reviewer and feed its observations into the existing creative-feedback loop, starting with a controlled Arsa & Pisha image experiment.
+
+The purpose is to let the future system say not merely whether an image obeys canon, but what it concretely observes about character treatment, gag readability, movement, hierarchy, style coherence, Andalusian integration and production suitability, while leaving taste and canon decisions in their proper layers.
 
 ### Recurrent Andalusian ambient motifs
 Experience from SinergYa product design is now recorded as soft environmental guidance: a simple Andalusian streetlamp, a small pot with carnations, and a present-but-not-dominant bougainvillea are recurring optional motifs. They are not canon invariants and should never appear together by default; selection depends on context, composition and gag.
