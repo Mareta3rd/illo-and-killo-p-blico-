@@ -41,6 +41,13 @@ Puede aparecer mediante lugares, arquitectura, objetos, ambientes y situaciones 
 ### 3. Andalucía ornamental
 Se utiliza con moderación. Los tópicos visuales nunca deben convertir el universo en una caricatura turística o folclórica.
 
+#### Motivos ambientales recurrentes
+- Una **farola andaluza sencilla** puede aparecer como firma ambiental discreta.
+- Una **pequeña maceta con claveles** puede funcionar como acento local, especialmente en contextos malagueños o axárquicos.
+- Una **buganvilla** puede aportar presencia, color y lugar sin convertirse en decoración dominante.
+- No deben aparecer por obligación ni juntos por sistema: se seleccionan según composición, contexto y necesidad del gag.
+- Son **recursos ambientales blandos**, nunca invariantes del canon y nunca relleno ornamental.
+
 La intención es que **Arsa & Pisha** pueda funcionar en Sevilla, Málaga, una playa, un supermercado de Tokio o una nave espacial y seguir siendo inequívocamente el mismo universo.
 
 ## Referencias funcionales
