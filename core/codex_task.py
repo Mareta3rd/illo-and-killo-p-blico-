@@ -97,6 +97,8 @@ class CodexTask:
         _require_nonempty_string("context", self.context)
         if self.authority != REQUIRED_AUTHORITY:
             raise ValueError("Codex tasks cannot hold Core decision authority")
+        if self.issuer != "human" and self.human_approval_required is not True:
+            raise ValueError("non-human Codex tasks require explicit human approval")
         if not isinstance(self.human_approval_required, bool):
             raise TypeError("human_approval_required must be a boolean")
         allowed = tuple(_normalize_repo_path(path) for path in self.allowed_paths)
