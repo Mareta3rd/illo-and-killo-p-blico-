@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `6551d87` (`index visual critique documentation`; verification pending).
+Current repository checkpoint: `d657bbd` (`fix visual critique module docstring syntax`; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -268,6 +268,8 @@ A new provider-neutral visual critique contract has been added as the next small
 This block deliberately does not connect an external visual model yet. The next implementation step after a green verification is to connect one real multimodal reviewer and feed its observations into the existing creative-feedback loop, starting with a controlled Arsa & Pisha image experiment.
 
 The purpose is to let the future system say not merely whether an image obeys canon, but what it concretely observes about character treatment, gag readability, movement, hierarchy, style coherence, Andalusian integration and production suitability, while leaving taste and canon decisions in their proper layers.
+
+The first Codespace verification failed during test collection because `core/visual_critique.py` contained a malformed module docstring. No tests executed. The syntax error has been corrected in `d657bbd`; rerun the complete closure script before considering this block green.
 
 ### Recurrent Andalusian ambient motifs
 Experience from SinergYa product design is now recorded as soft environmental guidance: a simple Andalusian streetlamp, a small pot with carnations, and a present-but-not-dominant bougainvillea are recurring optional motifs. They are not canon invariants and should never appear together by default; selection depends on context, composition and gag.
