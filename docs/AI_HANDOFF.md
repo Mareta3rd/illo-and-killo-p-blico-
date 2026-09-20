@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `210168df` / `f245e9bd` (Gemini multimodal visual reviewer implementation + regression tests; verification pending).
+Current repository checkpoint: `f89004b` (Gemini multimodal visual reviewer implementation, regression tests, documentation and index; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
