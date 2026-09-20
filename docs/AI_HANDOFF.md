@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `3639a258` (Codex task contract + execution-scope validation; verification pending).
+Current repository checkpoint: `74cf3e2` (Codex task contract, execution-scope validation, documentation and index; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
