@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `d657bbd` (`fix visual critique module docstring syntax`; verification pending).
+Current repository checkpoint: `210168df` / `f245e9bd` (Gemini multimodal visual reviewer implementation + regression tests; verification pending).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -258,18 +258,20 @@ The next Qwen run did not reach candidate generation. Groq rejected the request 
 The transport has now been changed to request `max_tokens=900` for qwen/qwen3.8-27b, with a regression test protecting that ceiling.
 The transport-budget/motif block is now also **VERIFIED GREEN: 562 passed, 49 subtests passed in 29.24s**, with clean whitespace and working-tree checks at checkpoint `6f95779`.
 
-## Visual Critique Layer — CONTRACT IMPLEMENTED / VERIFICATION PENDING
-A new provider-neutral visual critique contract has been added as the next small step toward the multimodal reviewer/artist team:
+## Visual Critique Layer — GEMINI REVIEWER IMPLEMENTED / VERIFICATION PENDING
+A provider-neutral visual critique contract is now paired with a concrete Gemini multimodal reviewer adapter:
 - core/visual_critique.py defines closed observations for character fidelity, gag readability, composition hierarchy, motion/pose, style coherence, cultural integration and production fit;
 - observations use state (observed/uncertain/not_applicable) and independent confidence (high/medium/low), with no aesthetic score;
-- docs/VISUAL_CRITIQUE.md documents the architecture and boundary;
-- tests/test_visual_critique.py covers deterministic normalization, closed-schema behavior and input validation.
+- core/gemini_visual_reviewer.py builds the Gemini image+text request, constructs the review prompt, parses structured findings, and requires complete coverage of the requested dimensions;
+- tests/test_visual_critique.py covers the provider-neutral contract;
+- tests/test_gemini_visual_reviewer.py covers prompt construction, strict dimension coverage, malformed responses, image transport, and provider-boundary failures;
+- docs/VISUAL_CRITIQUE.md documents the architecture and boundary.
 
-This block deliberately does not connect an external visual model yet. The next implementation step after a green verification is to connect one real multimodal reviewer and feed its observations into the existing creative-feedback loop, starting with a controlled Arsa & Pisha image experiment.
+The reviewer is deliberately observational only. It returns VisualCritiqueReport values and has no Core decision methods. The next step after a green verification is one real controlled image review, then wiring selected high-confidence observations into the existing creative-feedback loop without turning the reviewer into a scoring or canon system.
 
 The purpose is to let the future system say not merely whether an image obeys canon, but what it concretely observes about character treatment, gag readability, movement, hierarchy, style coherence, Andalusian integration and production suitability, while leaving taste and canon decisions in their proper layers.
 
-The first Codespace verification failed during test collection because `core/visual_critique.py` contained a malformed module docstring. No tests executed. The initial syntax error was partially corrected in `d657bbd`, but the multiline docstring remained malformed and the next verification reproduced the collection failure. The complete header has now been corrected in `9300805`; rerun the complete closure script before considering this block green.
+The first Codespace verification failed during test collection because `core/visual_critique.py` contained a malformed module docstring. No tests executed. The complete header was subsequently corrected in `9300805`. The branch now also contains the first Gemini reviewer adapter and its tests; complete closure is still the required verification gate before the visual block can be marked green.
 
 ### Recurrent Andalusian ambient motifs
 Experience from SinergYa product design is now recorded as soft environmental guidance: a simple Andalusian streetlamp, a small pot with carnations, and a present-but-not-dominant bougainvillea are recurring optional motifs. They are not canon invariants and should never appear together by default; selection depends on context, composition and gag.
