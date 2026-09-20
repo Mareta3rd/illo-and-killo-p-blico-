@@ -269,7 +269,7 @@ This block deliberately does not connect an external visual model yet. The next 
 
 The purpose is to let the future system say not merely whether an image obeys canon, but what it concretely observes about character treatment, gag readability, movement, hierarchy, style coherence, Andalusian integration and production suitability, while leaving taste and canon decisions in their proper layers.
 
-The first Codespace verification failed during test collection because `core/visual_critique.py` contained a malformed module docstring. No tests executed. The syntax error has been corrected in `d657bbd`; rerun the complete closure script before considering this block green.
+The first Codespace verification failed during test collection because `core/visual_critique.py` contained a malformed module docstring. No tests executed. The initial syntax error was partially corrected in `d657bbd`, but the multiline docstring remained malformed and the next verification reproduced the collection failure. The complete header has now been corrected in `9300805`; rerun the complete closure script before considering this block green.
 
 ### Recurrent Andalusian ambient motifs
 Experience from SinergYa product design is now recorded as soft environmental guidance: a simple Andalusian streetlamp, a small pot with carnations, and a present-but-not-dominant bougainvillea are recurring optional motifs. They are not canon invariants and should never appear together by default; selection depends on context, composition and gag.
