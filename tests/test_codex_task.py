@@ -75,6 +75,14 @@ class CodexTaskTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_task(human_approval_required=False)
 
+    def test_core_orchestrator_tasks_require_human_approval(self):
+        with self.assertRaises(ValueError):
+            build_task(issuer="core", human_approval_required=False)
+        with self.assertRaises(ValueError):
+            build_task(issuer="orchestrator", human_approval_required=False)
+        with self.assertRaises(ValueError):
+            build_task(issuer="reviewer", human_approval_required=False)
+
     def test_task_schema_is_closed(self):
         schema = codex_task_contract()
         self.assertFalse(schema["additionalProperties"])
