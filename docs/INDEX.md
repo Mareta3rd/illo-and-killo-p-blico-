@@ -34,6 +34,9 @@
 - `workflows/workflow_merchandising.md`
 - `workflows/workflow_3d.md`
 
+## Ricard Digital
+- docs/DIGITAL_RICARD.md — rol y puerta arquitectónica para Ricard Digital.
+
 ## Agentes de ejecución
 - `docs/CODEX_TASK_CONTRACT.md` — contrato de tareas controladas para Codex.
 - `core/codex_task.py` — contrato, validación de alcance y resultado Codex.
