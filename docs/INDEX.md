@@ -34,6 +34,10 @@
 - `workflows/workflow_merchandising.md`
 - `workflows/workflow_3d.md`
 
+## Agentes de ejecución
+- `docs/CODEX_TASK_CONTRACT.md` — contrato de tareas controladas para Codex.
+- `core/codex_task.py` — contrato, validación de alcance y resultado Codex.
+
 ## Evaluación multimodal
 - `docs/VISUAL_CRITIQUE.md` — contrato y arquitectura del revisor visual.
 - `core/gemini_visual_reviewer.py` — adaptador Gemini multimodal (provider boundary; verification pending).
