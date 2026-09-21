@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `9293764` (Codex CLI transport + creative-direction documentation; complete suite verified green).
+Current repository checkpoint: `a7a9363` (Codex CLI transport + Ricard Digital + mature creative-direction layer; complete suite verified green).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -371,7 +371,7 @@ Verification:
 
 ### Explicit next target
 
-Implement the **real Codex transport adapter** outside Core, after verifying the current Codex execution surface and authentication/setup path. Keep the existing `CodexTransport` boundary stable; do not introduce provider-specific assumptions into Core.
+Run the **first real Codex smoke test** against the user's installed Codex CLI using an `analysis` task and the existing `CodexExecutionBridge` + `CodexCliTransport`. Keep it read-only for the first live execution. If it succeeds, the following block can exercise a tightly bounded implementation task.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
