@@ -9,6 +9,7 @@
 6. `docs/AI_HANDOFF.md` — estado durable y hoja de ruta técnica/artística.
 
 ## Núcleo creativo
+- `docs/ATTITUDE_AND_MAGNETISM.md` — actitud punk refinada, magnetismo y sensualidad juguetona.
 - `docs/CULTURAL_ENGINE.md`
 - `docs/HUMOR.md`
 - `docs/PALETA.md`
