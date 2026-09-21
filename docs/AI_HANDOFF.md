@@ -279,8 +279,9 @@ Experience from SinergYa product design is now recorded as soft environmental gu
 ### Naming
 Arsa remains the canonical code identifier for now. Arza is a naming candidate that currently has stronger artistic resonance for the user, but no repository-wide rename has been authorized yet.
 
-## Codex Task Contract — IMPLEMENTED / VERIFICATION PENDING
-A first controlled executor boundary has been implemented for using Codex as a governed work agent rather than a Core authority.
+## Codex Task Contract — VERIFIED GREEN
+
+A first controlled executor boundary is implemented for using Codex as a governed work agent rather than a Core authority.
 
 Implementation now present:
 - `core/codex_task.py` defines `CodexTask` and `CodexTaskResult` with closed deterministic JSON serialization;
@@ -288,15 +289,44 @@ Implementation now present:
 - each task records issuer, objective/context, allowed paths, protected paths, constraints, acceptance criteria, verification commands, base ref/commit, fixed `execution_only` authority and mandatory human approval;
 - `validate_codex_task_result()` verifies task identity, digest, protected-path exclusion, allowed-scope containment and the read-only nature of analysis tasks;
 - `tests/test_codex_task.py` covers round-tripping, closed schemas, authority protection and execution-scope enforcement;
-- `docs/CODEX_TASK_CONTRACT.md` documents the intended agent boundary and future execution bridge.
+- `docs/CODEX_TASK_CONTRACT.md` documents the executor boundary;
+- `digital_ricard` is a recognised controlled issuer, while retaining the same execution-only authority and mandatory human approval.
 
-Architectural intent:
-- Codex may improve generators, prompts, adapters, evaluators, orchestration and tooling when those paths are explicitly authorized by the task;
-- Codex may also be tasked to diagnose or audit the system without making changes;
-- Codex results never become Core decisions and are not integrated merely because the result status is `completed`;
-- canon and other protected semantics remain outside the executor's authority unless a separate human-approved canon task is deliberately introduced.
+Verification:
+- complete suite: **601 passed, 54 subtests passed in 16.60s**;
+- `bash scripts/close_work_block.sh` completed successfully;
+- checkpoint: `20c9e68`;
+- whitespace, working-tree and diff checks were clean.
 
-This block intentionally does not call a Codex service from Python Core or auto-merge changes. The next target after verification is a small execution bridge or manually exercised task, using a real bounded maintenance task against the repository.
+## Ricard Digital — ARCHITECTURAL ENTRY POINT ESTABLISHED
+
+`docs/DIGITAL_RICARD.md` establishes Ricard Digital as a provider-neutral human-facing coordination role. The current ChatGPT interaction can implement this role, but Core remains independent of any single model or interface.
+
+Ricard Digital can interpret human intent, preserve continuity, coordinate specialised agents and formulate bounded Codex work. It cannot silently promote provider output to canon, grant Core authority to an executor, bypass protected scopes or remove human approval.
+
+This is an architectural door for future implementations rather than a persistent autonomous runtime. Future interfaces/providers may implement the same role without changing Core.
+
+## Codex Execution Bridge — VERIFIED GREEN
+
+The first runtime bridge is implemented:
+- `core/codex_execution_bridge.py` provides a provider-neutral `CodexTransport` protocol and `CodexExecutionBridge`;
+- `docs/CODEX_EXECUTION_BRIDGE.md` defines the bridge boundary;
+- `tests/test_codex_execution_bridge.py` covers approval gating, transport invocation, malformed results, digest mismatch and scope violations.
+
+Bridge behavior:
+- no human approval → return `blocked` without invoking the transport;
+- approved task → call the transport;
+- returned result must be a `CodexTaskResult` matching task identity/digest and staying inside allowed scope;
+- the bridge does not know how a concrete Codex environment is invoked.
+
+Verification:
+- complete suite: **601 passed, 54 subtests passed in 16.60s**;
+- checkpoint: `20c9e68`;
+- bridge and task authority changes are green together.
+
+### Explicit next target
+
+Implement the **real Codex transport adapter** outside Core, after verifying the current Codex execution surface and authentication/setup path. Keep the existing `CodexTransport` boundary stable; do not introduce provider-specific assumptions into Core.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
