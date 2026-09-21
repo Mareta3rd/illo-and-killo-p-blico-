@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from core.codex_task import CodexTask
 from core.codex_cli_transport import (
     CodexCliTransport,
     _build_prompt,
