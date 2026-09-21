@@ -75,9 +75,10 @@ class CodexTaskTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_task(human_approval_required=False)
 
-    def test_digital_ricard_tasks_require_human_approval(self):
-        with self.assertRaises(ValueError):
-            build_task(issuer="digital_ricard", human_approval_required=False)
+    def test_all_codex_tasks_require_human_approval(self):
+        for issuer in ("human", "core", "orchestrator", "reviewer", "digital_ricard"):
+            with self.subTest(issuer=issuer), self.assertRaises(ValueError):
+                build_task(issuer=issuer, human_approval_required=False)
 
     def test_core_orchestrator_tasks_require_human_approval(self):
         with self.assertRaises(ValueError):
