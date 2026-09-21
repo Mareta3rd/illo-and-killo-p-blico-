@@ -20,7 +20,7 @@ def build_task(**overrides):
         "mode": "analysis",
         "objective": "Inspect the repository structure and report the next technical target.",
         "context": "This is a read-only smoke test for the real Codex transport.",
-        "allowed_paths": ("docs/",),
+        "allowed_paths": ("docs/CODEX_CLI_TRANSPORT.md",),
         "protected_paths": ("data/characters.yaml", "docs/CANON_100.md"),
         "constraints": ("Do not change files.",),
         "acceptance_criteria": ("Return a concise analysis.",),
