@@ -298,6 +298,34 @@ Verification:
 - checkpoint: `20c9e68`;
 - whitespace, working-tree and diff checks were clean.
 
+## Creative Direction — SUBVERSIÓN ELEGANTE / MAGNETISMO PUNK
+
+A recent artistic direction has been explicitly recognised as an important part of the Arsa & Pisha identity and must be documented as a compositional/behavioral grammar rather than as a requirement to sexualise the characters.
+
+Core idea:
+- polished, friendly and commercially approachable surface;
+- underneath, a controlled punk attitude: confidence, insolence, asymmetry, self-awareness and refusal to look timid or generic;
+- visual magnetism may come from pose, body language, gaze, silhouette, crop, diagonals, gesture and compositional tension;
+- suggestive or cheeky energy can exist without explicit sexual content;
+- the effect should often reveal itself on a second read rather than announce itself immediately;
+- provocative energy must remain compatible with tenderness, humour and the inseparable Arsa/Pisha relationship.
+
+This is not a fixed gag recipe, score or mandatory visual motif. It is a search direction for generators, reviewers and human art direction. The desired balance is disciplined enough to preserve identity but open enough to allow invention.
+
+Practical vocabulary:
+- contrapposto and deliberate weight shifts;
+- asymmetrical shoulders/hips and compact dynamic silhouettes;
+- direct or knowingly cheeky gaze when context supports it;
+- bold crops, diagonals and negative space;
+- occasional rebellious line gestures or controlled deformation in the drawing;
+- acid/high-contrast accents used selectively against otherwise friendly presentation;
+- visual subversion hidden beneath an accessible product surface.
+
+Important boundary: examples involving sexualised commercial imagery, adult-coded presentation or infantilisation should not be copied as content. Only the abstract visual observations that are useful to the project are retained: attention capture, pose magnetism, rhythm, gaze, silhouette, confidence and layered readability.
+
+Creative test implication:
+The previous shield-of-Andalusia gag experiment was understood as conceptually coherent but visually too restrained. Future experiments should test stronger attitude/composition before escalating explicitness.
+
 ## Ricard Digital — ARCHITECTURAL ENTRY POINT ESTABLISHED
 
 `docs/DIGITAL_RICARD.md` establishes Ricard Digital as a provider-neutral human-facing coordination role. The current ChatGPT interaction can implement this role, but Core remains independent of any single model or interface.
