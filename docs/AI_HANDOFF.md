@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `74cf3e2` (Codex task contract, execution-scope validation, documentation and index; verification pending).
+Current repository checkpoint: `9293764` (Codex CLI transport + creative-direction documentation; complete suite verified green).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -333,6 +333,23 @@ The previous shield-of-Andalusia gag experiment was understood as conceptually c
 Ricard Digital can interpret human intent, preserve continuity, coordinate specialised agents and formulate bounded Codex work. It cannot silently promote provider output to canon, grant Core authority to an executor, bypass protected scopes or remove human approval.
 
 This is an architectural door for future implementations rather than a persistent autonomous runtime. Future interfaces/providers may implement the same role without changing Core.
+
+## Codex CLI Transport — VERIFIED GREEN
+
+The first concrete Codex transport now exists outside Core:
+- `core/codex_cli_transport.py` invokes `codex exec` non-interactively;
+- analysis tasks use a read-only sandbox; implementation/repair/improvement tasks use workspace-write;
+- repository branch, base commit and clean working tree are checked before execution;
+- JSONL events, final agent message, observed verification commands, changed files and a diff digest are translated into `CodexTaskResult`;
+- `tests/test_codex_cli_transport.py` covers prompt construction, JSONL parsing, verification extraction and CLI invocation wiring;
+- `docs/CODEX_CLI_TRANSPORT.md` documents the provider boundary.
+
+Verification:
+- complete suite: **606 passed, 54 subtests passed in 17.84s**;
+- checkpoint: `9293764`;
+- the initial transport tests exposed only fixture defects: a missing `CodexTask` import and an overlapping allowed/protected scope. Both were fixed without weakening the authority/scope contract.
+
+Important status: the transport has not yet been exercised against the user's live Codex installation. That real smoke test is the next operational step.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
