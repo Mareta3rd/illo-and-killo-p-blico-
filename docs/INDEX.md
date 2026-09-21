@@ -39,7 +39,9 @@
 
 ## Agentes de ejecución
 - `docs/CODEX_TASK_CONTRACT.md` — contrato de tareas controladas para Codex.
+- `docs/CODEX_EXECUTION_BRIDGE.md` — puente provider-neutral entre tareas Codex y un transporte de ejecución.
 - `core/codex_task.py` — contrato, validación de alcance y resultado Codex.
+- `core/codex_execution_bridge.py` — control de aprobación, transporte y validación del resultado.
 
 ## Evaluación multimodal
 - `docs/VISUAL_CRITIQUE.md` — contrato y arquitectura del revisor visual.
