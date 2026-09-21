@@ -22,6 +22,13 @@
 - **Arsa** aporta energía, iniciativa, picardía y escalada impulsiva.
 - **Pisha** aporta observación, contención aparente, orgullo y una posible escalada cuando se pone nervioso o se despista.
 
+## Actitud, picardía y magnetismo
+- La pose y la actitud pueden aportar una carga de picardía o magnetismo aunque no exista contenido sexual explícito.
+- Una pequeña dosis de sensualidad juguetona es compatible con el universo cuando sirve a personaje, gag o composición.
+- La provocación funciona mejor como segunda lectura que como anuncio frontal.
+- La imagen no debe recurrir a genitales explícitos como atajo cómico ni convertir la sensualidad en el único contenido.
+- Véase `docs/ATTITUDE_AND_MAGNETISM.md` para la gramática completa.
+
 ## Gramática del gag
 - La acción debe parecer inevitable una vez vista.
 - Una decisión sencilla puede conducir a una consecuencia desproporcionada o surrealista.
