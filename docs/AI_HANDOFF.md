@@ -426,6 +426,9 @@ Verified in the user's Codespace after pulling the preparation checkpoint:
 - no production files were changed.
 
 The execution boundary therefore worked in both directions:
+
+The smoke result is the runtime source of truth for this block. The GitHub file view may continue to show the pre-execution tree until the user's local Codespace mutation is intentionally committed and pushed; no generated or unreviewed local change is assumed canonical here.
+
 - the bridge required explicit human approval before transport execution;
 - implementation mode selected `--sandbox workspace-write`;
 - the task scope restricted the mutation to one test file;
