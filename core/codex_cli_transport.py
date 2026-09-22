@@ -210,7 +210,14 @@ class CodexCliTransport:
         if self.trace_path is not None:
             trace = Path(self.trace_path)
             trace.parent.mkdir(parents=True, exist_ok=True)
-            trace.write_text(completed.stdout, encoding="utf-8")
+            trace.write_text(
+                json.dumps(
+                    {"stdout": completed.stdout, "stderr": completed.stderr},
+                    ensure_ascii=False,
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
 
         events, final_message, parse_errors = _parse_jsonl(completed.stdout)
         changed_files = _changed_files(root, current_commit)
@@ -218,6 +225,8 @@ class CodexCliTransport:
         tests_run = _tests_from_events(events, task)
 
         blockers = list(parse_errors)
+        if completed.stderr.strip():
+            blockers.append("codex_stderr:" + completed.stderr.strip()[-4000:])
         if completed.returncode != 0:
             blockers.append(f"codex_exit_code:{completed.returncode}")
         if task.mode == "analysis" and changed_files:
