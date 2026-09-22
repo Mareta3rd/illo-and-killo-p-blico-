@@ -334,9 +334,9 @@ Ricard Digital can interpret human intent, preserve continuity, coordinate speci
 
 This is an architectural door for future implementations rather than a persistent autonomous runtime. Future interfaces/providers may implement the same role without changing Core.
 
-## Codex Live Smoke — BLOCKED BY ENVIRONMENT, ARCHITECTURE VERIFIED
+## Codex Live Smoke — HISTORICAL ENVIRONMENT BLOCK
 
-The live execution path is prepared and was invoked, but the current Codespace environment does not have the `codex` executable installed or available on PATH. The failure is therefore an environment/setup gap, not a task-contract failure. The repository now includes `scripts/check_codex_environment.sh` and current setup instructions in `docs/CODEX_CLI_TRANSPORT.md`.
+The live execution path was initially blocked because the Codespace did not yet have the `codex` executable installed. This section is historical: the executable was subsequently installed and authenticated, and the real smoke reached Codex CLI. The current blocker is documented in the newer `Codex CLI Live Smoke — ARGUMENT COMPATIBILITY FIX READY` section below.
 - `AGENTS.md` provides project-level instructions that current Codex tooling loads from the repository root;
 - `scripts/run_codex_smoke_test.py` builds a task from the current branch and HEAD and requires an explicit `--approve` flag;
 - the smoke task is `analysis` mode, has no writable paths, and returns failure if repository files change;
@@ -365,7 +365,7 @@ Verification:
 - checkpoint: `9293764`;
 - the initial transport tests exposed only fixture defects: a missing `CodexTask` import and an overlapping allowed/protected scope. Both were fixed without weakening the authority/scope contract.
 
-Important status: the transport has not yet been exercised against the user's live Codex installation. That real smoke test is the next operational step.
+Historical status at that stage: the transport had not yet been exercised against the live Codex installation.
 
 ## Codex CLI Live Smoke — ARGUMENT COMPATIBILITY FIX READY
 
@@ -414,7 +414,7 @@ Verification:
 
 ### Explicit next target
 
-Run the **first real Codex smoke test** against the user's installed Codex CLI using an `analysis` task and the existing `CodexExecutionBridge` + `CodexCliTransport`. Keep it read-only for the first live execution. If it succeeds, the following block can exercise a tightly bounded implementation task.
+The original first-smoke target is superseded by the live CLI parser finding documented above. The current next step is to pull the transport correction, run the complete closure suite, and rerun the read-only smoke. Once that is green, proceed to a tightly bounded `workspace-write` implementation mission through the existing `CodexTask` + `CodexExecutionBridge` path.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
