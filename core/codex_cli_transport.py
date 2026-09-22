@@ -172,18 +172,40 @@ class CodexCliTransport:
             "--ephemeral",
             "--sandbox",
             sandbox,
-            "-",
+            "--ask-for-approval",
+            "never",
+            _build_prompt(task),
         ]
 
-        completed = subprocess.run(
-            command,
-            cwd=root,
-            input=_build_prompt(task),
-            capture_output=True,
-            text=True,
-            timeout=self.timeout_seconds,
-            check=False,
-        )
+        try:
+            completed = subprocess.run(
+                command,
+                cwd=root,
+                capture_output=True,
+                text=True,
+                timeout=self.timeout_seconds,
+                check=False,
+            )
+        except FileNotFoundError:
+            return CodexTaskResult(
+                task_id=task.task_id,
+                task_digest=task.digest(),
+                status="failed",
+                summary="Codex executable was not found.",
+                changed_files=(),
+                tests_run=(),
+                blockers=("codex_executable_not_found",),
+            )
+        except subprocess.TimeoutExpired:
+            return CodexTaskResult(
+                task_id=task.task_id,
+                task_digest=task.digest(),
+                status="failed",
+                summary="Codex execution timed out.",
+                changed_files=(),
+                tests_run=(),
+                blockers=("codex_execution_timeout",),
+            )
 
         if self.trace_path is not None:
             trace = Path(self.trace_path)
