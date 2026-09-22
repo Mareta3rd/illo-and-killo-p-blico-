@@ -172,7 +172,7 @@ class CodexCliTransport:
             "--ephemeral",
             "--sandbox",
             sandbox,
-            "--ask-for-approval",
+            "-a",
             "never",
             _build_prompt(task),
         ]
