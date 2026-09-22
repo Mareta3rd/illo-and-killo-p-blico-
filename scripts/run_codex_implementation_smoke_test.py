@@ -95,7 +95,7 @@ def main() -> int:
 
     expected = {"tests/test_codex_cli_transport.py"}
     changed = set(result.changed_files)
-    return 0 if result.status == "completed" and changed.issubset(expected) else 2
+    return 0 if result.status == "completed" and changed == expected else 2
 
 
 if __name__ == "__main__":
