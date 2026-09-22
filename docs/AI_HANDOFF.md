@@ -394,6 +394,30 @@ PYTHONPATH=. python scripts/run_codex_smoke_test.py --approve
 
 Do not reintroduce `-a` or `--ask-for-approval` into the post-`exec` argv unless the installed CLI contract changes and is verified directly. The next target after a green live smoke remains a tightly bounded `workspace-write` implementation mission through the same task contract and bridge.
 
+## Codex CLI Live Smoke — VERIFIED GREEN
+
+The first real live smoke test through `Ricard Digital → CodexTask → CodexExecutionBridge → CodexCliTransport → codex exec` is now **GREEN**.
+
+Verified in the user's Codespace after pulling checkpoint `c0cd915`:
+- complete closure suite: **608 passed, 54 subtests passed in 38.16s**;
+- live smoke status: **completed**;
+- blockers: none;
+- changed files: none;
+- diff digest: none;
+- Codex reported that `AGENTS.md` and the required handoff/documentation were loaded;
+- the task remained read-only and the repository stayed clean.
+
+This closes the previous CLI-parser blocker. The corrected transport no longer emits `-a` or `--ask-for-approval` after `codex exec`; execution autonomy is bounded by the task mode's `--sandbox`, while project-level human approval remains enforced by `CodexExecutionBridge`.
+
+The smoke's own observations confirm the intended architecture: Ricard Digital formulates bounded work, the bridge gates and validates execution, the concrete transport invokes Codex, and Core retains canon/evidence/evaluation/final authority.
+
+## Next explicit target
+
+Create and execute the **first bounded implementation mission** through the same path:
+`CodexTask(mode=implementation) → CodexExecutionBridge(human approved) → CodexCliTransport(--sandbox workspace-write) → Codex`.
+
+The mission must have a small allowed-path scope, explicit protected paths, deterministic acceptance criteria and verification commands, and must stop before any commit/push. Use this as the first real test that Codex can modify the repository under the project's execution-only boundary without becoming a second Core.
+
 ## Codex Execution Bridge — VERIFIED GREEN
 
 The first runtime bridge is implemented:
