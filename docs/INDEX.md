@@ -37,6 +37,7 @@
 
 ## Technology & evolución
 - `docs/TECHNOLOGY_RADAR.md` — radar de capacidades, proveedores, lifecycle y estrategia anti-obsolescencia.
+- `docs/CAPABILITY_ROUTING.md` — contrato provider-neutral para capacidades y decisión.
 - `data/capabilities.json` — registro estructurado de capacidades tecnológicas observadas/adoptadas.
 
 ## Ricard Digital
