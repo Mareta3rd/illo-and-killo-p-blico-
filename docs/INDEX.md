@@ -41,6 +41,7 @@
 ## Agentes de ejecución
 - `AGENTS.md` — instrucciones de proyecto que Codex carga al entrar en el repositorio.
 - `scripts/run_codex_smoke_test.py` — primer smoke test real y explícitamente aprobado para Codex.
+- `scripts/check_codex_environment.sh` — comprueba si la CLI de Codex está instalada.
 - `docs/CODEX_TASK_CONTRACT.md` — contrato de tareas controladas para Codex.
 - `docs/CODEX_EXECUTION_BRIDGE.md` — puente provider-neutral entre tareas Codex y un transporte de ejecución.
 - `core/codex_task.py` — contrato, validación de alcance y resultado Codex.
