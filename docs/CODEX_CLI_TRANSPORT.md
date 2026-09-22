@@ -1,4 +1,64 @@
-# Codex CLI Transport\n\n## Purpose\n\nCodexCliTransport is the first concrete implementation of the provider-neutral\nCodexTransport boundary. It invokes the installed Codex CLI in non-interactive\nmode and translates its JSONL execution stream into CodexTaskResult.\n\nThe transport is deliberately outside Core.\n\n## Execution mode\n\nFor analysis tasks it invokes codex exec --json --ephemeral --sandbox read-only -.\n\nFor implementation, repair and improvement tasks it uses --sandbox workspace-write.\n\nThe task prompt contains the issuer, objective, context, allowed/protected paths,\nconstraints, acceptance criteria and verification commands. The transport also\nrefuses to run when the repository branch or base commit does not match the task,\nor when the working tree is already dirty.\n\nOpenAI's current Codex documentation specifies codex exec for non-interactive\nautomation and documents JSONL output with --json, plus read-only and\nworkspace-write sandbox modes for controlled automation.\n\n## Result extraction\n\nThe transport parses Codex JSONL events, captures the last agent message as the\ntask summary, records declared verification commands observed in command events,\nderives changed paths from Git relative to the pre-execution commit, and computes\na deterministic diff digest.\n\nA local JSONL trace may be written with trace_path. Trace files are runtime\nartifacts and must not be committed because they may contain execution data.\n\n## Scope boundary\n\nThe bridge remains the authoritative gate for explicit human approval and final\ntask-result validation. The transport cannot grant Core authority.\n\nFor the first real smoke test, use an analysis task. This validates the actual\nCodex CLI connection without giving the first experiment write permission.\nOnly after that succeeds should we execute a bounded implementation task.\n\n## Current non-goals\n\n- no API-key creation or secret management in source code;\n- no automatic merge or commit;\n- no provider-specific logic in Core;\n- no use of danger-full-access;\n- no autonomous bypass of human approval.
+# Codex CLI Transport
+
+## Purpose
+
+CodexCliTransport is the first concrete implementation of the provider-neutral
+CodexTransport boundary. It invokes the installed Codex CLI in non-interactive
+mode and translates its JSONL execution stream into CodexTaskResult.
+
+The transport is deliberately outside Core.
+
+## Execution mode
+
+For analysis tasks it invokes codex exec with --json --ephemeral --sandbox read-only
+and passes the compiled task prompt as the final positional argument.
+
+For implementation, repair and improvement tasks it uses --sandbox workspace-write.
+
+Important CLI compatibility note: the installed Codex CLI 0.155.1 rejects
+--ask-for-approval and -a when they are placed after the exec subcommand. The
+transport therefore does not emit either approval flag. The provider's exec mode
+is non-interactive; the execution bridge remains responsible for the project's
+explicit human-approval gate, while --sandbox remains the transport's runtime
+autonomy boundary. This avoids coupling the adapter to an option that the
+installed exec parser does not accept. Upstream Codex CLI issue reports document
+the same post-exec rejection behavior.
+
+The task prompt contains the issuer, objective, context, allowed/protected paths,
+constraints, acceptance criteria and verification commands. The transport also
+refuses to run when the repository branch or base commit does not match the task,
+or when the working tree is already dirty.
+
+OpenAI's current Codex documentation specifies codex exec for non-interactive
+automation and documents JSONL output with --json, plus read-only and
+workspace-write sandbox modes for controlled automation.
+
+## Result extraction
+
+The transport parses Codex JSONL events, captures the last agent message as the
+task summary, records declared verification commands observed in command events,
+derives changed paths from Git relative to the pre-execution commit, and computes
+a deterministic diff digest.
+
+A local JSONL trace may be written with trace_path. Trace files are runtime
+artifacts and must not be committed because they may contain execution data.
+
+## Scope boundary
+
+The bridge remains the authoritative gate for explicit human approval and final
+task-result validation. The transport cannot grant Core authority.
+
+For the first real smoke test, use an analysis task. This validates the actual
+Codex CLI connection without giving the first experiment write permission.
+Only after that succeeds should we execute a bounded implementation task.
+
+## Current non-goals
+
+- no API-key creation or secret management in source code;
+- no automatic merge or commit;
+- no provider-specific logic in Core;
+- no use of danger-full-access;
+- no autonomous bypass of human approval.
 
 ## Live smoke test
 
