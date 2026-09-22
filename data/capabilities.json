@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "reviewed": "2026-09-23",
+  "principle": "stable_core_replaceable_capabilities",
+  "capabilities": [
+    {
+      "id": "execution.codex_cli",
+      "capability": "execution",
+      "provider": "openai",
+      "product_or_runtime": "codex_cli_exec",
+      "status": "adopted",
+      "integration": "local_cli",
+      "cost_model": "account_or_provider_dependent",
+      "latency_character": "interactive_to_long_running",
+      "strengths": [
+        "real repository execution",
+        "sandbox selection",
+        "JSONL events",
+        "task-scoped execution"
+      ],
+      "limitations": [
+        "requires local CLI environment",
+        "provider CLI contract may evolve"
+      ],
+      "dependencies": [
+        "Codex CLI",
+        "project CodexTask",
+        "CodexExecutionBridge"
+      ],
+      "security_boundary": "project task scope + bridge approval + sandbox",
+      "replaceable_by": [
+        "execution.other_cli",
+        "execution.agents_api",
+        "execution.desktop"
+      ],
+      "last_reviewed": "2026-09-23",
+      "evidence": [
+        "first_read_only_live_smoke_green",
+        "first_write_enabled_smoke_green"
+      ]
+    },
+    {
+      "id": "decision.jev",
+      "capability": "decision",
+      "provider": "typesafe",
+      "product_or_runtime": "jev_system_one",
+      "status": "evaluate",
+      "integration": "api",
+      "cost_model": "usage_based_api",
+      "latency_character": "fast_structured_decisions",
+      "strengths": [
+        "typed decisions",
+        "bounded questions",
+        "routing and selection"
+      ],
+      "limitations": [
+        "external service",
+        "new product",
+        "decision quality must be benchmarked on project tasks"
+      ],
+      "dependencies": [
+        "TypeSafe API access"
+      ],
+      "security_boundary": "typed decision only; project code retains action authority",
+      "replaceable_by": [
+        "decision.rules",
+        "decision.llm_judge",
+        "decision.human"
+      ],
+      "last_reviewed": "2026-09-23",
+      "evidence": [
+        "official_system_one_launch",
+        "official_jev_api_quickstart"
+      ]
+    },
+    {
+      "id": "orchestration.openai_agents_api",
+      "capability": "orchestration",
+      "provider": "openai",
+      "product_or_runtime": "agents_api",
+      "status": "evaluate",
+      "integration": "managed_api",
+      "cost_model": "api_model_usage_plus_tools_and_sandbox",
+      "latency_character": "long_running_async",
+      "strengths": [
+        "managed sessions",
+        "orchestration",
+        "context compaction",
+        "recovery",
+        "subagents",
+        "sandbox",
+        "MCP"
+      ],
+      "limitations": [
+        "public beta",
+        "provider dependency",
+        "API surface may change"
+      ],
+      "dependencies": [
+        "OpenAI API access"
+      ],
+      "security_boundary": "managed session + configured tools/environment + project policy",
+      "replaceable_by": [
+        "orchestration.local",
+        "orchestration.other_provider"
+      ],
+      "last_reviewed": "2026-09-23",
+      "evidence": [
+        "official_agents_api_launch",
+        "official_agents_api_overview"
+      ]
+    },
+    {
+      "id": "computer_use.anthropic_cowork",
+      "capability": "computer_use",
+      "provider": "anthropic",
+      "product_or_runtime": "claude_cowork",
+      "status": "watch",
+      "integration": "desktop",
+      "cost_model": "plan_dependent",
+      "latency_character": "interactive_screen_control",
+      "strengths": [
+        "screen interaction",
+        "browser and application operation",
+        "unified chat and work experience"
+      ],
+      "limitations": [
+        "desktop dependency",
+        "beta computer use",
+        "permission and safety considerations"
+      ],
+      "dependencies": [
+        "supported desktop OS",
+        "Claude desktop"
+      ],
+      "security_boundary": "desktop permissions + product controls + project policy",
+      "replaceable_by": [
+        "computer_use.openai",
+        "computer_use.local_automation"
+      ],
+      "last_reviewed": "2026-09-23",
+      "evidence": [
+        "official_cowork_unification",
+        "official_computer_use_help"
+      ]
+    }
+  ]
+}
