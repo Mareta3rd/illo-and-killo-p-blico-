@@ -184,8 +184,6 @@ class CodexCliTransportTests(unittest.TestCase):
                     "--ephemeral",
                     "--sandbox",
                     "read-only",
-                    "-a",
-                    "never",
                     _build_prompt(task),
                 ],
             )
