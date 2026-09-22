@@ -39,6 +39,8 @@
 - docs/DIGITAL_RICARD.md — rol y puerta arquitectónica para Ricard Digital.
 
 ## Agentes de ejecución
+- `AGENTS.md` — instrucciones de proyecto que Codex carga al entrar en el repositorio.
+- `scripts/run_codex_smoke_test.py` — primer smoke test real y explícitamente aprobado para Codex.
 - `docs/CODEX_TASK_CONTRACT.md` — contrato de tareas controladas para Codex.
 - `docs/CODEX_EXECUTION_BRIDGE.md` — puente provider-neutral entre tareas Codex y un transporte de ejecución.
 - `core/codex_task.py` — contrato, validación de alcance y resultado Codex.
