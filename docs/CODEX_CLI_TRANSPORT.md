@@ -1,1 +1,13 @@
 # Codex CLI Transport\n\n## Purpose\n\nCodexCliTransport is the first concrete implementation of the provider-neutral\nCodexTransport boundary. It invokes the installed Codex CLI in non-interactive\nmode and translates its JSONL execution stream into CodexTaskResult.\n\nThe transport is deliberately outside Core.\n\n## Execution mode\n\nFor analysis tasks it invokes codex exec --json --ephemeral --sandbox read-only -.\n\nFor implementation, repair and improvement tasks it uses --sandbox workspace-write.\n\nThe task prompt contains the issuer, objective, context, allowed/protected paths,\nconstraints, acceptance criteria and verification commands. The transport also\nrefuses to run when the repository branch or base commit does not match the task,\nor when the working tree is already dirty.\n\nOpenAI's current Codex documentation specifies codex exec for non-interactive\nautomation and documents JSONL output with --json, plus read-only and\nworkspace-write sandbox modes for controlled automation.\n\n## Result extraction\n\nThe transport parses Codex JSONL events, captures the last agent message as the\ntask summary, records declared verification commands observed in command events,\nderives changed paths from Git relative to the pre-execution commit, and computes\na deterministic diff digest.\n\nA local JSONL trace may be written with trace_path. Trace files are runtime\nartifacts and must not be committed because they may contain execution data.\n\n## Scope boundary\n\nThe bridge remains the authoritative gate for explicit human approval and final\ntask-result validation. The transport cannot grant Core authority.\n\nFor the first real smoke test, use an analysis task. This validates the actual\nCodex CLI connection without giving the first experiment write permission.\nOnly after that succeeds should we execute a bounded implementation task.\n\n## Current non-goals\n\n- no API-key creation or secret management in source code;\n- no automatic merge or commit;\n- no provider-specific logic in Core;\n- no use of danger-full-access;\n- no autonomous bypass of human approval.
+
+## Live smoke test
+
+The repository includes `scripts/run_codex_smoke_test.py` for the first real execution. It builds a task from the current branch and HEAD, requires an explicit `--approve`, runs in `analysis` mode, and returns a non-zero exit code if the execution fails or files change. The trace defaults to `/tmp/arsa-pisha-codex-smoke.jsonl`.
+
+Run from the repository root after a green closure:
+
+```bash
+PYTHONPATH=. python scripts/run_codex_smoke_test.py --approve
+```
+
+The first live run is deliberately read-only. After it succeeds, the next task can use `workspace-write` for a bounded implementation mission.
