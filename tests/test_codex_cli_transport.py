@@ -106,6 +106,31 @@ class CodexCliTransportTests(unittest.TestCase):
         self.assertEqual(result.status, "failed")
         self.assertEqual(result.blockers, ("codex_executable_not_found",))
 
+    def test_nonzero_exit_preserves_stderr_as_blocker(self):
+        task = build_task()
+        fake_completed = type(
+            "Completed",
+            (),
+            {
+                "stdout": "",
+                "stderr": "usage: codex exec ...\\nerror: invalid flag",
+                "returncode": 2,
+            },
+        )()
+
+        with patch(
+            "core.codex_cli_transport._run_git",
+            side_effect=[task.base_ref, task.base_commit, "", "", "", ""],
+        ), patch(
+            "core.codex_cli_transport.subprocess.run",
+            return_value=fake_completed,
+        ):
+            result = CodexCliTransport(root=".").execute(task)
+
+        self.assertEqual(result.status, "failed")
+        self.assertIn("codex_exit_code:2", result.blockers)
+        self.assertTrue(any(item.startswith("codex_stderr:") for item in result.blockers))
+
     def test_execute_builds_expected_cli_command_and_trace(self):
         task = build_task()
         with tempfile.TemporaryDirectory() as tmp:
@@ -136,7 +161,7 @@ class CodexCliTransportTests(unittest.TestCase):
             fake_completed = type(
                 "Completed",
                 (),
-                {"stdout": fake_stdout, "returncode": 0},
+                {"stdout": fake_stdout, "stderr": "", "returncode": 0},
             )()
 
             def fake_run(*args, **kwargs):
@@ -147,7 +172,9 @@ class CodexCliTransportTests(unittest.TestCase):
 
             self.assertEqual(result.status, "completed")
             self.assertEqual(result.summary, "Repository inspected.")
-            self.assertEqual(trace.read_text(encoding="utf-8"), fake_stdout)
+            trace_payload = json.loads(trace.read_text(encoding="utf-8"))
+            self.assertEqual(trace_payload["stdout"], fake_stdout)
+            self.assertEqual(trace_payload["stderr"], "")
             self.assertEqual(
                 run.call_args.args[0],
                 [
