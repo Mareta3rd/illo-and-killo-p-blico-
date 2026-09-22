@@ -367,6 +367,33 @@ Verification:
 
 Important status: the transport has not yet been exercised against the user's live Codex installation. That real smoke test is the next operational step.
 
+## Codex CLI Live Smoke — ARGUMENT COMPATIBILITY FIX READY
+
+The first live smoke reached the installed Codex CLI sufficiently to expose a real CLI parser incompatibility. Authentication and the installed executable are working; the failure occurs before any model execution because the installed "codex exec" path rejects both "--ask-for-approval never" and "-a never" when those options are placed after the "exec" subcommand.
+
+The transport has now been corrected to remove the approval flag entirely. This is deliberate, not another flag-order experiment:
+- `codex exec` is the non-interactive execution mode used by this transport;
+- the project-level explicit human-approval gate remains in `CodexExecutionBridge`, before the provider transport is called;
+- the concrete CLI transport controls execution autonomy with the explicit `--sandbox` mode selected from the task mode;
+- analysis remains `read-only`; implementation/repair/improvement remains `workspace-write`;
+- the exact command invocation test was updated to protect this contract.
+
+The observed live error is preserved as historical diagnostic evidence. Upstream Codex CLI issue reports also document the same rejection of `--ask-for-approval` / `-a` after `exec`, so the previous authentication hypothesis is closed.
+
+Repository state before this correction:
+- checkpoint after pulling the previous compatibility patch: `bae971a`;
+- complete closure suite: **608 passed, 54 subtests passed in 18.23s**;
+- live smoke result: **failed at CLI argument parsing, no repository files changed, exit code 2**.
+
+New verification required after pulling this correction:
+```bash
+git pull --ff-only origin feature/semantic-model
+bash scripts/close_work_block.sh
+PYTHONPATH=. python scripts/run_codex_smoke_test.py --approve
+```
+
+Do not reintroduce `-a` or `--ask-for-approval` into the post-`exec` argv unless the installed CLI contract changes and is verified directly. The next target after a green live smoke remains a tightly bounded `workspace-write` implementation mission through the same task contract and bridge.
+
 ## Codex Execution Bridge — VERIFIED GREEN
 
 The first runtime bridge is implemented:
