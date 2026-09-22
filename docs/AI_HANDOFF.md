@@ -449,7 +449,58 @@ git status --short
 
 If the diff is exactly the focused timeout regression described by the smoke result, the change may be committed and pushed as a normal repository change. The Codex runner itself does not commit or push.
 
+### Technology Evolution Layer — PREPARED
+
+The architecture now has a first explicit technology-evolution layer so new AI
+products can be evaluated without rewriting Core around provider brands.
+
+Added:
+- `docs/TECHNOLOGY_RADAR.md` defines a capability-oriented radar and an
+  OBSERVE → INVESTIGATE → PROTOTYPE → BENCHMARK → ADOPT → DEPRECATE lifecycle.
+- `data/capabilities.json` seeds structured records for verified Codex execution
+  plus current candidates: TypeSafe Jev, OpenAI Agents API and Anthropic computer
+  use/Cowork.
+- `docs/CAPABILITY_ROUTING.md` defines the first provider-neutral capability
+  seam: `DecisionProvider`.
+- `scripts/run_codex_decision_provider_mission.py` prepares the first bounded
+  production-code Codex mission to implement that seam and its tests.
+
+This deliberately does not integrate any external decision provider yet. The
+system first establishes the capability contract, then benchmarks providers
+against project work.
+
+The current research confirms that this direction matches the shape of several
+current products: OpenAI Agents API exposes managed sessions, orchestration,
+subagents, MCP and sandbox environments; TypeSafe Jev exposes typed bounded
+decisions; Anthropic is merging Cowork and chat into one task-oriented Claude
+experience with computer use. These are external capabilities to evaluate, not
+architectural authorities.
+
+Current remote preparation checkpoint: `12a9ed3`.
+
 ### Next explicit target
+
+After reviewing the existing local Codex-generated test diff, pull the new
+technology/capability preparation and run the normal closure gate. Then execute
+the first production-code mission:
+
+```bash
+git pull --ff-only origin feature/semantic-model
+bash scripts/close_work_block.sh
+PYTHONPATH=. python scripts/run_codex_decision_provider_mission.py --approve
+```
+
+This mission is deliberately restricted to:
+- `core/decision_provider.py`
+- `tests/test_decision_provider.py`
+
+It must not modify existing Core files, canon, data or the external-provider
+adapters. Do not integrate Jev or any cloud API in this mission.
+
+After execution, inspect the two changed files and the focused test result before
+deciding whether the new contract is ready for full-suite verification.
+
+## Next explicit target
 
 Do not jump directly to a broad autonomous coding task. The next useful experiment is a **bounded production-code mission** with one small allowed production file, at least one protected Core/canon path, explicit acceptance criteria and verification commands, and the same bridge/transport path. That will test whether the authority and scope contract remains effective when Codex is permitted to modify real implementation code.
 
