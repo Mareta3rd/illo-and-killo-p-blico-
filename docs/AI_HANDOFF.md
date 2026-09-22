@@ -411,6 +411,36 @@ This closes the previous CLI-parser blocker. The corrected transport no longer e
 
 The smoke's own observations confirm the intended architecture: Ricard Digital formulates bounded work, the bridge gates and validates execution, the concrete transport invokes Codex, and Core retains canon/evidence/evaluation/final authority.
 
+## Codex First Write-Enabled Smoke — PREPARED
+
+The first successful read-only live Codex smoke is complete. The next block now prepares the first controlled write-enabled execution without asking Codex to alter production behavior.
+
+Added:
+- `scripts/run_codex_implementation_smoke_test.py` builds an explicit `CodexTask(mode="implementation")`;
+- the task allows only `tests/test_codex_cli_transport.py`;
+- `core/`, `data/`, `docs/`, `AGENTS.md`, `.github/` and the closure script are protected;
+- the mission asks Codex to add one focused timeout regression test and explicitly forbids production-code changes;
+- verification is the focused transport test;
+- the runner returns failure if changed files escape the single allowed test path;
+- `docs/CODEX_CLI_TRANSPORT.md` documents the procedure.
+
+This is intentionally a small write-enabled probe: the objective is to validate the full execution boundary with real repository modification while keeping the first mutation reversible, reviewable and outside canon/Core behavior.
+
+Current branch head after preparation: `d3d3546`.
+The preparation itself has not been verified in the Codespace yet.
+
+### Next explicit target
+
+Pull the preparation, run the normal closure gate, then execute:
+
+```bash
+git pull --ff-only origin feature/semantic-model
+bash scripts/close_work_block.sh
+PYTHONPATH=. python scripts/run_codex_implementation_smoke_test.py --approve
+```
+
+After that run, inspect the reported `changed_files`, the focused test result and the actual Git diff before considering the write-enabled block closed. Do not commit or push the Codex-produced test change until the human review of the diff is complete.
+
 ## Next explicit target
 
 Create and execute the **first bounded implementation mission** through the same path:
