@@ -426,7 +426,7 @@ Added:
 
 This is intentionally a small write-enabled probe: the objective is to validate the full execution boundary with real repository modification while keeping the first mutation reversible, reviewable and outside canon/Core behavior.
 
-Current branch head after preparation: `d3d3546`.
+Current branch head after preparation: `1f49c55`.
 The preparation itself has not been verified in the Codespace yet.
 
 ### Next explicit target
