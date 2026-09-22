@@ -411,42 +411,44 @@ This closes the previous CLI-parser blocker. The corrected transport no longer e
 
 The smoke's own observations confirm the intended architecture: Ricard Digital formulates bounded work, the bridge gates and validates execution, the concrete transport invokes Codex, and Core retains canon/evidence/evaluation/final authority.
 
-## Codex First Write-Enabled Smoke — PREPARED
+## Codex First Write-Enabled Smoke — VERIFIED GREEN
 
-The first successful read-only live Codex smoke is complete. The next block now prepares the first controlled write-enabled execution without asking Codex to alter production behavior.
+The first successful read-only live Codex smoke has now been followed by the first successful write-enabled execution through the full governed path.
 
-Added:
-- `scripts/run_codex_implementation_smoke_test.py` builds an explicit `CodexTask(mode="implementation")`;
-- the task allows only `tests/test_codex_cli_transport.py`;
-- `core/`, `data/`, `docs/`, `AGENTS.md`, `.github/` and the closure script are protected;
-- the mission asks Codex to add one focused timeout regression test and explicitly forbids production-code changes;
-- verification is the focused transport test;
-- the runner returns failure if changed files escape the single allowed test path;
-- `docs/CODEX_CLI_TRANSPORT.md` documents the procedure.
+Verified in the user's Codespace after pulling the preparation checkpoint:
+- complete closure suite: **608 passed, 54 subtests passed in 19.61s**;
+- live implementation-smoke status: **completed**;
+- blockers: none;
+- changed files: exactly `tests/test_codex_cli_transport.py`;
+- diff digest: `0da20614231d317c618b896e4109f473ee27df406d5f50788b965908b78daeed`;
+- Codex reported the focused timeout regression test was added;
+- focused verification: **8 passed**;
+- no production files were changed.
 
-This is intentionally a small write-enabled probe: the objective is to validate the full execution boundary with real repository modification while keeping the first mutation reversible, reviewable and outside canon/Core behavior.
+The execution boundary therefore worked in both directions:
+- the bridge required explicit human approval before transport execution;
+- implementation mode selected `--sandbox workspace-write`;
+- the task scope restricted the mutation to one test file;
+- the returned `CodexTaskResult` reported exactly that allowed mutation;
+- the runner rejected any scope outside the single allowed path;
+- Codex was instructed not to commit or push, and no commit/push occurred during the run.
 
-Current branch head after preparation: `1f49c55`.
-The preparation itself has not been verified in the Codespace yet.
+This is the first real evidence that Codex can act as a governed execution agent rather than merely an analysis endpoint. The Core authority boundary remains unchanged: Codex did not decide canon, evidence, evaluation or final project policy.
+
+### Immediate human review gate
+
+Before this write-enabled block is closed, inspect the actual diff in the Codespace:
+
+```bash
+git diff -- tests/test_codex_cli_transport.py
+git status --short
+```
+
+If the diff is exactly the focused timeout regression described by the smoke result, the change may be committed and pushed as a normal repository change. The Codex runner itself does not commit or push.
 
 ### Next explicit target
 
-Pull the preparation, run the normal closure gate, then execute:
-
-```bash
-git pull --ff-only origin feature/semantic-model
-bash scripts/close_work_block.sh
-PYTHONPATH=. python scripts/run_codex_implementation_smoke_test.py --approve
-```
-
-After that run, inspect the reported `changed_files`, the focused test result and the actual Git diff before considering the write-enabled block closed. Do not commit or push the Codex-produced test change until the human review of the diff is complete.
-
-## Next explicit target
-
-Create and execute the **first bounded implementation mission** through the same path:
-`CodexTask(mode=implementation) → CodexExecutionBridge(human approved) → CodexCliTransport(--sandbox workspace-write) → Codex`.
-
-The mission must have a small allowed-path scope, explicit protected paths, deterministic acceptance criteria and verification commands, and must stop before any commit/push. Use this as the first real test that Codex can modify the repository under the project's execution-only boundary without becoming a second Core.
+Do not jump directly to a broad autonomous coding task. The next useful experiment is a **bounded production-code mission** with one small allowed production file, at least one protected Core/canon path, explicit acceptance criteria and verification commands, and the same bridge/transport path. That will test whether the authority and scope contract remains effective when Codex is permitted to modify real implementation code.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
