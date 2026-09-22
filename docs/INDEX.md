@@ -35,6 +35,10 @@
 - `workflows/workflow_merchandising.md`
 - `workflows/workflow_3d.md`
 
+## Technology & evolución
+- `docs/TECHNOLOGY_RADAR.md` — radar de capacidades, proveedores, lifecycle y estrategia anti-obsolescencia.
+- `data/capabilities.json` — registro estructurado de capacidades tecnológicas observadas/adoptadas.
+
 ## Ricard Digital
 - docs/DIGITAL_RICARD.md — rol y puerta arquitectónica para Ricard Digital.
 
