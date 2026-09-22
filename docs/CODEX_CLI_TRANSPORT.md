@@ -11,3 +11,25 @@ PYTHONPATH=. python scripts/run_codex_smoke_test.py --approve
 ```
 
 The first live run is deliberately read-only. After it succeeds, the next task can use `workspace-write` for a bounded implementation mission.
+
+## Codespace setup
+
+The current Codespace failure was `codex_executable_not_found`. The official Codex CLI documentation currently provides a standalone macOS/Linux installer:
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+```
+
+After installation, start a fresh shell or refresh the command lookup and verify:
+
+```bash
+codex --version
+```
+
+Then run `codex` from the repository root and complete the authentication method offered by the CLI. Do not put tokens or credentials in the repository, `AGENTS.md`, or task payloads. The non-interactive transport can reuse Codex's stored CLI authentication; current OpenAI documentation also supports explicit `CODEX_API_KEY` or `CODEX_ACCESS_TOKEN` flows for automation, but no credential is committed by this project.
+
+For a quick environment check before the live smoke test:
+
+```bash
+bash scripts/check_codex_environment.sh
+```
