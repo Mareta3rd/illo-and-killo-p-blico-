@@ -336,16 +336,16 @@ This is an architectural door for future implementations rather than a persisten
 
 ## Codex Live Smoke — BLOCKED BY ENVIRONMENT, ARCHITECTURE VERIFIED
 
-The live execution path is prepared and was invoked, but the current Codespace environment does not have the `codex` executable installed or available on PATH. The failure is therefore an environment/setup gap, not a task-contract failure.
+The live execution path is prepared and was invoked, but the current Codespace environment does not have the `codex` executable installed or available on PATH. The failure is therefore an environment/setup gap, not a task-contract failure. The repository now includes `scripts/check_codex_environment.sh` and current setup instructions in `docs/CODEX_CLI_TRANSPORT.md`.
 - `AGENTS.md` provides project-level instructions that current Codex tooling loads from the repository root;
 - `scripts/run_codex_smoke_test.py` builds a task from the current branch and HEAD and requires an explicit `--approve` flag;
 - the smoke task is `analysis` mode, has no writable paths, and returns failure if repository files change;
 - missing executable and timeout conditions now return structured failed task results instead of raw subprocess exceptions.
 - missing executable and timeout conditions now return structured failed task results instead of raw subprocess exceptions.
 
-Verification state: the preparation block is GREEN at **607 passed, 54 subtests passed in 16.60s** on checkpoint `bdcd16d`; the live smoke remains blocked only by missing local Codex installation.
+Verification state: the preparation block is GREEN at **607 passed, 54 subtests passed in 16.60s** on checkpoint `bdcd16d`; the live smoke remains blocked only by missing local Codex installation. The setup-helper/docs additions are pending the next complete-suite closure.
 
-After installing/authenticating the Codex CLI in the Codespace, rerun:
+After the next green closure, install/authenticate the Codex CLI in the Codespace, verify it with `bash scripts/check_codex_environment.sh`, and then rerun:
 ```bash
 PYTHONPATH=. python scripts/run_codex_smoke_test.py --approve
 ```
