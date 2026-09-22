@@ -92,6 +92,20 @@ class CodexCliTransportTests(unittest.TestCase):
             ("PYTHONPATH=. pytest -q",),
         )
 
+    def test_missing_codex_executable_returns_failed_result(self):
+        task = build_task()
+        transport = CodexCliTransport(root=".")
+        with patch(
+            "core.codex_cli_transport._run_git",
+            side_effect=[task.base_ref, task.base_commit, "", "", "", ""],
+        ), patch(
+            "core.codex_cli_transport.subprocess.run",
+            side_effect=FileNotFoundError,
+        ):
+            result = transport.execute(task)
+        self.assertEqual(result.status, "failed")
+        self.assertEqual(result.blockers, ("codex_executable_not_found",))
+
     def test_execute_builds_expected_cli_command_and_trace(self):
         task = build_task()
         with tempfile.TemporaryDirectory() as tmp:
@@ -134,7 +148,6 @@ class CodexCliTransportTests(unittest.TestCase):
             self.assertEqual(result.status, "completed")
             self.assertEqual(result.summary, "Repository inspected.")
             self.assertEqual(trace.read_text(encoding="utf-8"), fake_stdout)
-            self.assertEqual(run.call_args.kwargs["input"], _build_prompt(task))
             self.assertEqual(
                 run.call_args.args[0],
                 [
@@ -144,7 +157,9 @@ class CodexCliTransportTests(unittest.TestCase):
                     "--ephemeral",
                     "--sandbox",
                     "read-only",
-                    "-",
+                    "--ask-for-approval",
+                    "never",
+                    _build_prompt(task),
                 ],
             )
 
