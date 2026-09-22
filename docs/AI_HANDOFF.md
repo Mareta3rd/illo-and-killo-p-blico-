@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `a7a9363` (Codex CLI transport + Ricard Digital + mature creative-direction layer; complete suite verified green).
+Current repository checkpoint: `bdcd16d` (Codex CLI transport + live smoke-test preparation; complete suite verified green).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -334,18 +334,18 @@ Ricard Digital can interpret human intent, preserve continuity, coordinate speci
 
 This is an architectural door for future implementations rather than a persistent autonomous runtime. Future interfaces/providers may implement the same role without changing Core.
 
-## Codex Live Smoke Preparation — VERIFICATION PENDING
+## Codex Live Smoke — BLOCKED BY ENVIRONMENT, ARCHITECTURE VERIFIED
 
-The next live-execution step is now prepared without yet claiming a successful real Codex run:
+The live execution path is prepared and was invoked, but the current Codespace environment does not have the `codex` executable installed or available on PATH. The failure is therefore an environment/setup gap, not a task-contract failure.
 - `AGENTS.md` provides project-level instructions that current Codex tooling loads from the repository root;
 - `scripts/run_codex_smoke_test.py` builds a task from the current branch and HEAD and requires an explicit `--approve` flag;
 - the smoke task is `analysis` mode, has no writable paths, and returns failure if repository files change;
-- `core/codex_cli_transport.py` now uses explicit `--sandbox` and `--ask-for-approval never` controls for non-interactive execution, matching the current Codex automation guidance;
+- missing executable and timeout conditions now return structured failed task results instead of raw subprocess exceptions.
 - missing executable and timeout conditions now return structured failed task results instead of raw subprocess exceptions.
 
-Verification is pending. The current stable checkpoint remains `a7a9363` until the Codespace closure passes after these changes.
+Verification state: the preparation block is GREEN at **607 passed, 54 subtests passed in 16.60s** on checkpoint `bdcd16d`; the live smoke remains blocked only by missing local Codex installation.
 
-First live command after the next green closure:
+After installing/authenticating the Codex CLI in the Codespace, rerun:
 ```bash
 PYTHONPATH=. python scripts/run_codex_smoke_test.py --approve
 ```
