@@ -93,3 +93,24 @@ For a quick environment check before the live smoke test:
 ```bash
 bash scripts/check_codex_environment.sh
 ```
+
+## First bounded implementation smoke
+
+The repository also includes `scripts/run_codex_implementation_smoke_test.py`.
+It exercises the same bridge and real Codex CLI, but switches the task to
+`implementation`, which selects `--sandbox workspace-write`.
+
+The first write-enabled mission is intentionally test-only: Codex may modify
+only `tests/test_codex_cli_transport.py` and must add one focused regression
+test for the existing timeout failure path. Production code, canon, Core and
+documentation are protected.
+
+Run after a green closure and from a clean working tree:
+
+```bash
+PYTHONPATH=. python scripts/run_codex_implementation_smoke_test.py --approve
+```
+
+The runner returns failure if Codex does not complete or reports changes outside
+the single allowed test file. The resulting diff must still be inspected before
+any later commit or push.
