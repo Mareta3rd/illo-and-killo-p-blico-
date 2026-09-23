@@ -1,4 +1,5 @@
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -105,6 +106,20 @@ class CodexCliTransportTests(unittest.TestCase):
             result = transport.execute(task)
         self.assertEqual(result.status, "failed")
         self.assertEqual(result.blockers, ("codex_executable_not_found",))
+
+    def test_timeout_returns_failed_result_with_timeout_blocker(self):
+        task = build_task()
+        with patch(
+            "core.codex_cli_transport._run_git",
+            side_effect=[task.base_ref, task.base_commit, "", "", "", ""],
+        ), patch(
+            "core.codex_cli_transport.subprocess.run",
+            side_effect=subprocess.TimeoutExpired(cmd="codex", timeout=1800),
+        ):
+            result = CodexCliTransport(root=".").execute(task)
+
+        self.assertEqual(result.status, "failed")
+        self.assertEqual(result.blockers, ("codex_execution_timeout",))
 
     def test_nonzero_exit_preserves_stderr_as_blocker(self):
         task = build_task()
