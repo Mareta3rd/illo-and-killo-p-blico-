@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `bdcd16d` (Codex CLI transport + live smoke-test preparation; complete suite verified green).
+Current repository checkpoint: `0bc3088` (DecisionProvider contract committed and pushed; complete suite verified green at 615/59).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -449,59 +449,61 @@ git status --short
 
 If the diff is exactly the focused timeout regression described by the smoke result, the change may be committed and pushed as a normal repository change. The Codex runner itself does not commit or push.
 
-### Technology Evolution Layer — PREPARED
+### Technology Evolution Layer — VERIFIED PREPARATION
 
-The architecture now has a first explicit technology-evolution layer so new AI
-products can be evaluated without rewriting Core around provider brands.
+The technology-evolution layer is now part of the repository architecture.
 
 Added:
-- `docs/TECHNOLOGY_RADAR.md` defines a capability-oriented radar and an
-  OBSERVE → INVESTIGATE → PROTOTYPE → BENCHMARK → ADOPT → DEPRECATE lifecycle.
-- `data/capabilities.json` seeds structured records for verified Codex execution
-  plus current candidates: TypeSafe Jev, OpenAI Agents API and Anthropic computer
-  use/Cowork.
-- `docs/CAPABILITY_ROUTING.md` defines the first provider-neutral capability
-  seam: `DecisionProvider`.
-- `scripts/run_codex_decision_provider_mission.py` prepares the first bounded
-  production-code Codex mission to implement that seam and its tests.
+- `docs/TECHNOLOGY_RADAR.md` defines capability-oriented lifecycle management:
+  OBSERVE → INVESTIGATE → PROTOTYPE → BENCHMARK → ADOPT → MAINTAIN / DEPRECATE.
+- `data/capabilities.json` records current capability candidates and verified
+  execution infrastructure.
+- `docs/CAPABILITY_ROUTING.md` defines the provider-neutral decision seam.
+- `docs/DETERMINISTIC_DECISION_PROVIDER.md` defines the reference baseline
+  for future decision-provider comparisons.
+- `scripts/run_codex_decision_provider_mission.py` and
+  `scripts/run_codex_deterministic_provider_mission.py` provide bounded,
+  human-approved Codex implementation missions for these seams.
 
-This deliberately does not integrate any external decision provider yet. The
-system first establishes the capability contract, then benchmarks providers
-against project work.
+The first DecisionProvider contract has now been implemented by Codex, reviewed
+in the Codespace, verified with the complete suite and committed/pushed.
 
-The current research confirms that this direction matches the shape of several
-current products: OpenAI Agents API exposes managed sessions, orchestration,
-subagents, MCP and sandbox environments; TypeSafe Jev exposes typed bounded
-decisions; Anthropic is merging Cowork and chat into one task-oriented Claude
-experience with computer use. These are external capabilities to evaluate, not
-architectural authorities.
+Verified:
+- complete suite: **615 passed, 59 subtests passed in 18.50s**;
+- focused DecisionProvider suite: **6 passed, 5 subtests passed**;
+- whitespace checks on both new untracked files were clean before commit;
+- committed checkpoint: `0bc3088`;
+- no external decision provider has been integrated yet.
 
-Current remote preparation checkpoint: `1847399` before the Codex timeout-test commit; the branch now includes that reviewed test at `3d56476`.
+The architectural principle is explicit: **capabilities are stable contracts;
+providers are replaceable implementations**. Codex, Jev, Claude, OpenAI
+Agents API, Gemini, Qwen and future systems are therefore evaluated at the
+capability boundary rather than embedded into Core.
 
 ### Next explicit target
 
-The first Codex write-enabled smoke is now committed and pushed as
-`3d56476`, after the full closure suite reached **609 passed, 54 subtests**.
-The technology/capability preparation is therefore ready to pull into the
-Codespace.
+Implement the deterministic reference DecisionProvider through the already
+validated Codex execution bridge.
 
-Next execute the first bounded production-code mission:
+The mission is deliberately limited to:
+- `core/deterministic_decision_provider.py`
+- `tests/test_deterministic_decision_provider.py`
+
+It must remain dependency-free, must not alter the existing DecisionProvider
+contract, must not integrate Jev or any cloud API, and must return only
+DecisionResult values rather than executing actions.
+
+After the normal closure gate, run:
 
 ```bash
 git pull --ff-only origin feature/semantic-model
 bash scripts/close_work_block.sh
-PYTHONPATH=. python scripts/run_codex_decision_provider_mission.py --approve
+PYTHONPATH=. python scripts/run_codex_deterministic_provider_mission.py --approve
 ```
 
-This mission is deliberately restricted to:
-- `core/decision_provider.py`
-- `tests/test_decision_provider.py`
+Inspect the implementation and focused tests before committing. Then run the
+complete suite and close the block.
 
-It must not modify existing Core files, canon, data or external-provider
-adapters. Do not integrate Jev or any cloud API in this mission.
-
-After execution, inspect both generated files, the focused test result and the
-reported `changed_files` before considering the contract green.
 
 ## Next explicit target
 
