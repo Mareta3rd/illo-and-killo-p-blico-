@@ -476,13 +476,16 @@ decisions; Anthropic is merging Cowork and chat into one task-oriented Claude
 experience with computer use. These are external capabilities to evaluate, not
 architectural authorities.
 
-Current remote preparation checkpoint: `12a9ed3`.
+Current remote preparation checkpoint: `1847399` before the Codex timeout-test commit; the branch now includes that reviewed test at `3d56476`.
 
 ### Next explicit target
 
-After reviewing the existing local Codex-generated test diff, pull the new
-technology/capability preparation and run the normal closure gate. Then execute
-the first production-code mission:
+The first Codex write-enabled smoke is now committed and pushed as
+`3d56476`, after the full closure suite reached **609 passed, 54 subtests**.
+The technology/capability preparation is therefore ready to pull into the
+Codespace.
+
+Next execute the first bounded production-code mission:
 
 ```bash
 git pull --ff-only origin feature/semantic-model
@@ -494,11 +497,11 @@ This mission is deliberately restricted to:
 - `core/decision_provider.py`
 - `tests/test_decision_provider.py`
 
-It must not modify existing Core files, canon, data or the external-provider
+It must not modify existing Core files, canon, data or external-provider
 adapters. Do not integrate Jev or any cloud API in this mission.
 
-After execution, inspect the two changed files and the focused test result before
-deciding whether the new contract is ready for full-suite verification.
+After execution, inspect both generated files, the focused test result and the
+reported `changed_files` before considering the contract green.
 
 ## Next explicit target
 
