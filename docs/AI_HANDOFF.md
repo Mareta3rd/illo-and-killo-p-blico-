@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `0bc3088` (DecisionProvider contract committed and pushed; complete suite verified green at 615/59).
+Current repository checkpoint: `c6d5af3` (DecisionProvider contract committed/pushed; deterministic baseline mission and benchmark protocol prepared; last verified suite 615/59).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -461,6 +461,9 @@ Added:
 - `docs/CAPABILITY_ROUTING.md` defines the provider-neutral decision seam.
 - `docs/DETERMINISTIC_DECISION_PROVIDER.md` defines the reference baseline
   for future decision-provider comparisons.
+- `docs/DECISION_BENCHMARK.md` defines the common benchmark protocol so future
+  deterministic, Jev, model-based and human decision implementations can be
+  compared under the same contract.
 - `scripts/run_codex_decision_provider_mission.py` and
   `scripts/run_codex_deterministic_provider_mission.py` provide bounded,
   human-approved Codex implementation missions for these seams.
