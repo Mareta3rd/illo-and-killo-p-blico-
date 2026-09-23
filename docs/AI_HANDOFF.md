@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `5e44313` (Core-owned decision-flow Codex mission prepared; last verified implementation checkpoint 8d713ac with complete suite 625/59).
+Current repository checkpoint: `08eac8a` (Core-owned decision flow implemented through governed Codex execution, fully verified and committed/pushed; complete suite 630/59).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -550,28 +550,44 @@ production provider. The integration must keep DecisionProvider replaceable so t
 same boundary can later host the deterministic baseline, Jev, model-based providers
 or human review.
 
+## Core Decision Flow — VERIFIED GREEN
+
+The first Core-owned decision-flow integration is now implemented and closed.
+
+Implementation:
+- `core/decision_flow.py` resolves a provider through an explicit injected callable;
+- the flow delegates the actual provider execution and result validation to
+  `execute_decision()`;
+- it exposes the unchanged auditable `DecisionExecutionRecord` through an
+  immutable Core-owned result;
+- malformed provider objects are rejected;
+- provider-result validation failures propagate through the existing seam;
+- no action is executed and no concrete provider is selected by the flow.
+
+Execution through Codex:
+- task: `codex-live-decision-flow-001`;
+- allowed files were exactly `core/decision_flow.py` and
+  `tests/test_decision_flow.py`;
+- protected Core/provider/audit/Codex paths were not writable by the mission;
+- Codex reported status `completed`, no blockers and exactly the two allowed files changed;
+- focused verification: **5 passed**;
+- complete closure suite: **630 passed, 59 subtests passed**;
+- whitespace checks passed;
+- commit: `08eac8a`;
+- pushed successfully to `origin/feature/semantic-model`.
+
+This closes the first usable Core decision flow: the provider-neutral contract,
+deterministic reference provider, auditable execution seam and Core flow now form
+a connected decision capability without coupling Core to a production provider.
+
 ## Next explicit target
 
-Execute the prepared **Core-owned decision-flow integration** through the governed
-Codex bridge. The mission is limited to:
-- `core/decision_flow.py`
-- `tests/test_decision_flow.py`
-
-It must accept a bounded `DecisionRequest`, obtain a `DecisionProvider` through
-an explicit injected resolver, execute it through `execute_decision()`, and
-return a small immutable Core-owned record exposing the auditable execution.
-Provider selection must remain replaceable; no Jev, LLM or external service is
-introduced, and no action is executed.
-
-Preparation commit: `5e44313`.
-
-After pulling, run the complete closure gate, then:
-```bash
-PYTHONPATH=. python scripts/run_codex_decision_flow_mission.py --approve
-```
-
-Inspect the returned implementation before committing. The focused and complete
-suite must both be green before this block is closed.
+Perform the **first end-to-end decision capability use from an existing Core
+workflow**, using the deterministic provider only as a test adapter. The goal is
+to prove that a real Core path can create a bounded `DecisionRequest`, inject a
+provider, obtain an auditable decision and continue without executing an action.
+Keep provider selection replaceable and do not integrate Jev or another external
+provider until this end-to-end seam is green.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
