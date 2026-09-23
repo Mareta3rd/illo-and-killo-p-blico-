@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `c6d5af3` (DecisionProvider contract committed/pushed; deterministic baseline mission and benchmark protocol prepared; last verified suite 615/59).
+Current repository checkpoint: `2b4b490` (DecisionProvider contract committed/pushed; technology radar refreshed; deterministic baseline mission and benchmark protocol prepared; last verified suite 615/59).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
