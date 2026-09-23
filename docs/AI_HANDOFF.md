@@ -582,12 +582,33 @@ a connected decision capability without coupling Core to a production provider.
 
 ## Next explicit target
 
-Perform the **first end-to-end decision capability use from an existing Core
-workflow**, using the deterministic provider only as a test adapter. The goal is
-to prove that a real Core path can create a bounded `DecisionRequest`, inject a
-provider, obtain an auditable decision and continue without executing an action.
-Keep provider selection replaceable and do not integrate Jev or another external
-provider until this end-to-end seam is green.
+Execute the prepared **first end-to-end decision-capability integration into an
+existing Core workflow** through the governed Codex bridge.
+
+Preparation commit: `f8225bd`.
+
+Mission scope:
+- `core/orchestrator.py`
+- `tests/test_orchestrator.py`
+
+The integration is explicitly advisory and non-authoritative. When a
+`DecisionProvider` is injected into `run_vertical_slice()`, Core should create
+a bounded boolean `DecisionRequest` asking whether the Core-selected route is
+appropriate for the current idea, execute it through `execute_decision()`, and
+expose the resulting immutable audit record. The advisory result must never
+replace, gate, authorize, or mutate the existing Core route/action path.
+
+No Jev, LLM or external provider is introduced. Existing behavior must remain
+unchanged when no provider is supplied.
+
+After pulling this preparation commit:
+```bash
+bash scripts/close_work_block.sh
+PYTHONPATH=. python scripts/run_codex_core_decision_integration_mission.py --approve
+```
+
+Inspect the implementation and focused tests before commit; then run the complete
+suite and close the block.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
