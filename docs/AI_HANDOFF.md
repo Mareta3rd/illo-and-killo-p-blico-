@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `8d713ac` (auditable DecisionProvider execution seam implemented through governed Codex execution, fully verified and committed/pushed; complete suite 625/59).
+Current repository checkpoint: `5e44313` (Core-owned decision-flow Codex mission prepared; last verified implementation checkpoint 8d713ac with complete suite 625/59).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -552,11 +552,27 @@ or human review.
 
 ## Next explicit target
 
-Implement the **first Core-owned decision routing integration**: accept a bounded
-`DecisionRequest`, resolve or inject a `DecisionProvider`, execute it through
-`execute_decision()`, and expose the resulting auditable decision without executing
-an action. Prefer the smallest integration point that can be tested end-to-end.
-Keep the existing provider-neutral contracts and protected Core/canon boundaries intact.
+Execute the prepared **Core-owned decision-flow integration** through the governed
+Codex bridge. The mission is limited to:
+- `core/decision_flow.py`
+- `tests/test_decision_flow.py`
+
+It must accept a bounded `DecisionRequest`, obtain a `DecisionProvider` through
+an explicit injected resolver, execute it through `execute_decision()`, and
+return a small immutable Core-owned record exposing the auditable execution.
+Provider selection must remain replaceable; no Jev, LLM or external service is
+introduced, and no action is executed.
+
+Preparation commit: `5e44313`.
+
+After pulling, run the complete closure gate, then:
+```bash
+PYTHONPATH=. python scripts/run_codex_decision_flow_mission.py --approve
+```
+
+Inspect the returned implementation before committing. The focused and complete
+suite must both be green before this block is closed.
+
 ## Codex Execution Bridge — VERIFIED GREEN
 
 The first runtime bridge is implemented:
