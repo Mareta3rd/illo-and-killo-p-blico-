@@ -15,6 +15,8 @@ from typing import Any, Callable, Mapping
 from .canon_guard import ValidationResult, validate_piece
 from .context import CoreContext, build_context
 from .creative_feedback import build_creative_feedback
+from .decision_execution import DecisionExecutionRecord, execute_decision
+from .decision_provider import DecisionProvider, DecisionRequest
 from .evidence_evaluator import evaluate_candidate_with_evidence
 from .evidence_snapshot import EvidenceSnapshot
 from .evidence_state import EvidenceClaim
@@ -41,6 +43,7 @@ class VerticalSliceResult:
     stop_reason: str | None
     audit_trail: tuple[SemanticAuditRecord, ...] = ()
     execution_audit: ExecutionAudit | None = None
+    advisory_decision: DecisionExecutionRecord | None = None
 
 
 def run_vertical_slice(
@@ -51,6 +54,7 @@ def run_vertical_slice(
     evidence_claims: Mapping[str, EvidenceClaim],
     initial_candidate: Candidate | None = None,
     max_iterations: int = 3,
+    decision_provider: DecisionProvider | None = None,
 ) -> VerticalSliceResult:
     """Run the Evidence-aware pipeline -> loop -> validation -> evaluator."""
     proposal = initial_candidate or {}
@@ -81,6 +85,7 @@ def run_vertical_slice(
     prompt = pipeline.compiled_prompt
     knowledge = pipeline.context.knowledge
     snapshot: EvidenceSnapshot | None = pipeline.evidence_snapshot
+    advisory_decision: DecisionExecutionRecord | None = None
     if snapshot is None:
         execution_audit = build_execution_audit(
             pipeline.context,
@@ -96,6 +101,18 @@ def run_vertical_slice(
             stop_reason="missing_evidence_snapshot",
             execution_audit=execution_audit,
         )
+
+    if decision_provider is not None:
+        decision_request = DecisionRequest(
+            question_id="core.route.advisory",
+            kind="boolean",
+            context={
+                "idea": idea,
+                "route": getattr(pipeline.context.route, "value", pipeline.context.route),
+            },
+            question="Is the Core-selected route appropriate for this idea?",
+        )
+        advisory_decision = execute_decision(decision_provider, decision_request)
 
     baseline_report: EvaluationReport | None = pipeline.evaluation
     audit_trail: list[SemanticAuditRecord] = []
@@ -187,4 +204,5 @@ def run_vertical_slice(
         stop_reason=stop_reason,
         audit_trail=tuple(audit_trail),
         execution_audit=execution_audit,
+        advisory_decision=advisory_decision,
     )
