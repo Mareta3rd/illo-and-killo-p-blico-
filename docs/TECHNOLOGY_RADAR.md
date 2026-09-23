@@ -80,7 +80,7 @@ The project deliberately keeps the transport provider-neutral. A future executio
 - Product/runtime: Agents API
 - Integration: managed API
 - Status: **evaluate**
-- Current documented concepts include durable sessions, managed orchestration, context compaction/recovery, tools, MCP, subagents and sandbox/computer environments.
+- Current documented status: **public beta**. OpenAI manages sessions, orchestration, context compaction and recovery; agents can use tools and MCP servers and run in OpenAI-hosted sandboxes or a connected compatible sandbox.
 - Architectural opportunity: a possible managed runtime for the same execution/task concepts already expressed locally in this repository.
 - Architectural rule: do not replace `CodexTask` / Core with provider objects. Build an adapter if and only if a benchmark proves it useful.
 
@@ -109,7 +109,7 @@ https://www.typesafeai.org/guides/jev-api-quickstart
 - Product/runtime: Claude / Cowork
 - Integration: desktop application
 - Status: **evaluate when suitable desktop hardware is available**
-- Current documented direction: Cowork and chat are unified into one Claude experience; computer use can interact with the screen, open files and applications, and operate browser/development tools.
+- Current documented status: Cowork and chat are being unified into one Claude experience. Claude can use connectors first, then browser tools, then direct screen interaction when enabled; computer use is currently beta for Pro/Max on supported desktop platforms.
 - Architectural opportunity: a second execution environment for desktop workflows where API-level tools are insufficient.
 - Boundary: computer-use agents remain executors/observers; project policy and acceptance remain external.
 
@@ -124,7 +124,7 @@ https://support.claude.com/en/articles/14128542
 - Provider: OpenAI
 - Integration: managed product
 - Status: **watch / evaluate through actual account access**
-- Use as a reference for how end-user long-running agent work may evolve, not as a dependency of Core.
+- Use as a reference for how end-user long-running agent work may evolve, not as a dependency of Core. Review actual account availability before planning a project integration.
 
 #### Claude Code / multi-agent workflows
 - Capability: execution + delegation
@@ -162,10 +162,11 @@ A decision system may recommend a capability or provider, but the final authoriz
 
 ## First research experiments
 
-1. Define a provider-neutral `DecisionProvider` interface and benchmark Jev against deterministic routing on a tiny set of project decisions.
-2. Compare OpenAI Agents API with the existing `CodexTask` + `CodexExecutionBridge` lifecycle for one bounded task.
-3. Compare desktop computer-use execution only after the new Windows machine is available.
-4. Record model/product retirement notices in this radar instead of hard-coding assumptions into Core.
+1. Implement the deterministic `DecisionProvider` baseline and benchmark it on stable fixtures.
+2. Evaluate Jev as a drop-in `DecisionProvider` only after the baseline is green; keep vendor claims separate from project measurements.
+3. Compare OpenAI Agents API with the existing `CodexTask` + `CodexExecutionBridge` lifecycle for one bounded task.
+4. Compare Claude computer-use execution only after the new Windows machine is available.
+5. Record model/product retirement notices in this radar instead of hard-coding assumptions into Core.
 
 ## Review cadence
 
