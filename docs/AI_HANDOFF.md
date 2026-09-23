@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `2b4b490` (DecisionProvider contract committed/pushed; technology radar refreshed; deterministic baseline mission and benchmark protocol prepared; last verified suite 615/59).
+Current repository checkpoint: `d8b18d0` (deterministic DecisionProvider implemented through the governed Codex execution path, fully verified and committed/pushed; complete suite 620/59).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -173,7 +173,7 @@ The semantic context must remain deterministic, bounded, route/task-relevant and
 - new creative-canon changes;
 - replacing or reinterpreting the historical corpus.
 
-The next implementation target is **the first auditable real Qwen candidate-generation experiment using the compiled semantic context**.
+The Qwen candidate-generation experiment remains a separate creative track; it is not the next required decision-capability integration.
 
 ## Candidate-generation audit scaffold — CONTRACT REPAIR / VERIFICATION PENDING
 A preparatory audit layer has now been added on top of the closed semantic-context block.
@@ -483,34 +483,50 @@ providers are replaceable implementations**. Codex, Jev, Claude, OpenAI
 Agents API, Gemini, Qwen and future systems are therefore evaluated at the
 capability boundary rather than embedded into Core.
 
-### Next explicit target
+### Deterministic DecisionProvider — VERIFIED GREEN
 
-Implement the deterministic reference DecisionProvider through the already
-validated Codex execution bridge.
+The deterministic reference implementation has now been built through the governed
+Codex execution path and closed as a stable checkpoint.
 
-The mission is deliberately limited to:
-- `core/deterministic_decision_provider.py`
-- `tests/test_deterministic_decision_provider.py`
+Execution history:
+- the first mission attempt was correctly blocked before Codex execution because the
+  working tree contained two pre-existing untracked target files;
+- those files were preserved in `stash@{0}` as a reference implementation;
+- the tree was then cleaned and the same bounded Codex mission was rerun successfully;
+- Codex changed exactly the two allowed paths:
+  - `core/deterministic_decision_provider.py`
+  - `tests/test_deterministic_decision_provider.py`
 
-It must remain dependency-free, must not alter the existing DecisionProvider
-contract, must not integrate Jev or any cloud API, and must return only
-DecisionResult values rather than executing actions.
+Verification in the Codespace:
+- focused deterministic-provider tests: **5 passed**;
+- complete closure suite: **620 passed, 59 subtests passed**;
+- `git diff --check` passed;
+- commit: `d8b18d0`;
+- push: `origin/feature/semantic-model` completed successfully.
 
-After the normal closure gate, run:
+The implementation remains dependency-free and provider-neutral. It maps a stable
+`question_id` to a predeclared boolean, choice or score value, constructs a
+`DecisionResult`, and delegates contract validation to the existing
+`DecisionResult.validate_for()` boundary. It performs no actions and does not
+alter Core policy.
 
-```bash
-git pull --ff-only origin feature/semantic-model
-bash scripts/close_work_block.sh
-PYTHONPATH=. python scripts/run_codex_deterministic_provider_mission.py --approve
-```
+A preserved pre-Codex implementation was compared against the Codex result before
+commit. Codex produced a smaller implementation and pytest-based focused tests,
+while retaining the same contract boundary and validation behavior. The reference
+stash remains intentionally preserved for now.
 
-Inspect the implementation and focused tests before committing. Then run the
-complete suite and close the block.
-
+This closes the first real provider implementation under the capability-oriented
+DecisionProvider seam. No external decision provider has been integrated yet.
 
 ## Next explicit target
 
-Do not jump directly to a broad autonomous coding task. The next useful experiment is a **bounded production-code mission** with one small allowed production file, at least one protected Core/canon path, explicit acceptance criteria and verification commands, and the same bridge/transport path. That will test whether the authority and scope contract remains effective when Codex is permitted to modify real implementation code.
+Build the **first auditable decision vertical slice** using the existing
+`DecisionProvider` contract and the deterministic provider as the initial adapter:
+a Core-owned routing seam should accept a bounded `DecisionRequest`, invoke an
+injected provider, validate the resulting `DecisionResult`, and return a small
+auditable result without executing any action. Keep the slice provider-neutral,
+dependency-free and replaceable so Jev or a model-based provider can later occupy
+the same boundary.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
