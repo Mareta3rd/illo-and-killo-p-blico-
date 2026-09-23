@@ -3,6 +3,7 @@ import unittest
 
 from core.evidence_state import EvidenceClaim, EvidenceState
 from core.orchestrator import run_vertical_slice
+from core.decision_provider import DecisionRequest, DecisionResult
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +26,66 @@ COMPLETE_EVIDENCE = {
 
 
 class OrchestratorTests(unittest.TestCase):
+
+    def test_advisory_decision_is_exposed_without_authority(self):
+        calls = []
+
+        class AdvisoryProvider:
+            def decide(self, request):
+                calls.append(request)
+                return DecisionResult(
+                    request.question_id,
+                    request.kind,
+                    False,
+                    "fixture",
+                    0.8,
+                )
+
+        result = run_vertical_slice(
+            "Crear un gag nuevo de Xoxo y Pisha",
+            ROOT,
+            lambda prompt, iteration, previous: {**INITIAL},
+            evidence_claims=COMPLETE_EVIDENCE,
+            initial_candidate=INITIAL,
+            decision_provider=AdvisoryProvider(),
+        )
+
+        self.assertFalse(result.stopped)
+        self.assertEqual(result.loop.status, "accepted")
+        self.assertEqual(result.advisory_decision.result.value, False)
+        self.assertEqual(result.advisory_decision.result.provider_id, "fixture")
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0].question_id, "core.route.advisory")
+        self.assertEqual(calls[0].kind, "boolean")
+        self.assertEqual(calls[0].context["route"], result.pipeline.context.route)
+        self.assertEqual(result.pipeline.context.route, "gag")
+
+    def test_no_provider_preserves_backward_compatible_behavior(self):
+        result = run_vertical_slice(
+            "Crear un gag nuevo de Xoxo y Pisha",
+            ROOT,
+            lambda prompt, iteration, previous: {**INITIAL},
+            evidence_claims=COMPLETE_EVIDENCE,
+            initial_candidate=INITIAL,
+        )
+
+        self.assertIsNone(result.advisory_decision)
+
+    def test_advisory_provider_failure_propagates(self):
+        class BrokenProvider:
+            def decide(self, request):
+                raise RuntimeError("provider unavailable")
+
+        with self.assertRaisesRegex(RuntimeError, "provider unavailable"):
+            run_vertical_slice(
+                "Crear un gag nuevo de Xoxo y Pisha",
+                ROOT,
+                lambda prompt, iteration, previous: {**INITIAL},
+                evidence_claims=COMPLETE_EVIDENCE,
+                initial_candidate=INITIAL,
+                decision_provider=BrokenProvider(),
+            )
+
 
     def test_vertical_slice_accepts_candidate(self):
         prompts = []
