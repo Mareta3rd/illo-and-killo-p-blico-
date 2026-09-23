@@ -582,33 +582,17 @@ a connected decision capability without coupling Core to a production provider.
 
 ## Next explicit target
 
-Execute the prepared **first end-to-end decision-capability integration into an
-existing Core workflow** through the governed Codex bridge.
+Complete and review the **first end-to-end advisory decision integration** now
+implemented locally by the governed Codex mission. Verify that the advisory
+DecisionProvider is represented consistently in the Core result/audit boundary,
+then commit/push the reviewed integration only after the complete regression suite
+is green. The advisory result must remain non-authoritative: it cannot replace,
+gate, authorize or execute the existing Core route/action path.
 
-Preparation commit: `f8225bd`.
-
-Mission scope:
-- `core/orchestrator.py`
-- `tests/test_orchestrator.py`
-
-The integration is explicitly advisory and non-authoritative. When a
-`DecisionProvider` is injected into `run_vertical_slice()`, Core should create
-a bounded boolean `DecisionRequest` asking whether the Core-selected route is
-appropriate for the current idea, execute it through `execute_decision()`, and
-expose the resulting immutable audit record. The advisory result must never
-replace, gate, authorize, or mutate the existing Core route/action path.
-
-No Jev, LLM or external provider is introduced. Existing behavior must remain
-unchanged when no provider is supplied.
-
-After pulling this preparation commit:
-```bash
-bash scripts/close_work_block.sh
-PYTHONPATH=. python scripts/run_codex_core_decision_integration_mission.py --approve
-```
-
-Inspect the implementation and focused tests before commit; then run the complete
-suite and close the block.
+Post-commit, the next architectural target is to make decision evidence available
+through the broader Core/application boundary so a real workflow can consume it
+without coupling to a concrete provider. Jev and other external providers remain
+evaluation candidates, not yet production integrations.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
