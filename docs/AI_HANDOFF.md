@@ -518,16 +518,45 @@ stash remains intentionally preserved for now.
 This closes the first real provider implementation under the capability-oriented
 DecisionProvider seam. No external decision provider has been integrated yet.
 
+## Decision Execution Seam — VERIFIED GREEN
+
+The first auditable decision vertical slice is now implemented through the governed
+Codex execution path and closed as a stable checkpoint.
+
+Implementation:
+- `core/decision_execution.py` provides `execute_decision()` over an injected
+  `DecisionProvider` and returns an immutable `DecisionExecutionRecord`;
+- provider results must be `DecisionResult` instances and must validate against the
+  original `DecisionRequest` before being accepted;
+- the record contains the request, result, request digest and result digest;
+- request/result digests are deterministic SHA-256 fingerprints of the existing
+  canonical DecisionProvider serializations;
+- the seam records the provider judgment only and never executes the represented action.
+
+Execution through Codex:
+- task: `codex-live-decision-vertical-slice-001`;
+- allowed files were exactly `core/decision_execution.py` and
+  `tests/test_decision_execution.py`;
+- protected Core/provider/audit/Codex paths were not writable by the mission;
+- Codex reported status `completed`, no blockers and exactly the two allowed files changed;
+- focused verification: **5 passed**;
+- complete closure suite: **625 passed, 59 subtests passed**;
+- `git diff --check` passed;
+- committed and pushed checkpoint: `8d713ac`.
+
+This closes the first usable, auditable decision capability. The next step is to
+integrate this seam into a Core-owned routing/execution path without choosing a
+production provider. The integration must keep DecisionProvider replaceable so the
+same boundary can later host the deterministic baseline, Jev, model-based providers
+or human review.
+
 ## Next explicit target
 
-Build the **first auditable decision vertical slice** using the existing
-`DecisionProvider` contract and the deterministic provider as the initial adapter:
-a Core-owned routing seam should accept a bounded `DecisionRequest`, invoke an
-injected provider, validate the resulting `DecisionResult`, and return a small
-auditable result without executing any action. Keep the slice provider-neutral,
-dependency-free and replaceable so Jev or a model-based provider can later occupy
-the same boundary.
-
+Implement the **first Core-owned decision routing integration**: accept a bounded
+`DecisionRequest`, resolve or inject a `DecisionProvider`, execute it through
+`execute_decision()`, and expose the resulting auditable decision without executing
+an action. Prefer the smallest integration point that can be tested end-to-end.
+Keep the existing provider-neutral contracts and protected Core/canon boundaries intact.
 ## Codex Execution Bridge — VERIFIED GREEN
 
 The first runtime bridge is implemented:
