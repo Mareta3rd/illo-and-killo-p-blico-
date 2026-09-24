@@ -195,6 +195,7 @@ def run_vertical_slice(
         audit_trail,
         final_status=final_status,
         stop_reason=stop_reason,
+        advisory_decision=advisory_decision,
     )
 
     return VerticalSliceResult(

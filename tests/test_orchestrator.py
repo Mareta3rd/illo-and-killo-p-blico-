@@ -59,6 +59,7 @@ class OrchestratorTests(unittest.TestCase):
         self.assertEqual(calls[0].kind, "boolean")
         self.assertEqual(calls[0].context["route"], result.pipeline.context.route)
         self.assertEqual(result.pipeline.context.route, "gag")
+        self.assertIs(result.execution_audit.advisory_decision, result.advisory_decision)
 
     def test_no_provider_preserves_backward_compatible_behavior(self):
         result = run_vertical_slice(
@@ -70,6 +71,7 @@ class OrchestratorTests(unittest.TestCase):
         )
 
         self.assertIsNone(result.advisory_decision)
+        self.assertIsNone(result.execution_audit.advisory_decision)
 
     def test_advisory_provider_failure_propagates(self):
         class BrokenProvider:

@@ -7,6 +7,7 @@ from hashlib import sha256
 from typing import Mapping, Sequence
 
 from .context import CoreContext
+from .decision_execution import DecisionExecutionRecord
 from .evidence_snapshot import EvidenceSnapshot
 from .semantic_audit import SemanticAuditRecord
 
@@ -24,6 +25,7 @@ class ExecutionAudit:
     iterations: tuple[SemanticAuditRecord, ...]
     final_status: str
     stop_reason: str | None
+    advisory_decision: DecisionExecutionRecord | None = None
 
 
 def fingerprint_evidence(snapshot: EvidenceSnapshot) -> str:
@@ -51,6 +53,7 @@ def build_execution_audit(
     *,
     final_status: str,
     stop_reason: str | None,
+    advisory_decision: DecisionExecutionRecord | None = None,
 ) -> ExecutionAudit:
     """Build an immutable execution summary without mutating inputs."""
     claims = snapshot.claims if snapshot is not None else {}
@@ -65,4 +68,5 @@ def build_execution_audit(
         iterations=tuple(iterations),
         final_status=final_status,
         stop_reason=stop_reason,
+        advisory_decision=advisory_decision,
     )

@@ -2,6 +2,8 @@ from pathlib import Path
 import unittest
 
 from core.context import build_context
+from core.decision_execution import DecisionExecutionRecord
+from core.decision_provider import DecisionRequest, DecisionResult
 from core.evidence_snapshot import build_evidence_snapshot
 from core.evidence_state import EvidenceClaim, EvidenceState
 from core.execution_audit import build_execution_audit, fingerprint_evidence
@@ -76,6 +78,23 @@ class ExecutionAuditTests(unittest.TestCase):
             audit.final_status = "accepted"
         self.assertEqual(audit.final_status, "human_review")
         self.assertEqual(audit.stop_reason, "evaluation_requires_human_review")
+
+    def test_audit_retains_exact_advisory_record(self):
+        context = build_context("Crear una escena veraniega", ROOT)
+        request = DecisionRequest("core.route.advisory", "boolean", {}, "Route?")
+        result = DecisionResult(request.question_id, request.kind, False, "fixture", 0.8)
+        advisory = DecisionExecutionRecord(request, result, "request-digest", "result-digest")
+
+        audit = build_execution_audit(
+            context,
+            None,
+            (),
+            final_status="accepted",
+            stop_reason=None,
+            advisory_decision=advisory,
+        )
+
+        self.assertIs(audit.advisory_decision, advisory)
 
 
 if __name__ == "__main__":
