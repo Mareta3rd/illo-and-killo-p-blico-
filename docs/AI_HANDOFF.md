@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `f71ba0a` (advisory-audit completion mission prepared; last verified implementation checkpoint 08eac8a with complete suite 630/59).
+Current repository checkpoint: `ce53dab` (application-boundary decision integration mission prepared; last verified implementation checkpoint 309dddb with complete suite 634/59).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -582,31 +582,31 @@ a connected decision capability without coupling Core to a production provider.
 
 ## Next explicit target
 
-Complete the **advisory decision audit placement** before consolidating the first
-end-to-end Core integration.
+Execute the prepared **application-boundary decision integration** through the
+governed Codex bridge.
 
-Preparation commit: `f71ba0a`.
+Preparation commit: `ce53dab`.
 
-The bounded Codex mission must update only:
-- `core/execution_audit.py`
-- `core/orchestrator.py`
-- `tests/test_execution_audit.py`
-- `tests/test_orchestrator.py`
+Mission scope:
+- `core/application.py`
+- `tests/test_application.py`
 
-The canonical durable execution audit should retain the exact immutable
-`DecisionExecutionRecord` already produced by `execute_decision()`, while
-`VerticalSliceResult.advisory_decision` remains the convenient in-memory
-projection for callers. The advisory result must remain non-authoritative.
+The integration should add an optional injected `DecisionProvider` to
+`ApplicationRequest` and pass that provider unchanged into the existing
+`run_vertical_slice()` boundary. Application remains an orchestration/aggregation
+layer: it must not create a second advisory decision structure, choose a concrete
+provider, authorize actions, or execute actions. Callers should be able to inspect
+the same immutable advisory `DecisionExecutionRecord` through
+`ApplicationResult.core`.
 
-The current local advisory integration from the preceding mission is preserved
-by the human until this review/repair is synchronized; do not discard local work.
-After alignment, run:
+After pulling:
 ```bash
-PYTHONPATH=. python scripts/run_codex_advisory_audit_completion_mission.py --approve
+bash scripts/close_work_block.sh
+PYTHONPATH=. python scripts/run_codex_application_decision_integration_mission.py --approve
 ```
 
-Only after the resulting implementation and focused tests are inspected should
-the integrated block be committed, pushed and closed with the complete suite.
+Inspect the implementation and focused tests before commit, then run the complete
+suite and close the block.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
