@@ -2,8 +2,12 @@ from pathlib import Path
 import tempfile
 import unittest
 from dataclasses import FrozenInstanceError
+from unittest.mock import patch
 
+from core import application
 from core.application import ApplicationRequest, ApplicationResult, run_application
+from core.decision_execution import DecisionExecutionRecord
+from core.deterministic_decision_provider import DeterministicDecisionProvider
 from core.evidence_snapshot import EvidenceSnapshot
 from core.evidence_state import EvidenceClaim, EvidenceState
 from core.execution_artifact import read_execution_artifact
@@ -54,7 +58,7 @@ class FailingProvider:
 
 
 class ApplicationTests(unittest.TestCase):
-    def request(self, provider, *, claims=(INVARIANT,), artifact_path=None, executor=None):
+    def request(self, provider, *, claims=(INVARIANT,), artifact_path=None, executor=None, decision_provider=None):
         executor = executor or (lambda prompt, iteration, previous: dict(PROPOSAL))
         return ApplicationRequest(
             idea="Crear un gag nuevo de Illo y Killo",
@@ -68,6 +72,7 @@ class ApplicationTests(unittest.TestCase):
             model="fake-model",
             image="gags/images/001_jamon.png",
             artifact_path=artifact_path,
+            decision_provider=decision_provider,
         )
 
     def test_valid_request_runs_provider_and_core_once(self):
@@ -82,7 +87,33 @@ class ApplicationTests(unittest.TestCase):
         self.assertIsInstance(result.snapshot, EvidenceSnapshot)
         self.assertIsNotNone(result.core)
         self.assertEqual(result.core.pipeline.evaluation.evaluation.decision, "accept")
+        self.assertIsNone(result.core.advisory_decision)
         self.assertFalse(result.stopped)
+
+    def test_decision_provider_passes_unchanged_and_record_is_exposed_through_core(self):
+        decision_provider = DeterministicDecisionProvider(
+            {"core.route.advisory": True}, confidence=0.9
+        )
+        core_runner = application.run_vertical_slice
+        with patch.object(application, "run_vertical_slice", wraps=core_runner) as run_core:
+            result = run_application(
+                self.request(FakeProvider(), decision_provider=decision_provider)
+            )
+
+        self.assertIs(run_core.call_args.kwargs["decision_provider"], decision_provider)
+        self.assertIsInstance(result.core.advisory_decision, DecisionExecutionRecord)
+        self.assertEqual(result.core.advisory_decision.result.value, True)
+        self.assertEqual(result.core.pipeline.evaluation.evaluation.decision, "accept")
+
+    def test_decision_provider_failure_propagates_from_core_boundary(self):
+        class FailingDecisionProvider:
+            def decide(self, request):
+                raise RuntimeError("decision provider unavailable")
+
+        with self.assertRaisesRegex(RuntimeError, "decision provider unavailable"):
+            run_application(
+                self.request(FakeProvider(), decision_provider=FailingDecisionProvider())
+            )
 
     def test_requested_claims_and_metadata_remain_separate(self):
         provider = FakeProvider()

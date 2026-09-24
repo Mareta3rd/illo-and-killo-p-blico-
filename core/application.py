@@ -12,6 +12,7 @@ from .execution_artifact import (
     build_execution_artifact,
     write_execution_artifact,
 )
+from .decision_provider import DecisionProvider
 from .external_evidence_adapter import ExternalEvidenceProvider
 from .orchestrator import Executor, VerticalSliceResult, run_vertical_slice
 from .provider_evidence_observation import (
@@ -34,6 +35,7 @@ class ApplicationRequest:
     image: str
     artifact_path: str | Path | None = None
     max_iterations: int = 3
+    decision_provider: DecisionProvider | None = None
 
 
 @dataclass(frozen=True)
@@ -79,6 +81,7 @@ def run_application(request: ApplicationRequest) -> ApplicationResult:
         evidence_claims=collected_snapshot.claims,
         initial_candidate=request.proposal,
         max_iterations=request.max_iterations,
+        decision_provider=request.decision_provider,
     )
     snapshot = core.pipeline.evidence_snapshot or collected_snapshot
     artifact = None
