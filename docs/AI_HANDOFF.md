@@ -606,26 +606,50 @@ Architectural boundary preserved:
 
 Application remains an orchestration/aggregation boundary. It does not select a concrete provider, create a second decision record, authorize an action, or execute an action.
 
+## Current block — Decision Capability E2E / VERIFIED GREEN
+
+The first end-to-end decision capability exercise is now closed and green.
+
+Experiment:
+- ApplicationRequest carried an injected `DeterministicDecisionProvider` through Application → Core.
+- Provider answer was deliberately `False` for `core.route.advisory`.
+- Core independently reached `accept`.
+- The exact immutable `DecisionExecutionRecord` was exposed both through `VerticalSliceResult.advisory_decision` and `ExecutionAudit.advisory_decision`.
+- The execution fixture ran exactly once and no action side effect occurred.
+- The first experiment stopped before DecisionProvider because the fixture omitted the existing required checks; this was diagnosed without changing production code, then the fixture was corrected to satisfy the established pipeline contract.
+- Final E2E output:
+  - route: `gag`;
+  - Core evaluation: `accept`;
+  - advisory value: `False`;
+  - provider: `deterministic-e2e`;
+  - same record in ExecutionAudit: `True`;
+  - executor calls: `[1]`;
+  - action side effects: none.
+
+Final Codespace verification:
+- complete suite: **638 passed, 59 subtests passed in 18.98s**;
+- `git diff --check` passed;
+- working tree/diff checks reported clean;
+- current remote checkpoint before this handoff update: `aed2682`.
+
+This closes the first complete provider-neutral Decision capability path:
+`Application → Core → DecisionProvider → DecisionExecutionRecord → ExecutionAudit`.
+
+No external provider was added, Core authority was unchanged, and the deterministic provider remains a fixture/reference implementation rather than a production provider selection.
+
 ## Next explicit target
 
-Run the first **real end-to-end decision capability exercise** using the deterministic provider as a fixture.
+The next phase should not add another decision provider immediately. First, use the clean vertical slice as the baseline for a **DecisionProvider benchmark harness**.
 
 Purpose:
-- prove that a complete `ApplicationRequest` can carry an injected `DecisionProvider` through Application → Core → provider → immutable `DecisionExecutionRecord`;
-- verify that the exact same advisory record remains available through `VerticalSliceResult` and `ExecutionAudit`;
-- confirm that a conflicting advisory value (for example `False`) does **not** alter the existing Core route/evaluation or execute an action;
-- exercise the capability without adding another provider or modifying production architecture.
+- define a small reusable fixture set for boolean, choice, score and escalation/failure behavior;
+- measure contract validity, repeatability, latency and operational cost where measurable;
+- make future Jev/model/human implementations drop-in participants without changing the request/result contract;
+- keep benchmark measurements separate from Core authority and avoid a single universal quality score.
 
-This is an experiment/verification block, not a new integration. Do not introduce Jev yet and do not create generated run artifacts unless deliberately retained as experimental evidence.
+Before implementation, inspect the existing `docs/DECISION_BENCHMARK.md` contract and determine the smallest bounded harness that can be exercised locally with the deterministic provider alone. Keep Jev out of scope until the benchmark baseline itself is green.
 
-Recommended one-off fixture:
-- use the current `arsa` / `pisha` character vocabulary;
-- use a small accepted candidate fixture;
-- use one confirmed evidence claim;
-- use `DeterministicDecisionProvider({"core.route.advisory": False})`;
-- assert the application result remains accepted while the advisory decision records `False` and the same object is present in both Core result and execution audit.
 
-After the exercise passes, inspect the output and decide whether the next capability step is benchmarking another provider implementation or strengthening the decision audit surface.
 ## Codex Execution Bridge — VERIFIED GREEN
 
 The first runtime bridge is implemented:
