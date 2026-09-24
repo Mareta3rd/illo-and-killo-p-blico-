@@ -580,10 +580,9 @@ This closes the first usable Core decision flow: the provider-neutral contract,
 deterministic reference provider, auditable execution seam and Core flow now form
 a connected decision capability without coupling Core to a production provider.
 
-## Current block — Application Decision Integration / REVIEW PENDING
+## Current block — Application Decision Integration / VERIFIED GREEN
 
-The first application-boundary DecisionProvider integration has been implemented
-locally through the governed Codex path.
+The first application-boundary DecisionProvider integration is now closed.
 
 Codex execution:
 - task: `codex-live-application-decision-integration-001`;
@@ -591,30 +590,42 @@ Codex execution:
 - status: `completed`;
 - blockers: none;
 - focused verification: **12 passed, 2 subtests**;
-- `git diff --check` passed;
+- the injected provider is passed unchanged from `ApplicationRequest` to `run_vertical_slice()`;
+- the application exposes no duplicate decision record; callers inspect the same immutable advisory record through `result.core`;
 - no commit or push was made by Codex.
 
-The intended boundary is:
-`ApplicationRequest.decision_provider` → `run_vertical_slice()` →
-`VerticalSliceResult.advisory_decision` / `ExecutionAudit`.
+Human consolidation:
+- the application-boundary change was committed and pushed on `feature/semantic-model`;
+- current remote checkpoint: `fbfe982c8af7be092860b6ccbaef8189d595ec29`;
+- complete regression suite in the Codespace: **638 passed, 59 subtests passed**;
+- the branch is green and the application-boundary block is closed;
+- the remote handoff was deliberately updated after the application commit so repository state and continuity documentation remain aligned.
 
-The Application layer must remain an orchestration/aggregation layer: it must not
-create a second decision record, choose a concrete provider, authorize actions,
-or execute actions.
+Architectural boundary preserved:
+`ApplicationRequest.decision_provider` → `run_vertical_slice()` → `VerticalSliceResult.advisory_decision` / `ExecutionAudit`.
 
-Before consolidation, inspect the local diff and run the complete closure suite.
-The new integration remains local until that review passes and the human commits
-and pushes it.
+Application remains an orchestration/aggregation boundary. It does not select a concrete provider, create a second decision record, authorize an action, or execute an action.
 
 ## Next explicit target
 
-After the application-boundary block is closed, run the first **real end-to-end
-decision capability exercise** using the deterministic provider as a fixture.
-The exercise should prove that a complete application invocation can carry a
-bounded decision request through Application → Core → DecisionProvider →
-auditable record, while preserving the existing Core outcome and producing no
-action side effects. Keep the provider replaceable and do not integrate Jev yet.
+Run the first **real end-to-end decision capability exercise** using the deterministic provider as a fixture.
 
+Purpose:
+- prove that a complete `ApplicationRequest` can carry an injected `DecisionProvider` through Application → Core → provider → immutable `DecisionExecutionRecord`;
+- verify that the exact same advisory record remains available through `VerticalSliceResult` and `ExecutionAudit`;
+- confirm that a conflicting advisory value (for example `False`) does **not** alter the existing Core route/evaluation or execute an action;
+- exercise the capability without adding another provider or modifying production architecture.
+
+This is an experiment/verification block, not a new integration. Do not introduce Jev yet and do not create generated run artifacts unless deliberately retained as experimental evidence.
+
+Recommended one-off fixture:
+- use the current `arsa` / `pisha` character vocabulary;
+- use a small accepted candidate fixture;
+- use one confirmed evidence claim;
+- use `DeterministicDecisionProvider({"core.route.advisory": False})`;
+- assert the application result remains accepted while the advisory decision records `False` and the same object is present in both Core result and execution audit.
+
+After the exercise passes, inspect the output and decide whether the next capability step is benchmarking another provider implementation or strengthening the decision audit surface.
 ## Codex Execution Bridge — VERIFIED GREEN
 
 The first runtime bridge is implemented:
