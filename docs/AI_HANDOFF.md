@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `ce53dab` (application-boundary decision integration mission prepared; last verified implementation checkpoint 309dddb with complete suite 634/59).
+Current repository checkpoint: `e173b36` (application-boundary DecisionProvider integration mission executed and awaiting local commit/closure; last remote preparation commit is e173b36).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -580,33 +580,40 @@ This closes the first usable Core decision flow: the provider-neutral contract,
 deterministic reference provider, auditable execution seam and Core flow now form
 a connected decision capability without coupling Core to a production provider.
 
+## Current block — Application Decision Integration / REVIEW PENDING
+
+The first application-boundary DecisionProvider integration has been implemented
+locally through the governed Codex path.
+
+Codex execution:
+- task: `codex-live-application-decision-integration-001`;
+- allowed files: `core/application.py` and `tests/test_application.py`;
+- status: `completed`;
+- blockers: none;
+- focused verification: **12 passed, 2 subtests**;
+- `git diff --check` passed;
+- no commit or push was made by Codex.
+
+The intended boundary is:
+`ApplicationRequest.decision_provider` → `run_vertical_slice()` →
+`VerticalSliceResult.advisory_decision` / `ExecutionAudit`.
+
+The Application layer must remain an orchestration/aggregation layer: it must not
+create a second decision record, choose a concrete provider, authorize actions,
+or execute actions.
+
+Before consolidation, inspect the local diff and run the complete closure suite.
+The new integration remains local until that review passes and the human commits
+and pushes it.
+
 ## Next explicit target
 
-Execute the prepared **application-boundary decision integration** through the
-governed Codex bridge.
-
-Preparation commit: `ce53dab`.
-
-Mission scope:
-- `core/application.py`
-- `tests/test_application.py`
-
-The integration should add an optional injected `DecisionProvider` to
-`ApplicationRequest` and pass that provider unchanged into the existing
-`run_vertical_slice()` boundary. Application remains an orchestration/aggregation
-layer: it must not create a second advisory decision structure, choose a concrete
-provider, authorize actions, or execute actions. Callers should be able to inspect
-the same immutable advisory `DecisionExecutionRecord` through
-`ApplicationResult.core`.
-
-After pulling:
-```bash
-bash scripts/close_work_block.sh
-PYTHONPATH=. python scripts/run_codex_application_decision_integration_mission.py --approve
-```
-
-Inspect the implementation and focused tests before commit, then run the complete
-suite and close the block.
+After the application-boundary block is closed, run the first **real end-to-end
+decision capability exercise** using the deterministic provider as a fixture.
+The exercise should prove that a complete application invocation can carry a
+bounded decision request through Application → Core → DecisionProvider →
+auditable record, while preserving the existing Core outcome and producing no
+action side effects. Keep the provider replaceable and do not integrate Jev yet.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
