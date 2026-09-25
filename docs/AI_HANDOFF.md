@@ -639,15 +639,24 @@ No external provider was added, Core authority was unchanged, and the determinis
 
 ## Next explicit target
 
-The next phase should not add another decision provider immediately. First, use the clean vertical slice as the baseline for a **DecisionProvider benchmark harness**.
+The next phase is a small **DecisionProvider benchmark harness**. The governed Codex mission has been prepared but not yet executed.
+
+Preparation:
+- mission runner: `scripts/run_codex_decision_benchmark_mission.py`;
+- preparation checkpoint: `4ef44b7ebf30e92e75c7030fc3c5a41e6f9ce160`;
+- allowed implementation paths: `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`;
+- protected paths include the existing DecisionProvider, decision execution, Core, application, canon/data, documentation and task/transport boundaries;
+- the mission uses the deterministic provider only and reuses `execute_decision()`;
+- no Jev, LLM, network dependency, production-provider selection or universal quality score is in scope.
 
 Purpose:
-- define a small reusable fixture set for boolean, choice, score and escalation/failure behavior;
-- measure contract validity, repeatability, latency and operational cost where measurable;
-- make future Jev/model/human implementations drop-in participants without changing the request/result contract;
-- keep benchmark measurements separate from Core authority and avoid a single universal quality score.
+- define a reusable fixture set for boolean, constrained choice, numeric score and failure/invalid-result behavior;
+- record explicit expected-vs-observed values, contract validity, repeatability, latency, provider/model identifiers, confidence and failure/abstention information;
+- keep benchmark measurements separate from Core authority.
 
-Before implementation, inspect the existing `docs/DECISION_BENCHMARK.md` contract and determine the smallest bounded harness that can be exercised locally with the deterministic provider alone. Keep Jev out of scope until the benchmark baseline itself is green.
+The immediate human action is to pull the preparation commit, review the mission script if desired, and run it through the existing governed Codex bridge from a clean working tree. Only after the focused benchmark tests and full closure suite are green should the benchmark block be closed.
+
+Do not add Jev yet.
 
 
 ## Codex Execution Bridge — VERIFIED GREEN
