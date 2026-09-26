@@ -668,15 +668,23 @@ The benchmark is therefore an engineering instrument for future provider compari
 
 ## Next explicit target
 
-Before integrating another decision provider, perform a small **benchmark execution pass** using the deterministic provider itself.
+The deterministic benchmark execution pass is complete.
 
-Purpose:
-- run the newly implemented harness against all baseline fixtures;
-- inspect the resulting measurements and failure handling;
-- confirm the benchmark output is useful and stable as a reference artifact;
-- decide from that evidence whether the harness needs any bounded repair before a future Jev or model-based participant.
+Measured baseline:
+- boolean, constrained-choice and numeric-score fixtures all returned their expected values;
+- the expected-failure fixture produced a controlled ValueError on both repetitions;
+- all four fixtures were repeatable=True;
+- provider metadata and confidence were preserved on valid observations;
+- latency was captured independently for every observation;
+- expected-vs-observed comparisons were explicit and matched expectations;
+- the serialized report was written only to /tmp/decision-benchmark-reference.json and was not added to the repository.
 
-Do not integrate Jev yet. Do not introduce a universal provider score.
+Reference-provider conclusion:
+- the harness is usable as an engineering observation instrument for the current deterministic baseline;
+- no bounded repair is justified by this execution pass;
+- the harness must remain multi-dimensional and must not collapse the observations into a universal score.
+
+The next architectural step is therefore a provider-neutral benchmark comparison preparation, not an immediate Jev integration: define the exact comparison fixture set and execution contract that a future Jev/model-based provider must satisfy, without integrating or selecting that provider yet.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
