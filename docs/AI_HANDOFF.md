@@ -637,27 +637,46 @@ This closes the first complete provider-neutral Decision capability path:
 
 No external provider was added, Core authority was unchanged, and the deterministic provider remains a fixture/reference implementation rather than a production provider selection.
 
+## Current block — DecisionProvider Benchmark / VERIFIED GREEN
+
+The first reusable local DecisionProvider benchmark harness is now implemented and closed.
+
+Codex execution:
+- task: `codex-live-decision-benchmark-001`;
+- allowed files: `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`;
+- status: `completed`;
+- focused verification during execution: **6 passed**;
+- `git diff --check` passed;
+- diff digest: `ebdaa2b4428ad31512d043f36e298656f770cc4ad7ed1d05805a6f6e775a45fe`;
+- Codex changed exactly the two allowed files.
+
+Human verification and consolidation:
+- complete suite before commit: **644 passed, 59 subtests passed in 19.87s**;
+- closure script repeated the full suite: **644 passed, 59 subtests passed in 15.35s**;
+- working-tree/diff checks showed only the two intended new files;
+- committed and pushed checkpoint: `ba5412dab9568b4b821789d1ea335426845d0a29`.
+
+Benchmark boundary:
+- valid cases execute through the existing `execute_decision()` seam;
+- boolean, constrained choice, numeric score and failure/invalid-result behavior are represented;
+- expected-vs-observed values remain explicit;
+- repeatability, monotonic latency, provider/model metadata, confidence and failure/abstention are recorded separately;
+- results remain deterministic/serializable without a universal quality score;
+- no provider is selected for production and no action is executed.
+
+The benchmark is therefore an engineering instrument for future provider comparison, not a leaderboard or authority layer.
+
 ## Next explicit target
 
-The next phase is a small **DecisionProvider benchmark harness**. The governed Codex mission has been prepared but not yet executed.
-
-Preparation:
-- mission runner: `scripts/run_codex_decision_benchmark_mission.py`;
-- preparation checkpoint: `4ef44b7ebf30e92e75c7030fc3c5a41e6f9ce160`;
-- allowed implementation paths: `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`;
-- protected paths include the existing DecisionProvider, decision execution, Core, application, canon/data, documentation and task/transport boundaries;
-- the mission uses the deterministic provider only and reuses `execute_decision()`;
-- no Jev, LLM, network dependency, production-provider selection or universal quality score is in scope.
+Before integrating another decision provider, perform a small **benchmark execution pass** using the deterministic provider itself.
 
 Purpose:
-- define a reusable fixture set for boolean, constrained choice, numeric score and failure/invalid-result behavior;
-- record explicit expected-vs-observed values, contract validity, repeatability, latency, provider/model identifiers, confidence and failure/abstention information;
-- keep benchmark measurements separate from Core authority.
+- run the newly implemented harness against all baseline fixtures;
+- inspect the resulting measurements and failure handling;
+- confirm the benchmark output is useful and stable as a reference artifact;
+- decide from that evidence whether the harness needs any bounded repair before a future Jev or model-based participant.
 
-The immediate human action is to pull the preparation commit, review the mission script if desired, and run it through the existing governed Codex bridge from a clean working tree. Only after the focused benchmark tests and full closure suite are green should the benchmark block be closed.
-
-Do not add Jev yet.
-
+Do not integrate Jev yet. Do not introduce a universal provider score.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
