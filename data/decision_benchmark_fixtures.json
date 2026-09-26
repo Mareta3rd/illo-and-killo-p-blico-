@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "fixture_set_id": "decision-benchmark-v1",
+  "description": "Provider-neutral DecisionProvider comparison fixtures. Values are contract-level reference expectations, not a universal quality score.",
+  "fixtures": [
+    {
+      "case_id": "boolean-review-escalation",
+      "benchmark_role": "objective",
+      "request": {
+        "question_id": "benchmark.v1.boolean.review_escalation",
+        "kind": "boolean",
+        "context": {
+          "candidate_contract_valid": true,
+          "human_review_required": true,
+          "evidence_state": "unknown"
+        },
+        "question": "Should this case be escalated to human review?"
+      },
+      "expected_value": true,
+      "expected_failure": false,
+      "repetitions": 2
+    },
+    {
+      "case_id": "choice-confirmed-route",
+      "benchmark_role": "objective",
+      "request": {
+        "question_id": "benchmark.v1.choice.confirmed_route",
+        "kind": "choice",
+        "context": {
+          "candidate_contract_valid": true,
+          "evidence_state": "confirmed",
+          "human_review_required": false
+        },
+        "question": "Which route should be used for a contract-valid candidate with confirmed evidence?",
+        "choices": [
+          "accept",
+          "human_review",
+          "continue"
+        ]
+      },
+      "expected_value": "accept",
+      "expected_failure": false,
+      "repetitions": 2
+    },
+    {
+      "case_id": "score-evidence-coverage",
+      "benchmark_role": "objective",
+      "request": {
+        "question_id": "benchmark.v1.score.evidence_coverage",
+        "kind": "score",
+        "context": {
+          "covered_dimensions": 3,
+          "required_dimensions": 4
+        },
+        "question": "What fraction of required dimensions are covered?"
+      },
+      "expected_value": 0.75,
+      "expected_failure": false,
+      "repetitions": 2
+    },
+    {
+      "case_id": "control-missing-provider-answer",
+      "benchmark_role": "harness_control",
+      "request": {
+        "question_id": "benchmark.v1.control.missing_provider_answer",
+        "kind": "boolean",
+        "context": {
+          "fixture_purpose": "exercise controlled provider failure handling"
+        },
+        "question": "Return the provider's answer for this intentionally unconfigured control case."
+      },
+      "expected_value": null,
+      "expected_failure": true,
+      "repetitions": 2
+    }
+  ]
+}
