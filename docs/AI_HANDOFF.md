@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `ba5412d` (DecisionProvider benchmark harness implemented, verified, committed and pushed; current remote head is `ba5412dab9568b4b821789d1ea335426845d0a29`).
+Current repository checkpoint: `f57df2c` (provider-neutral benchmark v1 fixture set and governed Codex integration mission prepared; code implementation is not yet executed).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -666,25 +666,28 @@ Benchmark boundary:
 
 The benchmark is therefore an engineering instrument for future provider comparison, not a leaderboard or authority layer.
 
-## Next explicit target
+## Decision Benchmark Comparison Preparation — READY / VERIFICATION PENDING
 
-The deterministic benchmark execution pass is complete.
+The provider-neutral v1 comparison surface is now defined before any second provider is integrated.
 
-Measured baseline:
-- boolean, constrained-choice and numeric-score fixtures all returned their expected values;
-- the expected-failure fixture produced a controlled ValueError on both repetitions;
-- all four fixtures were repeatable=True;
-- provider metadata and confidence were preserved on valid observations;
-- latency was captured independently for every observation;
-- expected-vs-observed comparisons were explicit and matched expectations;
-- the serialized report was written only to /tmp/decision-benchmark-reference.json and was not added to the repository.
+Prepared:
+- `data/decision_benchmark_fixtures.json` is the versioned source of truth for fixture inputs and expected contract-level outcomes;
+- `docs/DECISION_BENCHMARK_COMPARISON.md` defines the same-input rule, execution contract, comparison dimensions, fixture stability and adoption boundary;
+- `docs/DECISION_BENCHMARK.md` now points to the v1 fixture source;
+- the fixture set separates three objective cases from one harness-control failure case;
+- no fixture encodes a universal provider score or production selection rule.
 
-Reference-provider conclusion:
-- the harness is usable as an engineering observation instrument for the current deterministic baseline;
-- no bounded repair is justified by this execution pass;
-- the harness must remain multi-dimensional and must not collapse the observations into a universal score.
+A bounded Codex mission has also been prepared:
+- task: `codex-live-decision-benchmark-fixtures-001`;
+- allowed implementation paths: `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`;
+- protected paths include existing Core/provider contracts, `data/`, `docs/` and `scripts/`;
+- objective: make the versioned v1 fixture file the reusable source for `DecisionBenchmarkCase` creation while preserving the existing benchmark contract;
+- required focused verification: `PYTHONPATH=. pytest -q tests/test_decision_benchmark.py`;
+- the mission is explicitly forbidden from modifying the fixture file, integrating Jev/LLMs, selecting a provider, executing actions, or committing/pushing.
 
-The next architectural step is therefore a provider-neutral benchmark comparison preparation, not an immediate Jev integration: define the exact comparison fixture set and execution contract that a future Jev/model-based provider must satisfy, without integrating or selecting that provider yet.
+Verification state:
+- fixture/doc preparation has not yet been exercised in the Codespace;
+- the next action is to pull checkpoint `f57df2c`, run the prepared mission with explicit approval, inspect its exact diff, then run the complete closure suite before committing the implementation.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
@@ -704,9 +707,9 @@ Verification:
 - checkpoint: `20c9e68`;
 - bridge and task authority changes are green together.
 
-### Explicit next target
+### Historical next-target note
 
-The current next step is the **benchmark execution pass** recorded above: run the reusable harness with the deterministic reference provider, inspect the baseline measurements and failure handling, and only then decide whether a bounded harness repair is justified. Do not integrate Jev yet and do not introduce a universal provider score.
+The Codex bridge's original benchmark-execution wording is superseded by the current benchmark comparison-preparation block above. The active next action is the governed fixture-loader mission recorded there.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
