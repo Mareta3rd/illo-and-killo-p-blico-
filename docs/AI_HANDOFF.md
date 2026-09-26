@@ -16,7 +16,7 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `f57df2c` (provider-neutral benchmark v1 fixture set and governed Codex integration mission prepared; code implementation is not yet executed).
+Current repository checkpoint: `4e08039` (latest committed remote checkpoint). The Codespace now contains verified but not yet committed benchmark fixture-loader changes in `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -686,8 +686,12 @@ A bounded Codex mission has also been prepared:
 - the mission is explicitly forbidden from modifying the fixture file, integrating Jev/LLMs, selecting a provider, executing actions, or committing/pushing.
 
 Verification state:
-- fixture/doc preparation has not yet been exercised in the Codespace;
-- the next action is to pull checkpoint `f57df2c`, run the prepared mission with explicit approval, inspect its exact diff, then run the complete closure suite before committing the implementation.
+- the governed Codex mission `codex-live-decision-benchmark-fixtures-001` was executed in the Codespace with explicit approval;
+- Codex reported status `completed`, no blockers, exactly the two allowed files changed, focused verification **8 passed**, and `git diff --check` passed;
+- the human diff review confirmed that the loader reads the versioned v1 fixture source, validates its envelope/roles/request fields/expected values, and constructs the existing `DecisionBenchmarkCase` contract without touching provider/Core boundaries;
+- the final complete suite and closure gate passed: **646 passed, 59 subtests passed**; working-tree inspection showed only the two intended modified files;
+- current state is intentionally **verified but uncommitted**. No commit or push has been made for this block yet;
+- next human action: commit the two intended files as the completed fixture-loader block, push, then update this handoff to the resulting committed checkpoint.
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
@@ -709,7 +713,7 @@ Verification:
 
 ### Historical next-target note
 
-The Codex bridge's original benchmark-execution wording is superseded by the current benchmark comparison-preparation block above. The active next action is the governed fixture-loader mission recorded there.
+The Codex bridge's original benchmark-execution wording is superseded by the current benchmark comparison-preparation block above. The fixture-loader mission has been executed and verified; only commit/push consolidation remains for that block.
 
 ## Continuity rule
 If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
