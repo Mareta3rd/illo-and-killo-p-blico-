@@ -697,3 +697,12 @@ Verification:
 - bridge and task authority changes are green together.
 
 ### Explicit next target
+
+The current next step is the **benchmark execution pass** recorded above: run the reusable harness with the deterministic reference provider, inspect the baseline measurements and failure handling, and only then decide whether a bounded harness repair is justified. Do not integrate Jev yet and do not introduce a universal provider score.
+
+## Continuity rule
+If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
+
+“Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Arsa & Pisha are current canon; Illo & Killo and earlier Xoxo material are historical only. Verify repository state and tests before changing anything. Do not discard historical creative material: use it as an explicitly non-canonical development corpus for learning and comparison.”
+
+This handoff is the durable continuity document. It must be updated whenever a major architectural, experimental, or canon-level state change is made.
