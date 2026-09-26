@@ -16,11 +16,11 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 
 ## Current branch and checkpoint
 Active branch: `feature/semantic-model`.
-Current repository checkpoint: `e173b36` (application-boundary DecisionProvider integration mission executed and awaiting local commit/closure; last remote preparation commit is e173b36).
+Current repository checkpoint: `ba5412d` (DecisionProvider benchmark harness implemented, verified, committed and pushed; current remote head is `ba5412dab9568b4b821789d1ea335426845d0a29`).
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
-The semantic-context block is also **VERIFIED GREEN by the Codespace**, but has not yet been committed as a final closure checkpoint; the branch currently ends at `fe404c2` and the working tree was reported clean by `scripts/close_work_block.sh`.
+The semantic-context block and subsequent DecisionProvider architecture blocks are recorded below with their own verification history; the latest verified repository state is the benchmark checkpoint recorded later in this handoff.
 
 Confirmed in the Codespace immediately before closure:
 - historical corpus rename/classification completed;
@@ -697,12 +697,3 @@ Verification:
 - bridge and task authority changes are green together.
 
 ### Explicit next target
-
-The original first-smoke target is superseded by the live CLI parser finding documented above. The current next step is to pull the transport correction, run the complete closure suite, and rerun the read-only smoke. Once that is green, proceed to a tightly bounded `workspace-write` implementation mission through the existing `CodexTask` + `CodexExecutionBridge` path.
-
-## Continuity rule
-If the original ChatGPT conversation becomes unavailable, open a new chat and tell the assistant:
-
-“Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Arsa & Pisha are current canon; Illo & Killo and earlier Xoxo material are historical only. Verify repository state and tests before changing anything. Do not discard historical creative material: use it as an explicitly non-canonical development corpus for learning and comparison.”
-
-This handoff is the durable continuity document. It must be updated whenever a major architectural, experimental, or canon-level state change is made.
