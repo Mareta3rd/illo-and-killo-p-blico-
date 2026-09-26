@@ -6,7 +6,8 @@ Compare different implementations of the provider-neutral DecisionProvider contr
 without changing the request contract or allowing any provider to execute actions.
 
 The first comparison should use the same DecisionRequest fixtures for every
-implementation.
+implementation. The exact v1 comparison set is defined in `docs/DECISION_BENCHMARK_COMPARISON.md`
+and sourced from `data/decision_benchmark_fixtures.json`.
 
 ## Participants
 
