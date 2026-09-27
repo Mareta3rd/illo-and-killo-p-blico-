@@ -200,3 +200,14 @@ def test_choice_outside_allowed_set_is_rejected_by_core(monkeypatch):
 
     with pytest.raises(ValueError, match="allowed choices"):
         provider.decide(DecisionRequest("q", "choice", {}, "Route?", ("accept", "continue")))
+
+
+@pytest.mark.parametrize("model", ["", "   "])
+def test_model_must_be_non_empty_when_supplied(model):
+    with pytest.raises(ValueError, match="model"):
+        TypeSafeJevDecisionProvider(boolean_threshold=0.5, model=model, client=FakeClient(SimpleNamespace()))
+
+
+def test_client_must_expose_system_one():
+    with pytest.raises(TypeError, match="system_one"):
+        TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=object())
