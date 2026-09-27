@@ -7,7 +7,7 @@ of the semantic model.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 import math
 from typing import Any, Protocol
 
