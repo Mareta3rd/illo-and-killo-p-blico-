@@ -39,7 +39,7 @@
       "evidence": [
         "official_qwen3.8_27b_open_weights",
         "llama_cpp_json_schema_support",
-        "local_adapter_unit_tests_pending_full_suite"
+        "local_adapter_unit_tests_and_complete_suite_green"
       ]
     },
     {
