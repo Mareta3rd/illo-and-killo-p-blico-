@@ -95,3 +95,18 @@ change and must be rechecked before a live run.
 
 The project should therefore treat Jev as a now-verifiable external provider, not as
 an unverified future concept, while still keeping the provider replaceable.
+
+## Open contract question before full digestion
+
+Jev exposes richer probabilistic information than the current DecisionResult retains:
+the current adapter keeps the selected boolean/choice/score and provider-supplied
+confidence where available, but it deliberately does not add provider-specific
+probability distributions to Core.
+
+This is intentional for the first compatibility step. A later architectural block may
+consider an optional provider-neutral distribution/evidence field if several decision
+providers expose useful calibrated distributions. That change should be justified by
+multiple capability requirements, not by Jev alone.
+
+Until then, the adapter is a projection into the existing contract, not a claim that
+the full Jev capability has been absorbed.
