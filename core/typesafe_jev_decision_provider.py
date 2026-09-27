@@ -7,8 +7,8 @@ of the semantic model.
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import math
+from collections.abc import Callable
 from typing import Any, Protocol
 
 from core.decision_provider import DecisionProvider, DecisionRequest, DecisionResult
