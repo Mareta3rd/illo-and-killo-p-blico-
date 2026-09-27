@@ -19,10 +19,17 @@ def main() -> int:
         help="Explicit Jev Noul probability threshold used to produce Core booleans.",
     )
     parser.add_argument("--model", default=None, help="Optional TypeSafe model name/alias.")
+    parser.add_argument(
+        "--include-harness-controls",
+        action="store_true",
+        help="Also execute harness-control fixtures; these are not provider-quality cases.",
+    )
     parser.add_argument("--output", type=Path, default=None, help="Optional JSON output path.")
     args = parser.parse_args()
 
     cases = load_decision_benchmark_fixtures()
+    if not args.include_harness_controls:
+        cases = tuple(case for case in cases if not case.expected_failure)
     with TypeSafeJevDecisionProvider(
         boolean_threshold=args.boolean_threshold,
         model=args.model,
