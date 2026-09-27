@@ -4,6 +4,45 @@
   "principle": "stable_core_replaceable_capabilities",
   "capabilities": [
     {
+      "id": "decision.qwen_local",
+      "capability": "decision",
+      "provider": "qwen",
+      "product_or_runtime": "qwen3.8-27b_local",
+      "status": "prototype",
+      "integration": "local_openai_compatible",
+      "cost_model": "no_api_billing_local_compute",
+      "latency_character": "hardware_dependent",
+      "strengths": [
+        "open-weight multimodal model",
+        "structured JSON output through local runtime",
+        "replaceable model/runtime boundary",
+        "no external API dependency"
+      ],
+      "limitations": [
+        "27B local resource requirement",
+        "actual quality and latency not yet measured for project fixtures",
+        "local inference depends on available hardware/runtime"
+      ],
+      "dependencies": [
+        "LocalStructuredDecisionProvider",
+        "OpenAI-compatible local server",
+        "Qwen3.8-27B GGUF"
+      ],
+      "security_boundary": "local runtime endpoint + provider contract + Core result validation",
+      "replaceable_by": [
+        "decision.rules",
+        "decision.jev",
+        "decision.other_local_llm",
+        "decision.human"
+      ],
+      "last_reviewed": "2026-09-27",
+      "evidence": [
+        "official_qwen3.8_27b_open_weights",
+        "llama_cpp_json_schema_support",
+        "local_adapter_unit_tests_pending_full_suite"
+      ]
+    },
+    {
       "id": "decision.rules",
       "capability": "decision",
       "provider": "project_core",
