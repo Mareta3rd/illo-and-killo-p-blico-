@@ -99,7 +99,7 @@ def test_comparison_reuses_repository_fixture_source():
         for item in result.expected_vs_observed[:1]
     ]
     assert matches == [True, True, True]
-    assert comparison.participants[0].report.results[3].observations[0].observed_failure is True
+    assert comparison.participants[0].report.results[3].expected_vs_observed[0]["observed_failure"] is True
 
 
 @pytest.mark.parametrize(
