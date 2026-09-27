@@ -62,6 +62,8 @@ def _bounded_json_object(
 ) -> dict[str, Any] | None:
     if value is None:
         return None
+    if not isinstance(value, Mapping):
+        raise TypeError(f"{name} must be a mapping")
     normalized = _json_value(dict(value), name)
     if not isinstance(normalized, dict):
         raise ValueError(f"{name} must be a JSON object")
@@ -123,6 +125,8 @@ class WorkEnvelope:
                 self, field_name, _text_tuple(getattr(self, field_name), field_name)
             )
 
+        if not isinstance(self.expected_output, str):
+            raise TypeError("expected_output must be a string")
         if self.expected_output:
             object.__setattr__(
                 self,
