@@ -89,9 +89,8 @@ available cost/usage metadata separately. Do not create a universal provider sco
 
 TypeSafe's official launch announcement is dated 15 September 2026. Its public Python
 SDK repository is active; the latest tagged release visible on GitHub is v0.7.1 dated
-21 September 2026. The service status page currently reports the API operational, while
-also showing resolved incidents earlier in September. These operational facts can
-change and must be rechecked before a live run.
+21 September 2026. Release and service details can change and must be rechecked before
+a live run.
 
 The project should therefore treat Jev as a now-verifiable external provider, not as
 an unverified future concept, while still keeping the provider replaceable.
