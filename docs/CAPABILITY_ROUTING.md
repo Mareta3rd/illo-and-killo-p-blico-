@@ -53,7 +53,9 @@ a deterministic rule or human may answer the same contract. The calling system
 must not care which one supplied the result.
 
 The first implementation therefore must not import Jev, OpenAI, Anthropic,
-Gemini, Qwen or any other provider.
+Gemini, Qwen or any other provider. The machine-readable registry in
+`data/capabilities.json` is descriptive metadata and is validated independently by
+`core/capability_registry.py` without selecting a provider.
 
 ## Safety and determinism
 
