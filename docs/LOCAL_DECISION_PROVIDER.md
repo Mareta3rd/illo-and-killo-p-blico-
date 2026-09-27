@@ -27,12 +27,13 @@ runtime.
 
 ## First execution target
 
-After the focused and complete test gates are green, run:
+After the focused and complete test gates are green, start the local runtime and then run:
 
+    llama serve -hf ggml-org/Qwen3.8-27B-GGUF:Q4_K_M --alias qwen3.8-27b
     PYTHONPATH=. python scripts/run_local_decision_benchmark.py
 
-The default target assumes a local server at http://127.0.0.1:8080/v1 with the
-Qwen3.8-27B-GGUF:Q4_K_M model. The benchmark excludes the harness-control fixture unless
+The default target assumes a local llama.cpp server at http://127.0.0.1:8080/v1 using
+an explicit model alias named qwen3.8-27b. The benchmark excludes the harness-control fixture unless
 --include-control is supplied.
 
 The output is evidence only: expected-vs-observed values, repeatability, latency,
