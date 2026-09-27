@@ -58,24 +58,35 @@ def test_lists_are_bounded_and_unique():
         make_envelope(constraints=("same", "same"))
 
 
-def test_context_rejects_non_json_values():
+def test_context_rejects_non_json_values_and_non_mapping():
     with pytest.raises(ValueError, match="finite JSON values"):
         make_envelope(context={"bad": math.nan})
+    with pytest.raises(TypeError, match="must be a mapping"):
+        make_envelope(context=["not", "a", "mapping"])
 
 
 def test_expected_output_is_optional_but_bounded():
     assert make_envelope(expected_output="").expected_output == ""
+    with pytest.raises(TypeError, match="expected_output must be a string"):
+        make_envelope(expected_output=None)
     with pytest.raises(ValueError, match="maximum length"):
         make_envelope(expected_output="x" * 2001)
 
 
-def test_output_is_bounded():
+def test_output_is_bounded_and_requires_mapping():
     with pytest.raises(ValueError, match="maximum encoded size"):
         CollaborationUpdate(
             "work-001",
             "ready_for_review",
             "Done.",
             output={"text": "x" * 24_001},
+        )
+    with pytest.raises(TypeError, match="must be a mapping"):
+        CollaborationUpdate(
+            "work-001",
+            "ready_for_review",
+            "Done.",
+            output=["not", "a", "mapping"],
         )
 
 
