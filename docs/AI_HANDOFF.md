@@ -666,32 +666,46 @@ Benchmark boundary:
 
 The benchmark is therefore an engineering instrument for future provider comparison, not a leaderboard or authority layer.
 
-## Decision Benchmark Comparison Preparation — READY / VERIFICATION PENDING
+## Decision Benchmark Comparison Preparation — INTEGRATION GAP CLASSIFICATION / VERIFIED GREEN
 
-The provider-neutral v1 comparison surface is now defined before any second provider is integrated.
+The provider-neutral DecisionProvider comparison surface and the optional TypeSafe Jev
+adapter are now verified on the isolated preparation branch.
 
-Prepared:
-- `data/decision_benchmark_fixtures.json` is the versioned source of truth for fixture inputs and expected contract-level outcomes;
-- `docs/DECISION_BENCHMARK_COMPARISON.md` defines the same-input rule, execution contract, comparison dimensions, fixture stability and adoption boundary;
-- `docs/DECISION_BENCHMARK.md` now points to the v1 fixture source;
-- the fixture set separates three objective cases from one harness-control failure case;
-- no fixture encodes a universal provider score or production selection rule.
+Implemented in this block:
+- explicit provider-neutral `DecisionProviderIncompatibilityError`;
+- benchmark observation status taxonomy distinguishing `valid`,
+  `provider_incompatibility`, `execution_failure`, `contract_failure` and `abstention`;
+- Jev adapter uses provider incompatibility for mappings it cannot represent without
+  inventing semantics, including score requests without an explicit rubric and choice
+  requests above the supported cardinality;
+- Jev benchmark runner returns a distinct exit status for provider incompatibility;
+- comparison documentation records that capability gaps are integration evidence, not
+  an ordinary provider-quality mismatch.
 
-A bounded Codex mission has also been prepared:
-- task: `codex-live-decision-benchmark-fixtures-001`;
-- allowed implementation paths: `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`;
-- protected paths include existing Core/provider contracts, `data/`, `docs/` and `scripts/`;
-- objective: make the versioned v1 fixture file the reusable source for `DecisionBenchmarkCase` creation while preserving the existing benchmark contract;
-- required focused verification: `PYTHONPATH=. pytest -q tests/test_decision_benchmark.py`;
-- the mission is explicitly forbidden from modifying the fixture file, integrating Jev/LLMs, selecting a provider, executing actions, or committing/pushing.
+The fixed v1 benchmark fixtures remain unchanged. No provider-specific fixture rewrite,
+provider selection, routing or action execution was introduced.
 
-Verification state:
-- the governed Codex mission `codex-live-decision-benchmark-fixtures-001` was executed in the Codespace with explicit approval;
-- Codex reported status `completed`, no blockers, exactly the two allowed files changed, focused verification **8 passed**, and `git diff --check` passed;
-- the human diff review confirmed that the loader reads the versioned v1 fixture source, validates its envelope/roles/request fields/expected values, and constructs the existing `DecisionBenchmarkCase` contract without touching provider/Core boundaries;
-- the final complete suite and closure gate passed: **646 passed, 59 subtests passed**; working-tree inspection showed only the two intended modified files;
-- current state is intentionally **verified but uncommitted**. No commit or push has been made for this block yet;
-- next human action: commit the two intended files as the completed fixture-loader block, push, then update this handoff to the resulting committed checkpoint.
+Verification:
+- Codespace closure after synchronization: **684 passed, 59 subtests passed in 16.93s**;
+- initial and final synchronization checks both reported `SYNC: GREEN`;
+- `git diff --check`, working-tree and diff-summary checks completed cleanly at the
+  verified checkpoint;
+- verified remote checkpoint on `assistant/benchmark-comparison-prep`: `5ddb838`.
+
+Open Jev integration question:
+- the fixed score fixture intentionally has no `score_criteria`, so a real Jev run should
+  expose this as `provider_incompatibility` rather than hiding it through a provider-
+  specific benchmark mutation;
+- this means the next experiment is to execute the real v1 benchmark with an explicit
+  boolean threshold and record actual provider behavior before deciding whether Jev's
+  capability is sufficiently digested.
+
+The shared-branch synchronization mechanism is now part of the repository workflow:
+`scripts/sync_work_block.sh` performs safe fast-forward synchronization and detects
+ahead/behind/diverged states; `scripts/close_work_block.sh` checks synchronization both
+before and after verification; `AGENTS.md` and `docs/WORK_BLOCK_PROTOCOL.md` require
+this workflow for shared-branch work.
+
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
