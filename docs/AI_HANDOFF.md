@@ -666,45 +666,37 @@ Benchmark boundary:
 
 The benchmark is therefore an engineering instrument for future provider comparison, not a leaderboard or authority layer.
 
-## Decision Benchmark Comparison Preparation — INTEGRATION GAP CLASSIFICATION / VERIFIED GREEN
+## Decision Capability Digestion — ZERO-COST PATH / NEXT TARGET
 
-The provider-neutral DecisionProvider comparison surface and the optional TypeSafe Jev
-adapter are now verified on the isolated preparation branch.
+The Jev external execution path is deliberately deferred: the adapter and benchmark
+integration remain prepared for future API access, but the project is not spending money
+to activate Jev now.
 
-Implemented in this block:
-- explicit provider-neutral `DecisionProviderIncompatibilityError`;
-- benchmark observation status taxonomy distinguishing `valid`,
-  `provider_incompatibility`, `execution_failure`, `contract_failure` and `abstention`;
-- Jev adapter uses provider incompatibility for mappings it cannot represent without
-  inventing semantics, including score requests without an explicit rubric and choice
-  requests above the supported cardinality;
-- Jev benchmark runner returns a distinct exit status for provider incompatibility;
-- comparison documentation records that capability gaps are integration evidence, not
-  an ordinary provider-quality mismatch.
+The useful decision semantics have been digested into the provider-neutral contract rather
+than tied to Jev:
+- bounded boolean judgement;
+- constrained choice;
+- explicit-rubric score;
+- provider incompatibility distinguished from execution failure;
+- provider-specific probability detail remains outside Core until multiple providers justify
+  a common extension.
 
-The fixed v1 benchmark fixtures remain unchanged. No provider-specific fixture rewrite,
-provider selection, routing or action execution was introduced.
+A new internal `RuleDecisionProvider` provides a zero-external-service implementation of
+the same `DecisionProvider` contract. It can derive boolean, choice and score outputs from
+caller-supplied request context, while Core still validates the resulting `DecisionResult`
+and retains action authority.
 
-Verification:
-- Codespace closure after synchronization: **684 passed, 59 subtests passed in 16.93s**;
-- initial and final synchronization checks both reported `SYNC: GREEN`;
-- `git diff --check`, working-tree and diff-summary checks completed cleanly at the
-  verified checkpoint;
-- verified remote checkpoint on `assistant/benchmark-comparison-prep`: `5ddb838`.
+Technology strategy has also been widened: future decision providers may come from local
+rules, open-weight/local models, existing no-cost product access where permitted, or paid
+APIs when the budget permits. Provider adapters remain replaceable and the benchmark uses
+the same fixed input contract for all candidates.
 
-Open Jev integration question:
-- the fixed score fixture intentionally has no `score_criteria`, so a real Jev run should
-  expose this as `provider_incompatibility` rather than hiding it through a provider-
-  specific benchmark mutation;
-- this means the next experiment is to execute the real v1 benchmark with an explicit
-  boolean threshold and record actual provider behavior before deciding whether Jev's
-  capability is sufficiently digested.
+Verified prior checkpoint immediately before this block: `c3acd7d`, with **684 passed and
+59 subtests** plus synchronized closure checks.
 
-The shared-branch synchronization mechanism is now part of the repository workflow:
-`scripts/sync_work_block.sh` performs safe fast-forward synchronization and detects
-ahead/behind/diverged states; `scripts/close_work_block.sh` checks synchronization both
-before and after verification; `AGENTS.md` and `docs/WORK_BLOCK_PROTOCOL.md` require
-this workflow for shared-branch work.
+Next implementation target: verify and close the internal rule-based DecisionProvider, then
+refresh the technology radar with current no-cost/open-weight candidates before selecting the
+next provider experiment. Jev remains deliberately out of the critical path.
 
 
 ## Codex Execution Bridge — VERIFIED GREEN

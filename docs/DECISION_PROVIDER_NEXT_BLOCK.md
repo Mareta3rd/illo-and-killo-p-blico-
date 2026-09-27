@@ -4,9 +4,10 @@
 
 The green checkpoint on `feature/semantic-model` remains untouched at commit `762b7e5`.
 
-This auxiliary branch, `assistant/benchmark-comparison-prep`, contains an isolated
-benchmark-comparison helper and focused tests. They are intentionally not merged into
-the green branch until the Codespace runs the full closure gate.
+This auxiliary branch, `assistant/benchmark-comparison-prep`, contains the isolated
+benchmark-comparison helper, internal rule-based decision provider and optional Jev
+adapter. They remain unmerged into the green branch until deliberately reviewed and
+consolidated.
 
 ## Comparison helper
 
@@ -75,15 +76,17 @@ Second, build a fake-client Jev adapter test surface with no network access. Ver
 contract mapping, choice containment, score handling, boolean threshold behavior,
 provider/model metadata, and error propagation through `execute_decision()`.
 
-Third, only after the adapter is green, run a real Jev benchmark with the repository's
-fixed v1 objective fixtures. The runner excludes the harness-control case by default;
-that case is a robustness control, not a provider-quality assertion. Any semantic
-incompatibility, such as the fixed score fixture lacking an explicit rubric, should be
-recorded as a contract gap rather than hidden through provider-specific fixture rewrites.
+Third, the real Jev benchmark was attempted with the fixed v1 fixtures. The API call path
+reached `api.typesafe.ai`, but authentication was unavailable in the project's current
+access path, so no provider decision was obtained. The fixed score fixture independently
+demonstrated the intended `provider_incompatibility` classification.
 
-Fourth, measure Jev in the same environment used for the other providers. Record
-latency, repeatability, contract validity, expected-vs-observed behavior and any
-available cost/usage metadata separately. Do not create a universal provider score.
+Fourth, defer paid Jev activation. Keep its adapter as a future compatibility seam while
+using the internal rule provider and future no-cost/open-weight candidates to advance the
+decision capability without external spend.
+
+Fifth, when a candidate provider becomes available at zero or acceptable cost, run it against
+the same fixed fixtures and compare it through the existing side-by-side harness.
 
 ## Current external verification
 

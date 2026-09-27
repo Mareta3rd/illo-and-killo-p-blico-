@@ -83,14 +83,22 @@ without rewriting the semantic pipeline.
 
 ## Current digestion state
 
-The deterministic decision provider is already fully internalized as a reference
-implementation.
+The provider-neutral decision contract is now accompanied by an internal rule-based
+implementation. This means the useful semantic layer can operate without any external
+decision service.
+
+The deterministic decision provider remains a reference/fixture implementation. The
+rule-based provider is the first internal implementation that derives bounded judgements
+from request context, so the project has a zero-external-service path for the decision
+capability.
 
 The benchmark fixture loader and comparison harness are internalized engineering
 infrastructure.
 
-The TypeSafe Jev adapter is currently an experimental provider implementation on an
-auxiliary branch. It has not yet been accepted into the green feature branch.
+The TypeSafe Jev adapter remains an isolated optional provider implementation on the
+auxiliary branch. External Jev execution is deferred because API access is not part of
+the project's current zero-budget path. The adapter is retained as future compatibility
+work rather than as an architectural dependency.
 
 Current Jev-specific findings:
 
@@ -100,6 +108,21 @@ Current Jev-specific findings:
   request that lacks one;
 - Jev-native probability must not be silently relabeled as Core confidence;
 - the TypeSafe SDK should remain optional and lazily imported.
+
+## Decision capability now internalized
+
+The useful part of Jev's model for this project is not the vendor identity. It is the
+separation of bounded decision kinds and provider-specific translation policies:
+
+- boolean judgement can be produced from provider-neutral context;
+- choice is constrained by an explicit allowed set;
+- score requires an explicit rubric/context rather than invented criteria;
+- provider incompatibility remains distinguishable from execution failure;
+- provider-specific probability detail is optional evidence and stays outside Core policy
+  unless multiple implementations justify a common contract extension.
+
+These semantics are available through the provider-neutral DecisionProvider contract and
+can now be exercised by the internal rule provider without network access.
 
 ## Retirement test
 

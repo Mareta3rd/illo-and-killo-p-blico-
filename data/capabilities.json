@@ -4,6 +4,43 @@
   "principle": "stable_core_replaceable_capabilities",
   "capabilities": [
     {
+      "id": "decision.rules",
+      "capability": "decision",
+      "provider": "project_core",
+      "product_or_runtime": "rule_decision_provider",
+      "status": "adopted",
+      "integration": "local",
+      "cost_model": "no_external_service",
+      "latency_character": "local_deterministic",
+      "strengths": [
+        "bounded boolean judgement",
+        "bounded choice",
+        "bounded score with explicit context",
+        "zero external API dependency"
+      ],
+      "limitations": [
+        "rule quality depends on authored rules",
+        "not a learned general-purpose judge",
+        "no native probability distribution"
+      ],
+      "dependencies": [
+        "DecisionProvider",
+        "DecisionRequest",
+        "DecisionResult"
+      ],
+      "security_boundary": "caller-supplied pure rule + Core result validation",
+      "replaceable_by": [
+        "decision.jev",
+        "decision.llm_judge",
+        "decision.human"
+      ],
+      "last_reviewed": "2026-09-27",
+      "evidence": [
+        "v1_objective_fixtures_reproduced_locally",
+        "provider_neutral_decision_contract"
+      ]
+    },
+    {
       "id": "execution.codex_cli",
       "capability": "execution",
       "provider": "openai",
@@ -44,7 +81,7 @@
       "capability": "decision",
       "provider": "typesafe",
       "product_or_runtime": "jev_system_one",
-      "status": "evaluate",
+      "status": "deferred_external_access",
       "integration": "api",
       "cost_model": "usage_based_api",
       "latency_character": "fast_structured_decisions",
@@ -60,7 +97,8 @@
         "decision quality must be benchmarked on project tasks",
         "boolean probability requires explicit adapter threshold",
         "score mapping requires explicit ordered rubric",
-        "current DecisionResult projects away richer provider probability distributions"
+        "current DecisionResult projects away richer provider probability distributions",
+        "API access currently not available within project zero-budget path"
       ],
       "dependencies": [
         "TypeSafe API access"
@@ -75,7 +113,8 @@
       "evidence": [
         "official_system_one_launch",
         "official_jev_api_quickstart",
-        "provider_neutral_jev_adapter_prototype_pending_verification"
+        "provider_neutral_jev_adapter_prototype_pending_verification",
+        "live_benchmark_attempt_blocked_by_authentication_access"
       ]
     },
     {
