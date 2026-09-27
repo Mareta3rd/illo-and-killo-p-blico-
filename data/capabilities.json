@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "reviewed": "2026-09-23",
+  "reviewed": "2026-09-27",
   "principle": "stable_core_replaceable_capabilities",
   "capabilities": [
     {
@@ -51,12 +51,15 @@
       "strengths": [
         "typed decisions",
         "bounded questions",
+        "probabilistic boolean signal",
         "routing and selection"
       ],
       "limitations": [
         "external service",
         "new product",
-        "decision quality must be benchmarked on project tasks"
+        "decision quality must be benchmarked on project tasks",
+        "boolean probability requires explicit adapter threshold",
+        "score mapping requires explicit ordered rubric"
       ],
       "dependencies": [
         "TypeSafe API access"
@@ -67,10 +70,11 @@
         "decision.llm_judge",
         "decision.human"
       ],
-      "last_reviewed": "2026-09-23",
+      "last_reviewed": "2026-09-27",
       "evidence": [
         "official_system_one_launch",
-        "official_jev_api_quickstart"
+        "official_jev_api_quickstart",
+        "provider_neutral_jev_adapter_prototype_pending_verification"
       ]
     },
     {
