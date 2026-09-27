@@ -1,3 +1,4 @@
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -70,7 +71,7 @@ def test_build_prompt_is_deterministic_and_uses_bounded_work():
     assert first == build_collaboration_prompt(envelope)
     assert "previous output was vague" in first
     assert "available_tools" in first
-    assert "do not call, execute or imply authorization" in first
+    assert "Do not call, execute or imply authorization" in first
     assert envelope.to_json() in first
 
 
