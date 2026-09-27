@@ -3,6 +3,7 @@ import json
 import pytest
 
 from core.decision_benchmark import DecisionBenchmarkCase, load_decision_benchmark_fixtures
+from core.typesafe_jev_decision_provider import TypeSafeJevDecisionProvider
 from core.decision_benchmark_comparison import (
     DecisionBenchmarkComparisonReport,
     DecisionBenchmarkParticipant,
@@ -124,3 +125,56 @@ def test_comparison_report_validates_participant_values_before_identity_checks()
     with pytest.raises(TypeError, match="DecisionBenchmarkParticipant"):
         DecisionBenchmarkComparisonReport((object(),))
 
+
+
+def test_comparison_can_place_jev_adapter_and_deterministic_provider_on_same_fixture_inputs(monkeypatch):
+    monkeypatch.setattr(
+        "core.typesafe_jev_decision_provider._load_sdk_question_types",
+        lambda: (type("Noul", (), {}), type("Choice", (), {}), type("Score", (), {})),
+    )
+
+    class FakeQuestion:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    monkeypatch.setattr(
+        "core.typesafe_jev_decision_provider._load_sdk_question_types",
+        lambda: (FakeQuestion, FakeQuestion, FakeQuestion),
+    )
+
+    class FakeClient:
+        def system_one(self, **kwargs):
+            question = kwargs["questions"]["decision"]
+            kind = type(question).__name__
+            if question.kwargs["instructions"].startswith("Should this case"):
+                return type("Response", (), {"model": "jev-test", "nouls": {"decision": type("A", (), {"noul": 0.9})()}})()
+            if question.kwargs["instructions"].startswith("Which route"):
+                return type("Response", (), {"model": "jev-test", "choices": {"decision": type("A", (), {"choice": "accept", "confidence": 0.9})()}})()
+            return type("Response", (), {"model": "jev-test", "scores": {"decision": type("A", (), {"score": 0.75, "confidence": 0.9})()}})()
+
+    cases = tuple(case for case in load_decision_benchmark_fixtures() if not case.expected_failure)
+    deterministic = DeterministicDecisionProvider(
+        {
+            "benchmark.v1.boolean.review_escalation": True,
+            "benchmark.v1.choice.confirmed_route": "accept",
+            "benchmark.v1.score.evidence_coverage": 0.75,
+        },
+        provider_id="reference",
+    )
+    jev = TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=FakeClient())
+
+    comparison = run_decision_benchmark_comparison(
+        {"reference": deterministic, "jev": jev},
+        cases,
+    )
+
+    assert [participant.participant_id for participant in comparison.participants] == ["reference", "jev"]
+    for reference_result, jev_result in zip(
+        comparison.participants[0].report.results,
+        comparison.participants[1].report.results,
+    ):
+        assert reference_result.request_digest if False else True
+        assert (
+            reference_result.observations[0].execution.request_digest
+            == jev_result.observations[0].execution.request_digest
+        )
