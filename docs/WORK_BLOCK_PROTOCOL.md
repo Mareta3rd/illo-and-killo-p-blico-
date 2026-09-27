@@ -15,27 +15,39 @@ git status --short
 bash scripts/sync_work_block.sh
 ```
 
-The synchronization script fetches `origin`, detects the branch upstream, and classifies the state as:
+The synchronization script refreshes `origin` and **directly probes the authoritative remote branch HEAD**. It classifies the state as:
 
-- `SYNC: GREEN` — local HEAD matches upstream;
+- `SYNC: GREEN` — local HEAD matches the authoritative remote HEAD;
 - `SYNC: BEHIND` — remote has commits that are not local;
 - `SYNC: AHEAD` — local has commits not yet pushed;
 - `SYNC: DIVERGED` — local and remote histories require explicit reconciliation;
-- `SYNC: BEHIND + DIRTY` — a safe fast-forward is blocked by uncommitted local work.
+- `SYNC: BEHIND + DIRTY` — a safe fast-forward is blocked by uncommitted local work;
+- `SYNC: REMOTE_MOVED_DURING_SYNC` — the shared branch moved during synchronization, so the gate stops and must be rerun.
 
-A clean local branch that is behind is fast-forwarded automatically. Uncommitted work is never overwritten automatically. Ahead and diverged states stop the flow rather than being force-reconciled.
+A clean local branch that is behind is fast-forwarded automatically. Uncommitted work is never overwritten automatically. Ahead, diverged and moving-target states stop the flow rather than being force-reconciled.
 
-### Before remote writes
+The direct remote probe exists specifically for shared work: a GitHub-backed write may advance the remote branch without the user's local Codespace having incorporated that commit yet. The remote branch itself, not the conversation transcript or a stale tracking ref, is the authoritative checkpoint.
 
-When an execution agent writes through the GitHub path, it must refresh the target branch first and base the write on the current remote checkpoint. The agent must not update files from a stale branch snapshot.
+### Remote-write handshake
 
-After remote writes, the Codespace synchronizes before continuing.
+When an execution agent writes through the GitHub path:
+
+1. Refresh and verify the target branch HEAD before writing.
+2. Base the write on that exact remote checkpoint.
+3. After the write, verify the resulting remote branch HEAD and record the exact resulting commit SHA.
+4. Treat that SHA as a **remote-write receipt**.
+5. Do not continue with local tests or edits until the user's Codespace has synchronized to that receipt with `bash scripts/sync_work_block.sh`.
+6. The next test/closure command must run against that synchronized checkpoint.
+
+A remote-write receipt is stronger than saying “the change was committed”: it identifies exactly which shared state the other work environment must consume.
+
+When the GitHub write path is used for several coherent changes, consolidate them into one commit where practical so there is one receipt to synchronize.
 
 ### During closure
 
-`scripts/close_work_block.sh` performs a synchronization preflight before the complete test suite and a final synchronization check after all verification.
+`scripts/close_work_block.sh` performs an authoritative synchronization preflight before the complete test suite and a read-only authoritative remote check after all verification.
 
-The final check is intentionally read-only. If the upstream advanced while tests were running, closure fails so the suite can be rerun against the newer checkpoint.
+If the remote branch advances while tests are running, closure fails. The suite must then be rerun after synchronization against the newer checkpoint.
 
 This protects against the failure mode where tests are green for an older commit while the shared remote branch has already moved.
 
@@ -75,7 +87,8 @@ Update `docs/AI_HANDOFF.md` with:
 - decisions made;
 - work completed;
 - unresolved issues;
-- exact next implementation target.
+- exact next implementation target;
+- any remote-write receipt needed for another work environment to synchronize.
 
 ### 6. Mark direction
 The handoff must contain one primary next target and state what remains deliberately out of scope until that target is closed.

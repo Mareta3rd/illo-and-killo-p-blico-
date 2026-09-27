@@ -792,3 +792,18 @@ Technology context checked 27 September 2026:
 - GGUF local inference is available;
 - llama.cpp supports JSON Schema-constrained generation through its server interface;
 - DeepSeek V4.1-Flash and GLM-5.3-Flash remain interesting future candidates, but their current model scales make Qwen3.8-27B the more practical first local experiment for this project.
+
+
+## Process Improvement — Shared-State Remote Write Receipt / IN PROGRESS
+
+The shared-branch protocol has been hardened after a real stale-checkpoint incident during the local DecisionProvider prototype.
+
+The failure mode was not a code loss: a GitHub-backed commit advanced the remote branch while the Codespace was still at the previous checkpoint, and the closure gate relied on its local tracking state at that moment. This could cause verification to run against an older tree.
+
+The protocol change now requires:
+- a direct authoritative remote HEAD probe in `scripts/sync_work_block.sh`;
+- a second remote probe after any automatic fast-forward, with a moving-target stop rather than silent chasing;
+- a remote-write receipt: the exact post-write commit SHA must be recorded and consumed by the Codespace before further tests or edits;
+- the closure gate to use the strengthened synchronization path both before and after verification.
+
+This is a process/engineering improvement to prevent stale-context work, not a change to Core decision authority. The conversation remains transient; the remote branch plus `docs/AI_HANDOFF.md` remain the durable shared state.

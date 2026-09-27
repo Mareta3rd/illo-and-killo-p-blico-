@@ -21,7 +21,7 @@ git status --short
 printf '\n%s\n' '4) Diff summary...'
 git diff --stat
 
-printf '\n%s\n' '5) Final synchronization check...'
+printf '\n%s\n' '5) Final synchronization check against authoritative remote HEAD...'
 bash scripts/sync_work_block.sh --check-only
 
 printf '\n%s\n' '6) Current checkpoint...'
@@ -42,6 +42,7 @@ SYNC RULES:
 - Local uncommitted changes never get overwritten automatically.
 - A local branch that is ahead must be pushed before the block can close.
 - Diverged histories stop the gate and require explicit reconciliation.
-- If the upstream advances while tests are running, the final check fails so
-  the suite can be rerun against the newer checkpoint.
+- The sync gate probes the authoritative remote branch directly, not only a local tracking ref.
+- If the remote moves during synchronization, the gate stops instead of silently chasing it.
+- If the upstream advances while tests are running, the final check fails so the suite can be rerun against the newer checkpoint.
 EOF
