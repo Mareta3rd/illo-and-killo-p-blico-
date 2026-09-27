@@ -2,7 +2,11 @@ import json
 
 import pytest
 
-from core.decision_benchmark import DecisionBenchmarkCase, run_decision_benchmark
+from core.decision_benchmark import (
+    DecisionBenchmarkCase,
+    load_decision_benchmark_fixtures,
+    run_decision_benchmark,
+)
 from core.decision_provider import DecisionRequest, DecisionResult
 from core.deterministic_decision_provider import DeterministicDecisionProvider
 
@@ -70,3 +74,34 @@ def test_unexpected_failure_is_not_reported_as_success():
     assert not observation.contract_valid
     assert report.results[0].expected_vs_observed[0]["matches"] is False
 
+
+def test_repository_v1_fixtures_are_the_benchmark_case_source():
+    from pathlib import Path
+
+    fixture_path = Path(__file__).resolve().parents[1] / "data" / "decision_benchmark_fixtures.json"
+    fixture_set = json.loads(fixture_path.read_text(encoding="utf-8"))
+    cases = load_decision_benchmark_fixtures()
+
+    assert [case.case_id for case in cases] == [item["case_id"] for item in fixture_set["fixtures"]]
+    roles = {item["case_id"]: item["benchmark_role"] for item in fixture_set["fixtures"]}
+    assert {case_id for case_id, role in roles.items() if role == "objective"} == {
+        "boolean-review-escalation", "choice-confirmed-route", "score-evidence-coverage"
+    }
+    assert {case_id for case_id, role in roles.items() if role == "harness_control"} == {
+        "control-missing-provider-answer"
+    }
+    assert all(not case.expected_failure for case in cases[:3])
+    assert cases[3].expected_failure
+    assert [case.request.kind for case in cases] == ["boolean", "choice", "score", "boolean"]
+
+
+def test_fixture_loader_rejects_malformed_entries(tmp_path):
+    fixture_path = tmp_path / "fixtures.json"
+    from pathlib import Path
+    repository_fixture = Path(__file__).resolve().parents[1] / "data" / "decision_benchmark_fixtures.json"
+    fixture_set = json.loads(repository_fixture.read_text(encoding="utf-8"))
+    del fixture_set["fixtures"][0]["request"]["question"]
+    fixture_path.write_text(json.dumps(fixture_set), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="request has invalid fields"):
+        load_decision_benchmark_fixtures(fixture_path)
