@@ -63,12 +63,16 @@ class TypeSafeJevDecisionProvider:
             raise ValueError("boolean_threshold must be strictly between 0 and 1")
         if client is not None and client_factory is not None:
             raise ValueError("client and client_factory are mutually exclusive")
+        if model is not None and (not isinstance(model, str) or not model.strip()):
+            raise ValueError("model must be a non-empty string when supplied")
 
         self._boolean_threshold = float(boolean_threshold)
         self._model = model
         self._owns_client = client is None
         factory = _default_client_factory if client_factory is None else client_factory
         self._client = client if client is not None else factory(model)
+        if not callable(getattr(self._client, "system_one", None)):
+            raise TypeError("TypeSafe client must expose a callable system_one method")
 
     def decide(self, request: DecisionRequest) -> DecisionResult:
         Noul, Choice, Score = _load_sdk_question_types()
