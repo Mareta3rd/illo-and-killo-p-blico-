@@ -211,3 +211,17 @@ def test_model_must_be_non_empty_when_supplied(model):
 def test_client_must_expose_system_one():
     with pytest.raises(TypeError, match="system_one"):
         TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=object())
+
+
+def test_jev_choice_cardinality_limit_is_enforced(monkeypatch):
+    monkeypatch.setattr(
+        "core.typesafe_jev_decision_provider._load_sdk_question_types",
+        fake_sdk_types,
+    )
+    client = FakeClient(SimpleNamespace())
+    provider = TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=client)
+    choices = tuple(f"option-{index}" for index in range(256))
+
+    with pytest.raises(ValueError, match="255 choices"):
+        provider.decide(DecisionRequest("q", "choice", {}, "Route?", choices))
+    assert client.calls == []
