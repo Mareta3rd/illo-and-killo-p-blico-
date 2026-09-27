@@ -3,13 +3,13 @@ import json
 import pytest
 
 from core.decision_benchmark import DecisionBenchmarkCase, load_decision_benchmark_fixtures
-from core.typesafe_jev_decision_provider import TypeSafeJevDecisionProvider
 from core.decision_benchmark_comparison import (
     DecisionBenchmarkComparisonReport,
     DecisionBenchmarkParticipant,
     run_decision_benchmark_comparison,
 )
 from core.decision_provider import DecisionRequest
+from core.typesafe_jev_decision_provider import TypeSafeJevDecisionProvider
 from core.deterministic_decision_provider import DeterministicDecisionProvider
 
 
