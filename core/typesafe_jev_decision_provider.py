@@ -135,7 +135,8 @@ class TypeSafeJevDecisionProvider:
             return Noul(instructions=request.question)
 
         if request.kind == "choice":
-            assert request.choices is not None
+            if request.choices is None:
+                raise ValueError("choice decisions require explicit allowed choices")
             return Choice(
                 instructions=request.question,
                 criteria={choice: None for choice in request.choices},
