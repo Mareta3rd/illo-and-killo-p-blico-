@@ -15,9 +15,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 - Record major technical and artistic decisions here so future sessions do not depend on conversation memory.
 
 ## Current branch and checkpoint
-Active branch: `feature/semantic-model`.
-Current consolidated checkpoint: `181aa573` (`Consolidate zero-cost decision capability`).
-Previous green baseline before this consolidation: `762b7e5`.
+Active branch: `assistant/local-qwen-decision-prototype` (prototype work).
+Green consolidated branch: `feature/semantic-model` at `d06612c`.
+Current prototype branch checkpoint is the latest commit on this branch.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -746,3 +746,49 @@ If the original ChatGPT conversation becomes unavailable, open a new chat and te
 “Work on repository `Mareta3rd/illo-and-killo-p-blico-`, branch `feature/semantic-model`. Read `docs/AI_HANDOFF.md` first. Treat it as the durable project state and continue from its current checkpoint. Arsa & Pisha are current canon; Illo & Killo and earlier Xoxo material are historical only. Verify repository state and tests before changing anything. Do not discard historical creative material: use it as an explicitly non-canonical development corpus for learning and comparison.”
 
 This handoff is the durable continuity document. It must be updated whenever a major architectural, experimental, or canon-level state change is made.
+
+## Current block — Local Qwen Decision Provider / PROTOTYPE
+
+A provider-runtime-agnostic local decision adapter has been added as a prototype.
+The first target runtime is Qwen3.8-27B in GGUF form served locally through an
+OpenAI-compatible llama.cpp endpoint.
+
+Implementation:
+- `core/local_structured_decision_provider.py` implements the existing `DecisionProvider` contract;
+- `scripts/run_local_decision_benchmark.py` runs the fixed v1 benchmark against the local endpoint;
+- `tests/test_local_structured_decision_provider.py` covers boolean, choice, score, Core validation, malformed output, confidence and deterministic prompt construction;
+- `docs/LOCAL_DECISION_PROVIDER.md` records the prototype boundary and runtime assumptions;
+- `data/capabilities.json` and `docs/TECHNOLOGY_RADAR.md` register Qwen local as `prototype`, not adopted.
+
+Architectural boundary:
+- Core still owns `DecisionRequest`, `DecisionResult`, validation, audit and action authority;
+- the local adapter maps the runtime response into `DecisionResult` and cannot return Core decisions, canon mutations or actions;
+- the adapter accepts an injected OpenAI-compatible client so Qwen, llama.cpp and a future compatible local runtime remain replaceable;
+- structured output is constrained by a request-derived JSON Schema; choice values are taken from the request's allowed set.
+
+Verification state:
+- implementation is prepared but has not yet been through the Codespace closure gate;
+- no real model call has been performed in this block;
+- no quality, latency or hardware conclusion is implied yet.
+
+First execution gate:
+```bash
+git fetch origin
+git checkout assistant/local-qwen-decision-prototype
+git pull --ff-only
+PYTHONPATH=. python -m pytest tests/test_local_structured_decision_provider.py -q
+bash scripts/close_work_block.sh
+```
+
+After a green gate, the first live experiment is:
+```bash
+PYTHONPATH=. python scripts/run_local_decision_benchmark.py
+```
+The live result must be recorded as benchmark evidence only. Do not promote the model to
+an adopted provider from one run, and do not modify the fixed benchmark fixtures to suit it.
+
+Technology context checked 27 September 2026:
+- Qwen3.8-27B is published as an open-weight 27B native multimodal model;
+- GGUF local inference is available;
+- llama.cpp supports JSON Schema-constrained generation through its server interface;
+- DeepSeek V4.1-Flash and GLM-5.3-Flash remain interesting future candidates, but their current model scales make Qwen3.8-27B the more practical first local experiment for this project.
