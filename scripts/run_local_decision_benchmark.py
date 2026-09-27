@@ -16,7 +16,7 @@ from core.local_structured_decision_provider import LocalStructuredDecisionProvi
 def build_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default=os.environ.get("LOCAL_LLM_BASE_URL", "http://127.0.0.1:8080/v1"))
-    parser.add_argument("--model", default=os.environ.get("LOCAL_LLM_MODEL", "Qwen3.8-27B-GGUF:Q4_K_M"))
+    parser.add_argument("--model", default=os.environ.get("LOCAL_LLM_MODEL", "qwen3.8-27b"))
     parser.add_argument("--provider-id", default="local-qwen")
     parser.add_argument("--api-key", default=os.environ.get("LOCAL_LLM_API_KEY", "none"))
     parser.add_argument("--include-control", action="store_true")
