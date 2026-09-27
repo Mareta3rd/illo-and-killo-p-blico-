@@ -40,6 +40,8 @@
 - `docs/CAPABILITY_ROUTING.md` — contrato provider-neutral para capacidades y decisión.
 - `docs/DETERMINISTIC_DECISION_PROVIDER.md` — baseline determinista para comparar futuros decisores.
 - `docs/DECISION_BENCHMARK.md` — protocolo para comparar implementaciones de DecisionProvider.
+- `docs/DECISION_PROVIDER_NEXT_BLOCK.md` — preparación del comparador y del adaptador Jev.
+- `docs/CAPABILITY_DIGESTION.md` — regla para asimilar capacidades sin fijar Core a proveedores.
 - `data/capabilities.json` — registro estructurado de capacidades tecnológicas observadas/adoptadas.
 
 ## Ricard Digital
