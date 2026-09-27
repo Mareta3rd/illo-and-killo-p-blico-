@@ -14,7 +14,11 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from core.decision_execution import DecisionExecutionRecord, execute_decision
-from core.decision_provider import DecisionProvider, DecisionRequest
+from core.decision_provider import (
+    DecisionProvider,
+    DecisionProviderIncompatibilityError,
+    DecisionRequest,
+)
 
 
 _FIXTURE_SET_ID = "decision-benchmark-v1"
@@ -142,6 +146,16 @@ class DecisionBenchmarkObservation:
     failure_message: str | None = None
     abstained: bool = False
     execution: DecisionExecutionRecord | None = None
+    status: str = "valid"
+
+    def __post_init__(self) -> None:
+        allowed = {"valid", "provider_incompatibility", "execution_failure", "contract_failure", "abstention"}
+        if self.status not in allowed:
+            raise ValueError(f"unsupported benchmark observation status: {self.status}")
+        if self.status == "valid" and not self.contract_valid:
+            raise ValueError("valid observations must have contract_valid=True")
+        if self.status != "valid" and self.contract_valid:
+            raise ValueError("failed observations must have contract_valid=False")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -156,6 +170,7 @@ class DecisionBenchmarkObservation:
             "abstained": self.abstained,
             "request_digest": self.execution.request_digest if self.execution else None,
             "result_digest": self.execution.result_digest if self.execution else None,
+            "status": self.status,
         }
 
 
@@ -211,6 +226,19 @@ def run_decision_benchmark(
 
             try:
                 execution = execute_decision(CapturingProvider(), case.request)
+            except DecisionProviderIncompatibilityError as exc:
+                elapsed = time.monotonic_ns() - started
+                text = str(exc)
+                observations.append(DecisionBenchmarkObservation(
+                    contract_valid=False,
+                    observed_value=None,
+                    provider_id=None,
+                    model_id=None,
+                    confidence=None,
+                    latency_ns=elapsed,
+                    failure_type=type(exc).__name__, failure_message=text,
+                    status="provider_incompatibility",
+                ))
             except Exception as exc:
                 elapsed = time.monotonic_ns() - started
                 text = str(exc)
@@ -222,6 +250,7 @@ def run_decision_benchmark(
                     observed = None
                 if isinstance(confidence, float) and not math.isfinite(confidence):
                     confidence = None
+                abstained = "abstain" in text.lower() or "escalat" in text.lower()
                 observations.append(DecisionBenchmarkObservation(
                     contract_valid=False,
                     observed_value=observed if isinstance(observed, (bool, str, int, float)) else None,
@@ -230,7 +259,8 @@ def run_decision_benchmark(
                     confidence=confidence if isinstance(confidence, (int, float)) and not isinstance(confidence, bool) else None,
                     latency_ns=elapsed,
                     failure_type=type(exc).__name__, failure_message=text,
-                    abstained="abstain" in text.lower() or "escalat" in text.lower(),
+                    abstained=abstained,
+                    status="abstention" if abstained else ("contract_failure" if raw_result is not None else "execution_failure"),
                 ))
             else:
                 elapsed = time.monotonic_ns() - started

@@ -2,6 +2,43 @@
 
 This repository is worked in closed, auditable blocks. The goal is to finish a coherent problem, verify it, save it, document it, and leave one clear next direction rather than carrying unresolved state between sessions.
 
+## Shared-branch synchronization
+
+The active work branch can be changed from both the user's Codespace and the GitHub-backed execution path. Synchronization is therefore a first-class work-block invariant.
+
+### Before starting or resuming a block
+
+Run:
+
+```bash
+git status --short
+bash scripts/sync_work_block.sh
+```
+
+The synchronization script fetches `origin`, detects the branch upstream, and classifies the state as:
+
+- `SYNC: GREEN` — local HEAD matches upstream;
+- `SYNC: BEHIND` — remote has commits that are not local;
+- `SYNC: AHEAD` — local has commits not yet pushed;
+- `SYNC: DIVERGED` — local and remote histories require explicit reconciliation;
+- `SYNC: BEHIND + DIRTY` — a safe fast-forward is blocked by uncommitted local work.
+
+A clean local branch that is behind is fast-forwarded automatically. Uncommitted work is never overwritten automatically. Ahead and diverged states stop the flow rather than being force-reconciled.
+
+### Before remote writes
+
+When an execution agent writes through the GitHub path, it must refresh the target branch first and base the write on the current remote checkpoint. The agent must not update files from a stale branch snapshot.
+
+After remote writes, the Codespace synchronizes before continuing.
+
+### During closure
+
+`scripts/close_work_block.sh` performs a synchronization preflight before the complete test suite and a final synchronization check after all verification.
+
+The final check is intentionally read-only. If the upstream advanced while tests were running, closure fails so the suite can be rerun against the newer checkpoint.
+
+This protects against the failure mode where tests are green for an older commit while the shared remote branch has already moved.
+
 ## Standard cycle
 
 ### 1. Solve
@@ -48,11 +85,11 @@ Once the block is verified, saved and handed off, stop. Do not open a second arc
 
 ## Session start
 
-Start every new session with:
+For a new session, use the active branch rather than assuming `feature/semantic-model`:
 
 ```bash
 git status --short
-git pull --rebase origin feature/semantic-model
+bash scripts/sync_work_block.sh
 PYTHONPATH=. pytest -q
 ```
 
@@ -62,6 +99,6 @@ Then read `docs/AI_HANDOFF.md` and continue only from its documented checkpoint 
 
 A work block is closed only when all of these are true:
 
-`solved + verified + inspected + committed + pushed + handed-off + next-direction-marked`
+`solved + synchronized + verified + inspected + committed + pushed + handed-off + next-direction-marked`
 
 The conversation is transient context. `docs/AI_HANDOFF.md` is the durable project state.

@@ -93,10 +93,11 @@ https://developers.openai.com/api/docs/guides/agents-api/overview
 - Provider: TypeSafe AI
 - Product/runtime: Jev / System One
 - Integration: API
-- Status: **evaluate**
+- Status: **deferred — keep adapter ready**
 - Intended role: fast, structured, bounded judgments such as routing, classification, selection, scoring or escalation.
-- Architectural opportunity: implement a `DecisionProvider` contract and evaluate Jev alongside deterministic rules and model-based judges.
-- Important boundary: Jev provides a typed decision; ordinary project code decides whether and how to act.
+- Architectural opportunity: the useful decision semantics are already represented by the provider-neutral `DecisionProvider` contract and the internal `RuleDecisionProvider`.
+- Current project state: the Jev adapter remains ready for future paid/API access, but no budget is allocated to activate it now.
+- Important boundary: Jev, when eventually tested, will provide evidence for the decision capability; ordinary project code decides whether and how to act.
 
 Source:
 https://typesafe.ai/blog/introducing-system-one-models-and-jev
@@ -117,7 +118,34 @@ Source:
 https://claude.com/blog/cowork-is-now-claude
 https://support.claude.com/en/articles/14128542
 
-### WATCH
+### Current technology refresh — September 27, 2026
+
+Recent releases reinforce the strategy of treating model capabilities as replaceable
+resources rather than architectural dependencies. Anthropic announced Claude Opus 5.5
+on September 22 with stronger coding, agentic and professional-work positioning; OpenAI's
+September release notes describe GPT-6 Astra improvements in coding, research, computer
+use and complex multi-step work, while ChatGPT Images 2.5 added sharper generation and
+more precise editing. These are technology observations, not adoption decisions.
+
+Open and Chinese model ecosystems are also worth watching for zero-API-cost paths. DeepSeek
+V4.1-Flash has native multimodal understanding and the vendor says it is expanding open-
+source inference support; GLM-5.3 is published as open weights with local-serving paths;
+Kimi K3 is described by Moonshot as an open model with native vision and long context.
+These models are not assumed to be free to run: local deployment moves cost from API billing
+to hardware/compute, and hosted APIs may still be paid.
+
+## WATCH
+
+#### Zero-cost / low-cost decision-provider candidates
+- **Internal rules** — already available as `decision.rules`; use as the local/no-service path for objective rules.
+- **DeepSeek** — watch for a future `DecisionProvider` adapter; V4.1-Flash currently supports native multimodal input and the vendor documents open-source inference work alongside paid API access.
+- **GLM** — watch open-weight releases and local-serving options; GLM-5.3 is distributed with model downloads and local serving instructions.
+- **Kimi** — watch K3 and later open-model releases for a future provider adapter.
+- **Qwen and other open-weight ecosystems** — keep as generic provider slots; do not couple Core to any single vendor.
+
+No candidate is treated as free merely because its weights are public. The preferred zero-budget
+path is local/open-weight inference when hardware permits, existing no-cost product access when
+permitted, and paid APIs only as optional experiments.
 
 #### ChatGPT Work
 - Capability: orchestration + long-running work

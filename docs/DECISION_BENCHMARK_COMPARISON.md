@@ -63,6 +63,18 @@ benchmark.
 
 ## Comparison dimensions
 
+### Failure taxonomy
+
+A benchmark observation is classified before interpretation:
+
+- `valid`: the provider returned a contract-valid result; expected-vs-observed determines whether it matches the fixture.
+- `provider_incompatibility`: the provider/adapter cannot represent the valid benchmark request under its supported mapping.
+- `execution_failure`: the provider call failed without returning a result.
+- `contract_failure`: the provider returned a result that failed Core validation.
+- `abstention`: the provider explicitly or recognizably declined/escalated rather than producing an ordinary answer.
+
+A provider incompatibility is therefore an integration-capability finding, not an ordinary quality mismatch. It must remain visible in the evidence rather than being collapsed into a provider score.
+
 The comparison record is deliberately multidimensional:
 
 - contract validity;

@@ -7,7 +7,11 @@ from core.decision_benchmark import (
     load_decision_benchmark_fixtures,
     run_decision_benchmark,
 )
-from core.decision_provider import DecisionRequest, DecisionResult
+from core.decision_provider import (
+    DecisionProviderIncompatibilityError,
+    DecisionRequest,
+    DecisionResult,
+)
 from core.deterministic_decision_provider import DeterministicDecisionProvider
 
 
@@ -50,6 +54,30 @@ def test_expected_failure_and_malformed_results_are_recorded(provider):
     assert result.expected_vs_observed[0]["observed_failure"]
     assert result.expected_vs_observed[0]["matches"]
     assert result.observations[0].failure_type
+
+
+
+def test_benchmark_distinguishes_provider_incompatibility_from_other_failures():
+    request = DecisionRequest("q", "score", {}, "Rate?")
+
+    class IncompatibleProvider:
+        def decide(self, request):
+            raise DecisionProviderIncompatibilityError("missing provider mapping")
+
+    class RuntimeFailureProvider:
+        def decide(self, request):
+            raise RuntimeError("network unavailable")
+
+    incompatible = run_decision_benchmark(
+        IncompatibleProvider(), [DecisionBenchmarkCase("gap", request, expected_failure=False, expected_value=0.5)]
+    ).results[0].observations[0]
+    runtime = run_decision_benchmark(
+        RuntimeFailureProvider(), [DecisionBenchmarkCase("failure", request, expected_failure=True)]
+    ).results[0].observations[0]
+
+    assert incompatible.status == "provider_incompatibility"
+    assert incompatible.contract_valid is False
+    assert runtime.status == "execution_failure"
 
 
 def test_repeatability_and_deterministic_json_compatible_serialization(monkeypatch):

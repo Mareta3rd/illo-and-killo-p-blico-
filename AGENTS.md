@@ -13,6 +13,14 @@
 - Use `bash scripts/close_work_block.sh` for the repository's complete verification gate when the task asks for closure.
 - The closure script sets the repository Python path correctly; do not replace it with an unrelated test invocation.
 
+## Shared-branch synchronization
+- The active work branch may be written from both the user's Codespace and the GitHub-backed execution path. Treat its remote branch as shared state.
+- Before writing through GitHub to the active branch, refresh the branch head and base any file/tree update on that current remote state. Never write against a stale branch head.
+- After remote changes are made, the Codespace must synchronize with `bash scripts/sync_work_block.sh` before continuing local work or running the closure gate.
+- Never force-push to reconcile a shared branch.
+- A clean local branch that is behind its upstream may be fast-forwarded automatically by `scripts/sync_work_block.sh`; dirty, ahead or diverged states require explicit human reconciliation.
+- If the upstream branch advances after tests start, the closure gate must detect that change and require a rerun on the newer checkpoint.
+
 ## Creative system
 - Read `docs/CANON_100.md`, `docs/HUMOR.md` and `docs/ATTITUDE_AND_MAGNETISM.md` when a task touches creative behavior.
 - `ATTITUDE_AND_MAGNETISM` is a direction, not a scoring rule: preserve freedom, variety and human art direction.

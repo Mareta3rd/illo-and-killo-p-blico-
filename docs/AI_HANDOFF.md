@@ -15,8 +15,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 - Record major technical and artistic decisions here so future sessions do not depend on conversation memory.
 
 ## Current branch and checkpoint
-Active branch: `feature/semantic-model`.
-Current repository checkpoint: `4e08039` (latest committed remote checkpoint). The Codespace now contains verified but not yet committed benchmark fixture-loader changes in `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`.
+Active development branch: `assistant/benchmark-comparison-prep`.
+Green baseline branch: `feature/semantic-model` at `762b7e5`.
+Current verified auxiliary checkpoint: `a0a67d4`.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -666,32 +667,50 @@ Benchmark boundary:
 
 The benchmark is therefore an engineering instrument for future provider comparison, not a leaderboard or authority layer.
 
-## Decision Benchmark Comparison Preparation — READY / VERIFICATION PENDING
+## Decision Capability Digestion — ZERO-COST PATH / NEXT TARGET
 
-The provider-neutral v1 comparison surface is now defined before any second provider is integrated.
+The Jev external execution path is deliberately deferred: the adapter and benchmark
+integration remain prepared for future API access, but the project is not spending money
+to activate Jev now.
 
-Prepared:
-- `data/decision_benchmark_fixtures.json` is the versioned source of truth for fixture inputs and expected contract-level outcomes;
-- `docs/DECISION_BENCHMARK_COMPARISON.md` defines the same-input rule, execution contract, comparison dimensions, fixture stability and adoption boundary;
-- `docs/DECISION_BENCHMARK.md` now points to the v1 fixture source;
-- the fixture set separates three objective cases from one harness-control failure case;
-- no fixture encodes a universal provider score or production selection rule.
+The useful decision semantics have been digested into the provider-neutral contract rather
+than tied to Jev:
+- bounded boolean judgement;
+- constrained choice;
+- explicit-rubric score;
+- provider incompatibility distinguished from execution failure;
+- provider-specific probability detail remains outside Core until multiple providers justify
+  a common extension.
 
-A bounded Codex mission has also been prepared:
-- task: `codex-live-decision-benchmark-fixtures-001`;
-- allowed implementation paths: `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`;
-- protected paths include existing Core/provider contracts, `data/`, `docs/` and `scripts/`;
-- objective: make the versioned v1 fixture file the reusable source for `DecisionBenchmarkCase` creation while preserving the existing benchmark contract;
-- required focused verification: `PYTHONPATH=. pytest -q tests/test_decision_benchmark.py`;
-- the mission is explicitly forbidden from modifying the fixture file, integrating Jev/LLMs, selecting a provider, executing actions, or committing/pushing.
+A new internal `RuleDecisionProvider` provides a zero-external-service implementation of
+the same `DecisionProvider` contract. It can derive boolean, choice and score outputs from
+caller-supplied request context, while Core still validates the resulting `DecisionResult`
+and retains action authority.
 
-Verification state:
-- the governed Codex mission `codex-live-decision-benchmark-fixtures-001` was executed in the Codespace with explicit approval;
-- Codex reported status `completed`, no blockers, exactly the two allowed files changed, focused verification **8 passed**, and `git diff --check` passed;
-- the human diff review confirmed that the loader reads the versioned v1 fixture source, validates its envelope/roles/request fields/expected values, and constructs the existing `DecisionBenchmarkCase` contract without touching provider/Core boundaries;
-- the final complete suite and closure gate passed: **646 passed, 59 subtests passed**; working-tree inspection showed only the two intended modified files;
-- current state is intentionally **verified but uncommitted**. No commit or push has been made for this block yet;
-- next human action: commit the two intended files as the completed fixture-loader block, push, then update this handoff to the resulting committed checkpoint.
+Technology strategy has also been widened: future decision providers may come from local
+rules, open-weight/local models, existing no-cost product access where permitted, or paid
+APIs when the budget permits. Provider adapters remain replaceable and the benchmark uses
+the same fixed input contract for all candidates.
+
+Verification for this block is now CLOSED AND GREEN:
+- the synchronized Codespace run first fast-forwarded the local branch from `c3acd7d` to `a0a67d4`;
+- the initially requested focused command could not start because that Codespace environment did not have `pytest` available as a standalone module invocation;
+- `bash scripts/close_work_block.sh` then ran its repository-configured test command successfully with `PYTHONPATH=.`;
+- complete suite: **688 passed, 59 subtests passed in 18.98s**;
+- synchronization before and after verification: **SYNC: GREEN** at `a0a67d4`;
+- `git diff --check`: clean;
+- working tree: clean;
+- no generated files or secrets were introduced by this block.
+
+This closes the zero-cost decision-capability digestion block. The internal `RuleDecisionProvider`
+is verified against the fixed v1 objective fixtures and the existing Core validation boundary.
+Jev remains prepared as an optional future adapter but deliberately outside the current
+zero-budget execution path.
+
+Next implementation direction: refresh the technology radar against current no-cost/open-weight
+capabilities and then evaluate one concrete candidate through the same fixed DecisionProvider
+benchmark, without coupling Core to the provider.
+
 
 ## Codex Execution Bridge — VERIFIED GREEN
 
