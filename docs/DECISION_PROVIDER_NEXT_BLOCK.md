@@ -68,7 +68,7 @@ The official SDK therefore maps conceptually well to the existing `boolean`,
 
 ## Recommended execution order
 
-First, run the focused comparison tests and then the complete closure script on this
+First, run the focused comparison/adapter tests and then the complete closure script on this
 auxiliary branch.
 
 Second, build a fake-client Jev adapter test surface with no network access. Verify
@@ -76,9 +76,10 @@ contract mapping, choice containment, score handling, boolean threshold behavior
 provider/model metadata, and error propagation through `execute_decision()`.
 
 Third, only after the adapter is green, run a real Jev benchmark with the repository's
-fixed v1 fixture set where the semantics are genuinely compatible. Any incompatibility
-should be recorded as a contract gap rather than hidden through provider-specific
-fixture rewrites.
+fixed v1 objective fixtures. The runner excludes the harness-control case by default;
+that case is a robustness control, not a provider-quality assertion. Any semantic
+incompatibility, such as the fixed score fixture lacking an explicit rubric, should be
+recorded as a contract gap rather than hidden through provider-specific fixture rewrites.
 
 Fourth, measure Jev in the same environment used for the other providers. Record
 latency, repeatability, contract validity, expected-vs-observed behavior and any
