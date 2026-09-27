@@ -15,9 +15,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 - Record major technical and artistic decisions here so future sessions do not depend on conversation memory.
 
 ## Current branch and checkpoint
-Active development branch: `assistant/benchmark-comparison-prep`.
-Green baseline branch: `feature/semantic-model` at `762b7e5`.
-Current verified auxiliary checkpoint: `a0a67d4`.
+Active branch: `feature/semantic-model`.
+Current consolidated checkpoint: `181aa573` (`Consolidate zero-cost decision capability`).
+Previous green baseline before this consolidation: `762b7e5`.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -702,14 +702,20 @@ Verification for this block is now CLOSED AND GREEN:
 - working tree: clean;
 - no generated files or secrets were introduced by this block.
 
-This closes the zero-cost decision-capability digestion block. The internal `RuleDecisionProvider`
-is verified against the fixed v1 objective fixtures and the existing Core validation boundary.
-Jev remains prepared as an optional future adapter but deliberately outside the current
-zero-budget execution path.
+This closes the zero-cost decision-capability digestion block, which has been consolidated into
+`feature/semantic-model` at `181aa573` via PR #3.
+
+The internal `RuleDecisionProvider` is verified against the fixed v1 objective fixtures and the
+existing Core validation boundary. Jev remains prepared as an optional future adapter but is
+deliberately outside the current zero-budget execution path.
+
+The architecture remains open to future no-cost/open-weight providers through the same
+`DecisionProvider` seam and fixed benchmark fixtures. Public model weights are not assumed to
+be cost-free because local compute still consumes hardware/resources.
 
 Next implementation direction: refresh the technology radar against current no-cost/open-weight
-capabilities and then evaluate one concrete candidate through the same fixed DecisionProvider
-benchmark, without coupling Core to the provider.
+capabilities and evaluate one concrete candidate through the same fixed DecisionProvider
+benchmark, without coupling Core to that provider.
 
 
 ## Codex Execution Bridge — VERIFIED GREEN
