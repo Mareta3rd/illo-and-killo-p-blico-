@@ -15,8 +15,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 - Record major technical and artistic decisions here so future sessions do not depend on conversation memory.
 
 ## Current branch and checkpoint
-Active branch: `feature/semantic-model`.
-Current repository checkpoint: `4e08039` (latest committed remote checkpoint). The Codespace now contains verified but not yet committed benchmark fixture-loader changes in `core/decision_benchmark.py` and `tests/test_decision_benchmark.py`.
+Active development branch: `assistant/benchmark-comparison-prep`.
+Green baseline branch: `feature/semantic-model` at `762b7e5`.
+Current verified auxiliary checkpoint: `a0a67d4`.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -691,12 +692,24 @@ rules, open-weight/local models, existing no-cost product access where permitted
 APIs when the budget permits. Provider adapters remain replaceable and the benchmark uses
 the same fixed input contract for all candidates.
 
-Verified prior checkpoint immediately before this block: `c3acd7d`, with **684 passed and
-59 subtests** plus synchronized closure checks.
+Verification for this block is now CLOSED AND GREEN:
+- the synchronized Codespace run first fast-forwarded the local branch from `c3acd7d` to `a0a67d4`;
+- the initially requested focused command could not start because that Codespace environment did not have `pytest` available as a standalone module invocation;
+- `bash scripts/close_work_block.sh` then ran its repository-configured test command successfully with `PYTHONPATH=.`;
+- complete suite: **688 passed, 59 subtests passed in 18.98s**;
+- synchronization before and after verification: **SYNC: GREEN** at `a0a67d4`;
+- `git diff --check`: clean;
+- working tree: clean;
+- no generated files or secrets were introduced by this block.
 
-Next implementation target: verify and close the internal rule-based DecisionProvider, then
-refresh the technology radar with current no-cost/open-weight candidates before selecting the
-next provider experiment. Jev remains deliberately out of the critical path.
+This closes the zero-cost decision-capability digestion block. The internal `RuleDecisionProvider`
+is verified against the fixed v1 objective fixtures and the existing Core validation boundary.
+Jev remains prepared as an optional future adapter but deliberately outside the current
+zero-budget execution path.
+
+Next implementation direction: refresh the technology radar against current no-cost/open-weight
+capabilities and then evaluate one concrete candidate through the same fixed DecisionProvider
+benchmark, without coupling Core to the provider.
 
 
 ## Codex Execution Bridge — VERIFIED GREEN
