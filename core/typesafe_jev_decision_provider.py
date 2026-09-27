@@ -8,6 +8,7 @@ of the semantic model.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+import math
 from typing import Any, Protocol
 
 from core.decision_provider import DecisionProvider, DecisionRequest, DecisionResult
@@ -92,6 +93,8 @@ class TypeSafeJevDecisionProvider:
                 raise ValueError("TypeSafe response did not contain a valid Noul answer") from exc
             if isinstance(probability, bool) or not isinstance(probability, (int, float)):
                 raise ValueError("TypeSafe Noul answer must be numeric")
+            if not math.isfinite(probability) or not 0 <= probability <= 1:
+                raise ValueError("TypeSafe Noul answer must be a finite probability between 0 and 1")
             value = float(probability) >= self._boolean_threshold
             confidence = None
         elif request.kind == "choice":
