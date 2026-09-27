@@ -794,16 +794,53 @@ Technology context checked 27 September 2026:
 - DeepSeek V4.1-Flash and GLM-5.3-Flash remain interesting future candidates, but their current model scales make Qwen3.8-27B the more practical first local experiment for this project.
 
 
-## Process Improvement — Shared-State Remote Write Receipt / IN PROGRESS
+## Process Improvement — Shared-State Remote Write Receipt / VERIFIED GREEN
 
-The shared-branch protocol has been hardened after a real stale-checkpoint incident during the local DecisionProvider prototype.
+A real stale-checkpoint incident during the local DecisionProvider prototype exposed a gap in the previous shared-branch synchronization process. No code was lost, but the Codespace had verified an older checkpoint while GitHub had already advanced.
 
-The failure mode was not a code loss: a GitHub-backed commit advanced the remote branch while the Codespace was still at the previous checkpoint, and the closure gate relied on its local tracking state at that moment. This could cause verification to run against an older tree.
+The shared-branch protocol is now hardened and verified in the Codespace.
 
-The protocol change now requires:
-- a direct authoritative remote HEAD probe in `scripts/sync_work_block.sh`;
-- a second remote probe after any automatic fast-forward, with a moving-target stop rather than silent chasing;
-- a remote-write receipt: the exact post-write commit SHA must be recorded and consumed by the Codespace before further tests or edits;
-- the closure gate to use the strengthened synchronization path both before and after verification.
+Implemented:
+- `scripts/sync_work_block.sh` directly probes the authoritative remote branch HEAD instead of relying only on a local tracking ref;
+- synchronization performs a second authoritative probe after an automatic fast-forward and stops on `SYNC: REMOTE_MOVED_DURING_SYNC`;
+- `scripts/close_work_block.sh` performs authoritative synchronization before and after the full suite;
+- `docs/WORK_BLOCK_PROTOCOL.md` defines the remote-write handshake and exact-SHA remote-write receipt;
+- GitHub-backed writes must return the exact post-write commit SHA, and the Codespace must consume that receipt before further tests or edits.
 
-This is a process/engineering improvement to prevent stale-context work, not a change to Core decision authority. The conversation remains transient; the remote branch plus `docs/AI_HANDOFF.md` remain the durable shared state.
+Real verification:
+- the Codespace synchronized from `cb30170` to remote-write receipt `ca12749`;
+- synchronization reported `SYNC: PROBE` with local and remote both at `ca12749`;
+- complete suite: **698 passed, 59 subtests passed in 18.31s**;
+- whitespace check: clean;
+- working tree: clean;
+- final authoritative remote probe: local and remote both `ca12749`.
+
+The process-improvement block is therefore **CLOSED AND GREEN**. This procedure is now part of the repository's durable working protocol.
+
+## Current block — Local Qwen Decision Provider / PROTOTYPE — IMPLEMENTATION VERIFIED
+
+A provider-runtime-agnostic local decision adapter has been added as a prototype.
+The first target runtime is Qwen3.8-27B in GGUF form served locally through an
+OpenAI-compatible llama.cpp endpoint.
+
+Implementation:
+- `core/local_structured_decision_provider.py` implements the existing `DecisionProvider` contract;
+- `scripts/run_local_decision_benchmark.py` runs the fixed v1 benchmark against the local endpoint;
+- `tests/test_local_structured_decision_provider.py` covers boolean, choice, score, Core validation, malformed output, confidence and deterministic prompt construction;
+- `docs/LOCAL_DECISION_PROVIDER.md` records the prototype boundary and runtime assumptions;
+- `data/capabilities.json` and `docs/TECHNOLOGY_RADAR.md` register Qwen local as `prototype`, not adopted.
+
+Architectural boundary:
+- Core still owns `DecisionRequest`, `DecisionResult`, validation, audit and action authority;
+- the local adapter maps the runtime response into `DecisionResult` and cannot return Core decisions, canon mutations or actions;
+- the adapter accepts an injected OpenAI-compatible client so Qwen, llama.cpp and a future compatible local runtime remain replaceable;
+- structured output is constrained by a request-derived JSON Schema; choice values are taken from the request's allowed set.
+
+Implementation verification:
+- complete suite: **698 passed, 59 subtests passed**;
+- the initial failure was a stale capability-registry expectation after adding `decision.qwen_local`; the repository test was corrected;
+- the implementation is now green on the synchronized prototype branch;
+- no real model call has yet been performed;
+- no quality, latency or hardware conclusion is implied yet.
+
+Next implementation target: execute the first live local benchmark against an OpenAI-compatible runtime. The live result remains benchmark evidence only and does not constitute provider adoption.
