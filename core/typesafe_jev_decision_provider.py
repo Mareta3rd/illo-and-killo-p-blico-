@@ -141,6 +141,8 @@ class TypeSafeJevDecisionProvider:
         if request.kind == "choice":
             if request.choices is None:
                 raise ValueError("choice decisions require explicit allowed choices")
+            if len(request.choices) > 255:
+                raise ValueError("TypeSafe Jev supports at most 255 choices")
             return Choice(
                 instructions=request.question,
                 criteria={choice: None for choice in request.choices},
