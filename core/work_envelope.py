@@ -105,8 +105,10 @@ class WorkEnvelope:
         if self.interrupt_policy not in _INTERRUPT_POLICIES:
             raise ValueError(f"unsupported interrupt policy: {self.interrupt_policy!r}")
 
-        raw_context = {} if self.context is None else dict(self.context)
-        if len(raw_context) > _MAX_CONTEXT_KEYS:
+        if self.context is not None and not isinstance(self.context, Mapping):
+            raise TypeError("context must be a mapping")
+        raw_context = self.context
+        if raw_context is not None and len(raw_context) > _MAX_CONTEXT_KEYS:
             raise ValueError(
                 f"context exceeds the maximum key count of {_MAX_CONTEXT_KEYS}"
             )
