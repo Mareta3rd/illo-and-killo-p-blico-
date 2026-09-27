@@ -59,7 +59,8 @@
         "new product",
         "decision quality must be benchmarked on project tasks",
         "boolean probability requires explicit adapter threshold",
-        "score mapping requires explicit ordered rubric"
+        "score mapping requires explicit ordered rubric",
+        "current DecisionResult projects away richer provider probability distributions"
       ],
       "dependencies": [
         "TypeSafe API access"
