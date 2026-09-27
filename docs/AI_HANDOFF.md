@@ -15,9 +15,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 - Record major technical and artistic decisions here so future sessions do not depend on conversation memory.
 
 ## Current branch and checkpoint
-Active branch: `assistant/local-qwen-decision-prototype` (prototype work).
+Active branch: `assistant/collaborative-work-envelope` (collaborative-protocol work).
 Green consolidated branch: `feature/semantic-model` at `d06612c`.
-Current prototype branch checkpoint is the latest commit on this branch.
+Previous green prototype checkpoint: `assistant/local-qwen-decision-prototype` at `2d49b7c`.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -844,3 +844,46 @@ Implementation verification:
 - no quality, latency or hardware conclusion is implied yet.
 
 Next implementation target: execute the first live local benchmark against an OpenAI-compatible runtime. The live result remains benchmark evidence only and does not constitute provider adoption.
+
+
+## Current block — Collaborative Work Envelope / PROTOTYPE — VERIFIED GREEN
+
+A provider-neutral collaborative protocol has been established above individual
+capabilities and below Core authority.
+
+Implementation on branch `assistant/collaborative-work-envelope`:
+- `core/work_envelope.py` defines immutable `WorkEnvelope` and `CollaborationUpdate` contracts;
+- `tests/test_work_envelope.py` covers boundedness, deterministic serialization,
+  state, attention and validation checks;
+- `docs/COLLABORATIVE_WORK_ENVELOPE.md` records the protocol and explicitly keeps
+  execution out of scope for this block;
+- `docs/CAPABILITY_ROUTING.md` documents the collaborative layer and provider/capability boundary.
+
+Protocol intent:
+- `WorkEnvelope` separates objective, project, bounded context, constraints,
+  available tools, prior work, known failures, expected output, autonomy and interrupt policy;
+- context is information, not permission;
+- available tools are capability metadata, not authorization;
+- `CollaborationUpdate` separates progress from actual human attention;
+- `attention_required` is permitted only for actionable handoff states;
+- bounded JSON and text limits prevent ambient whole-project context from entering a task unintentionally;
+- no collaborator can execute actions, change canon or become Core merely from this protocol.
+
+Verification:
+- the first closure run exposed one validation-order defect for non-mapping context input;
+- the defect was corrected at the provider-neutral contract boundary without weakening the test requirement;
+- the branch was synchronized to remote checkpoint `e1ce281`;
+- authoritative pre- and post-suite synchronization both reported `SYNC: GREEN`;
+- complete closure suite: **716 passed, 59 subtests passed in 18.54s**;
+- whitespace, working-tree and diff checks passed;
+- final checkpoint: `e1ce281`.
+
+The branch also retains the previously documented harmless no-content-diff history marker
+`e1ce281` created by the sequential GitHub Contents API write; no history rewrite is warranted.
+
+This block is therefore **CLOSED AND GREEN**.
+
+Next implementation target: add the small orchestration seam that invokes an injected
+collaboration provider and returns an auditable handoff record. The seam must validate
+the returned `CollaborationUpdate`, preserve envelope identity, capture deterministic
+execution metadata/digests, and keep automatic action execution out of scope.
