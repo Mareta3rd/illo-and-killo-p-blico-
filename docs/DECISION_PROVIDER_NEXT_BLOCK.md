@@ -60,7 +60,7 @@ The official SDK therefore maps conceptually well to the existing `boolean`,
 5. Jev's Noul probability should not be mislabeled as provider-supplied confidence.
    The current contract may leave `confidence` unset for boolean results unless a
    separate, explicitly named derived-confidence policy is introduced.
-6. The adapter should use an injected client seam. Importing the optional TypeSafe SDK
+6. The adapter should use an injected client seam. A valid request that cannot be represented by Jev's native mapping is raised as the provider-neutral `DecisionProviderIncompatibilityError`, so benchmark evidence can distinguish a capability gap from a provider execution failure. Importing the optional TypeSafe SDK
    should remain lazy/provider-specific so the provider-neutral Core package does not
    acquire a hard runtime dependency merely by importing the adapter module.
 7. Live API credentials must remain environment-only. No key belongs in fixtures,

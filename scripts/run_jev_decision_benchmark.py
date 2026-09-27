@@ -47,7 +47,16 @@ def main() -> int:
         for result in report.results
         for comparison in result.expected_vs_observed
     )
-    return 0 if all_match else 2
+    has_incompatibility = any(
+        observation.status == "provider_incompatibility"
+        for result in report.results
+        for observation in result.observations
+    )
+    if all_match:
+        return 0
+    if has_incompatibility:
+        return 3
+    return 2
 
 
 if __name__ == "__main__":

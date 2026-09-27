@@ -3,7 +3,7 @@ from types import SimpleNamespace
 import pytest
 
 from core.decision_execution import execute_decision
-from core.decision_provider import DecisionRequest
+from core.decision_provider import DecisionProviderIncompatibilityError, DecisionRequest
 from core.typesafe_jev_decision_provider import (
     TypeSafeJevDecisionProvider,
 )
@@ -83,7 +83,7 @@ def test_score_requires_explicit_rubric_and_maps_score(monkeypatch):
     )
     missing_client = FakeClient(SimpleNamespace(model="jev-test", scores={}))
     provider = TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=missing_client)
-    with pytest.raises(ValueError, match="score_criteria"):
+    with pytest.raises(DecisionProviderIncompatibilityError, match="score_criteria"):
         provider.decide(DecisionRequest("q", "score", {"x": 1}, "Rate?"))
     assert missing_client.calls == []
 
@@ -222,6 +222,6 @@ def test_jev_choice_cardinality_limit_is_enforced(monkeypatch):
     provider = TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=client)
     choices = tuple(f"option-{index}" for index in range(256))
 
-    with pytest.raises(ValueError, match="255 choices"):
+    with pytest.raises(DecisionProviderIncompatibilityError, match="255 choices"):
         provider.decide(DecisionRequest("q", "choice", {}, "Route?", choices))
     assert client.calls == []

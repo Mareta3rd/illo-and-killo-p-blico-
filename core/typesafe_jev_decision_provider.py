@@ -11,7 +11,11 @@ import math
 from collections.abc import Callable
 from typing import Any, Protocol
 
-from core.decision_provider import DecisionRequest, DecisionResult
+from core.decision_provider import (
+    DecisionProviderIncompatibilityError,
+    DecisionRequest,
+    DecisionResult,
+)
 
 
 class _SystemOneClient(Protocol):
@@ -142,7 +146,7 @@ class TypeSafeJevDecisionProvider:
             if request.choices is None:
                 raise ValueError("choice decisions require explicit allowed choices")
             if len(request.choices) > 255:
-                raise ValueError("TypeSafe Jev supports at most 255 choices")
+                raise DecisionProviderIncompatibilityError("TypeSafe Jev supports at most 255 choices")
             return Choice(
                 instructions=request.question,
                 criteria={choice: None for choice in request.choices},
@@ -150,8 +154,8 @@ class TypeSafeJevDecisionProvider:
 
         raw_criteria = request.context.get("score_criteria")
         if not isinstance(raw_criteria, (list, tuple)) or not raw_criteria:
-            raise ValueError(
-                "score decisions require explicit context['score_criteria'] for TypeSafe mapping"
+            raise DecisionProviderIncompatibilityError(
+                "score requests require explicit context['score_criteria'] for TypeSafe mapping"
             )
         return Score(
             instructions=request.question,

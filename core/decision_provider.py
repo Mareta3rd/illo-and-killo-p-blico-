@@ -17,6 +17,10 @@ DECISION_KINDS = frozenset({"boolean", "choice", "score"})
 DecisionValue: TypeAlias = bool | str | float
 
 
+class DecisionProviderIncompatibilityError(Exception):
+    """The provider cannot represent a valid provider-neutral decision request."""
+
+
 def _nonempty(name: str, value: Any) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{name} must be a non-empty string")
