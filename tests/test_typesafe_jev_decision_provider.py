@@ -170,3 +170,33 @@ def test_client_and_factory_are_mutually_exclusive():
             client=FakeClient(SimpleNamespace()),
             client_factory=lambda model: FakeClient(SimpleNamespace()),
         )
+
+
+@pytest.mark.parametrize("probability", [-0.1, 1.1, float("nan"), float("inf")])
+def test_boolean_provider_probability_must_be_valid(monkeypatch, probability):
+    monkeypatch.setattr(
+        "core.typesafe_jev_decision_provider._load_sdk_question_types",
+        fake_sdk_types,
+    )
+    client = FakeClient(SimpleNamespace(model="jev-test", nouls={"decision": SimpleNamespace(noul=probability)}))
+    provider = TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=client)
+
+    with pytest.raises(ValueError, match="finite probability"):
+        provider.decide(DecisionRequest("q", "boolean", {}, "Escalate?"))
+
+
+def test_choice_outside_allowed_set_is_rejected_by_core(monkeypatch):
+    monkeypatch.setattr(
+        "core.typesafe_jev_decision_provider._load_sdk_question_types",
+        fake_sdk_types,
+    )
+    client = FakeClient(
+        SimpleNamespace(
+            model="jev-test",
+            choices={"decision": SimpleNamespace(choice="not-allowed", confidence=0.9)},
+        )
+    )
+    provider = TypeSafeJevDecisionProvider(boolean_threshold=0.5, client=client)
+
+    with pytest.raises(ValueError, match="allowed choices"):
+        provider.decide(DecisionRequest("q", "choice", {}, "Route?", ("accept", "continue")))
