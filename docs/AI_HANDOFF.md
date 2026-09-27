@@ -15,9 +15,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 - Record major technical and artistic decisions here so future sessions do not depend on conversation memory.
 
 ## Current branch and checkpoint
-Active branch: `assistant/local-qwen-decision-prototype` (prototype work).
+Active branch: `assistant/collaborative-work-envelope` (collaborative-protocol work).
 Green consolidated branch: `feature/semantic-model` at `d06612c`.
-Current prototype branch checkpoint is the latest commit on this branch.
+Previous green prototype checkpoint: `assistant/local-qwen-decision-prototype` at `2d49b7c`.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -844,3 +844,39 @@ Implementation verification:
 - no quality, latency or hardware conclusion is implied yet.
 
 Next implementation target: execute the first live local benchmark against an OpenAI-compatible runtime. The live result remains benchmark evidence only and does not constitute provider adoption.
+
+
+## Current block — Collaborative Work Envelope / PROTOTYPE
+
+A new provider-neutral collaborative protocol is being developed above individual
+capabilities and below Core authority.
+
+Implementation on branch `assistant/collaborative-work-envelope`:
+- `core/work_envelope.py` defines immutable WorkEnvelope and CollaborationUpdate contracts;
+- `tests/test_work_envelope.py` defines boundedness, deterministic serialization,
+  state, attention and validation checks;
+- `docs/COLLABORATIVE_WORK_ENVELOPE.md` records the protocol and explicitly keeps
+  execution out of scope;
+- `docs/CAPABILITY_ROUTING.md` now documents the collaborative layer.
+
+Protocol intent:
+- WorkEnvelope separates objective, project, bounded context, constraints,
+  available tools, prior work, known failures, expected output, autonomy and interrupt policy;
+- context is information, not permission;
+- available tools are capability metadata, not authorization;
+- CollaborationUpdate separates progress from actual human attention;
+- `attention_required` is permitted only for actionable handoff states;
+- bounded JSON and text limits prevent ambient whole-project context from entering a task unintentionally;
+- no collaborator can execute actions, change canon or become Core merely from this protocol.
+
+Verification state:
+- static contract review completed after tightening mapping and output-type validation;
+- Codespace test/closure gate is not yet run for this branch;
+- no concrete model/runtime or execution adapter is included in this block.
+
+Remote-write receipt for the latest branch state: `cc98190d999daa29fee9201640d16a916de9690b`.
+The Codespace must synchronize to that receipt before running tests or making further edits.
+
+Next implementation target: run the full closure gate on this branch, then add the
+small orchestration seam that invokes an injected collaboration provider and returns
+an auditable handoff record. Automatic action execution remains out of scope.
