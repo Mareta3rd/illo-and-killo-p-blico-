@@ -11,7 +11,7 @@ import math
 from collections.abc import Callable
 from typing import Any, Protocol
 
-from core.decision_provider import DecisionProvider, DecisionRequest, DecisionResult
+from core.decision_provider import DecisionRequest, DecisionResult
 
 
 class _SystemOneClient(Protocol):
