@@ -76,3 +76,29 @@ A minimal implementation should prove:
 
 This is deliberately small. It establishes the seam first; real Jev integration
 comes only after the seam is green.
+
+## Capability digestion
+
+The project does not seek permanent dependence on a provider. External systems are
+tested as implementations of capabilities that should remain expressible without
+the provider's brand.
+
+The lifecycle is:
+
+OBSERVE -> INVESTIGATE -> PROTOTYPE -> BENCHMARK -> ADOPT -> MAINTAIN / DEPRECATE
+
+A provider is architecturally digested only when the useful behavior can be retained
+behind the capability contract and Core can continue operating with another
+implementation after the external dependency is removed.
+
+For decision capability this currently means:
+
+- Core owns DecisionRequest, DecisionResult, validation, audit and action authority.
+- A provider adapter owns native request/response translation and provider-specific
+  policies such as probability thresholds or score rubrics.
+- Benchmarking produces evidence but does not select a provider.
+- The provider can be removed without changing the semantic model.
+
+TypeSafe Jev is currently an experimental implementation of the decision capability.
+The adapter work is isolated on an auxiliary branch and remains unevaluated until the
+normal test/closure gate passes.
