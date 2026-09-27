@@ -134,6 +134,24 @@ Kimi K3 is described by Moonshot as an open model with native vision and long co
 These models are not assumed to be free to run: local deployment moves cost from API billing
 to hardware/compute, and hosted APIs may still be paid.
 
+## PROTOTYPE / ZERO-API EXPERIMENT
+
+### Local Qwen3.8-27B decision provider
+- Capability: decision
+- Provider/model: Qwen3.8-27B
+- Integration target: local GGUF through an OpenAI-compatible llama.cpp server
+- Status: prototype / not adopted
+- Reason for selection: Qwen3.8-27B is published as an open-weight 27B native multimodal model, and a public GGUF distribution supports local inference. llama.cpp exposes JSON Schema-constrained output on its server interface, which maps cleanly to the bounded DecisionProvider contract.
+- Current project implementation: core/local_structured_decision_provider.py and scripts/run_local_decision_benchmark.py.
+- Constraint: local inference is not automatically free; hardware, storage and runtime resources still have a cost.
+- Evidence sources checked 27 September 2026:
+  - https://github.com/AlibabaCloud-Official/Qwen3.8-27B
+  - https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF
+  - https://github.com/ggml-org/llama.cpp
+
+This candidate is deliberately evaluated at the provider boundary. Its measured project
+quality, latency, repeatability and hardware feasibility remain unknown until the local
+benchmark is executed in the runtime environment.
 ## WATCH
 
 #### Zero-cost / low-cost decision-provider candidates
