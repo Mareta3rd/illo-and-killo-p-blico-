@@ -119,3 +119,8 @@ def test_participant_rejects_wrong_report_type():
     with pytest.raises(TypeError, match="DecisionBenchmarkReport"):
         DecisionBenchmarkParticipant("p", object())
 
+
+def test_comparison_report_validates_participant_values_before_identity_checks():
+    with pytest.raises(TypeError, match="DecisionBenchmarkParticipant"):
+        DecisionBenchmarkComparisonReport((object(),))
+
