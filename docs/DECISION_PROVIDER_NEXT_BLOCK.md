@@ -110,3 +110,12 @@ multiple capability requirements, not by Jev alone.
 
 Until then, the adapter is a projection into the existing contract, not a claim that
 the full Jev capability has been absorbed.
+
+### Noul confidence nuance
+
+The current Python SDK source models NoulAnswer with the `noul` probability field and
+does not expose a separate Noul confidence field, while TypeSafe's public product
+material describes confidence as part of System One outputs. The adapter therefore
+leaves Core confidence unset for boolean Noul decisions rather than inventing a
+derived value. This should be rechecked against a live response before any contract
+extension is considered.
