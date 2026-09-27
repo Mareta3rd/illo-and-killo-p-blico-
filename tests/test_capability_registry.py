@@ -14,12 +14,18 @@ def test_repository_capability_registry_loads_and_queries():
         "execution.codex_cli",
         "decision.rules",
         "decision.jev",
+        "decision.qwen_local",
         "orchestration.openai_agents_api",
         "computer_use.anthropic_cowork",
     }
     assert registry.get("decision.rules").status == "adopted"
     assert registry.get("decision.jev").status == "deferred_external_access"
-    assert [record.id for record in registry.for_capability("decision")] == ["decision.rules", "decision.jev"]
+    assert registry.get("decision.qwen_local").status == "prototype"
+    assert [record.id for record in registry.for_capability("decision")] == [
+        "decision.qwen_local",
+        "decision.rules",
+        "decision.jev",
+    ]
 
 
 def test_registry_serialization_is_deterministic_and_matches_source(tmp_path):
