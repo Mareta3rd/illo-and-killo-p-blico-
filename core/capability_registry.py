@@ -127,15 +127,15 @@ class CapabilityRegistry:
             raise ValueError("capability ids must be unique")
 
     def get(self, capability_id: str) -> CapabilityRecord:
-        _non_empty_text(capability_id, "capability_id")
+        normalized_id = _non_empty_text(capability_id, "capability_id")
         for record in self.records:
-            if record.id == capability_id:
+            if record.id == normalized_id:
                 return record
-        raise KeyError(capability_id)
+        raise KeyError(normalized_id)
 
     def for_capability(self, capability: str) -> tuple[CapabilityRecord, ...]:
-        _non_empty_text(capability, "capability")
-        return tuple(record for record in self.records if record.capability == capability)
+        normalized_capability = _non_empty_text(capability, "capability")
+        return tuple(record for record in self.records if record.capability == normalized_capability)
 
     def to_dict(self) -> dict[str, Any]:
         return {
