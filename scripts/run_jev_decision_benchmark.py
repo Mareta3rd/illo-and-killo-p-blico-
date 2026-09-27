@@ -35,12 +35,12 @@ def main() -> int:
     else:
         args.output.write_text(rendered + "\n", encoding="utf-8")
 
-    return 0 if all(
+    all_match = all(
         comparison["matches"]
         for result in report.results
         for comparison in result.expected_vs_observed
-        if result.expected_failure or not result.expected_failure
-    ) else 2
+    )
+    return 0 if all_match else 2
 
 
 if __name__ == "__main__":
