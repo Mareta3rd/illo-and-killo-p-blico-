@@ -9,7 +9,7 @@ It defines two provider-neutral structures:
 - WorkEnvelope: the complete bounded brief delivered to a collaborator;
 - CollaborationUpdate: the bounded status or handoff returned by that collaborator.
 
-This is a protocol contract, not an execution engine.
+This is a protocol contract plus a small orchestration seam; it is not an autonomous execution engine.
 
 ## WorkEnvelope
 
@@ -39,7 +39,7 @@ The envelope limits context size, list sizes and individual text sizes. Context 
 - bounded_execution: future mode for explicitly scoped execution;
 - human_approval_required: work may prepare changes but a human approval gate remains mandatory.
 
-These values describe policy; they do not grant a capability. Execution is intentionally not implemented in this block.
+These values describe policy; they do not grant a capability. The current orchestration seam does not execute tools or actions.
 
 ### Interrupt policy
 
@@ -76,7 +76,27 @@ The permitted states are:
 
     available -> working -> needs_input / ready_for_review / blocked -> done
 
-The transition logic itself is deliberately not implemented in this block. A later orchestration layer can enforce legal transitions and persistence without modifying the provider-neutral envelope.
+The transition logic itself remains a future policy/orchestration concern. The provider-neutral envelope does not mutate its own state.
+
+## Orchestration seam
+
+core/collaboration_execution.py now provides:
+
+- CollaborationProvider: an injected provider contract exposing provider_id and collaborate(envelope);
+- execute_collaboration(...): one bounded provider invocation;
+- CollaborationExecutionRecord: an immutable handoff record containing the envelope, validated update, provider identifier and deterministic SHA-256 digests of the exact envelope/update JSON.
+
+The seam validates the envelope before invocation, rejects providers without a usable identity or callable collaboration method, requires an actual CollaborationUpdate, and validates that the returned update belongs to the same envelope.
+
+It deliberately does not:
+
+- execute tools or external actions;
+- infer authorization from available_tools;
+- select a production provider;
+- create or modify canon;
+- turn a collaborator update into a Core decision.
+
+Verification of this orchestration seam is performed by the repository's complete closure gate. A green checkpoint is required before the next layer is added.
 
 ## Boundary
 
@@ -91,6 +111,6 @@ A collaborator using this protocol:
 
 ## Next target
 
-Next block: add a small orchestration seam that accepts a WorkEnvelope, invokes an injected collaboration provider, validates CollaborationUpdate, and returns an auditable handoff record.
+After the orchestration seam is verified green, add a concrete collaborative provider adapter separately from this protocol. The first candidate can be the local Qwen runtime, but the provider must consume the WorkEnvelope and return a CollaborationUpdate without bypassing Core.
 
-No concrete model/runtime or automatic action execution should be added in that block.
+No automatic action execution or provider adoption should be bundled into that adapter block.
