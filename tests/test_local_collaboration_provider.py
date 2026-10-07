@@ -3,6 +3,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from core.collaboration_execution import execute_collaboration
 from core.local_collaboration_provider import (
     LocalStructuredCollaborationProvider,
     build_collaboration_prompt,
@@ -149,6 +150,20 @@ def test_rejects_invalid_json_response():
 
     with pytest.raises(ValueError, match="invalid JSON"):
         provider.collaborate(make_envelope())
+
+
+def test_provider_crosses_auditable_orchestration_seam():
+    client = FakeClient(json.dumps(valid_payload()))
+    provider = LocalStructuredCollaborationProvider(client, model="qwen3.8-27b")
+
+    record = execute_collaboration(provider, make_envelope())
+
+    assert record.provider_id == "local-qwen-collaboration"
+    assert record.model_id == "qwen3.8-27b"
+    assert record.update.status == "ready_for_review"
+    assert record.update.output["answer"] == "The proposal needs a clearer next action."
+    assert len(record.envelope_digest) == 64
+    assert len(record.update_digest) == 64
 
 
 def test_provider_rejects_non_envelope():
