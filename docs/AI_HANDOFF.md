@@ -846,44 +846,54 @@ Implementation verification:
 Next implementation target: execute the first live local benchmark against an OpenAI-compatible runtime. The live result remains benchmark evidence only and does not constitute provider adoption.
 
 
-## Current block — Collaborative Work Envelope / PROTOTYPE — VERIFIED GREEN
+## Current block — Collaborative Work Envelope + Local Collaboration Adapter / VERIFIED GREEN
 
-A provider-neutral collaborative protocol has been established above individual
-capabilities and below Core authority.
+The collaborative protocol has now advanced from a data-only envelope to a provider-neutral
+execution seam plus a local structured collaboration adapter, while preserving Core authority.
 
 Implementation on branch `assistant/collaborative-work-envelope`:
-- `core/work_envelope.py` defines immutable `WorkEnvelope` and `CollaborationUpdate` contracts;
-- `tests/test_work_envelope.py` covers boundedness, deterministic serialization,
-  state, attention and validation checks;
-- `docs/COLLABORATIVE_WORK_ENVELOPE.md` records the protocol and explicitly keeps
-  execution out of scope for this block;
-- `docs/CAPABILITY_ROUTING.md` documents the collaborative layer and provider/capability boundary.
+- `core/work_envelope.py` defines immutable, bounded `WorkEnvelope` and `CollaborationUpdate`;
+- `core/collaboration_execution.py` defines `CollaborationProvider`,
+  `execute_collaboration()` and immutable `CollaborationExecutionRecord`;
+- the execution seam validates the returned update, preserves envelope identity, invokes
+  the provider once, and records deterministic envelope/update digests plus provider/model metadata;
+- `core/local_collaboration_provider.py` implements a local OpenAI-compatible structured
+  collaboration adapter with deterministic prompt construction and strict JSON-schema output;
+- the adapter is deliberately advisory/collaborative: it cannot execute tools, mutate canon,
+  or make Core decisions;
+- `data/capabilities.json` registers `collaboration.qwen_local` as a prototype capability;
+- `docs/COLLABORATIVE_WORK_ENVELOPE.md`, `docs/LOCAL_COLLABORATIVE_PROVIDER.md` and
+  `docs/CAPABILITY_ROUTING.md` document the protocol, adapter boundary and routing semantics;
+- dedicated tests cover the envelope, execution seam, local provider contract and capability registry.
 
-Protocol intent:
-- `WorkEnvelope` separates objective, project, bounded context, constraints,
-  available tools, prior work, known failures, expected output, autonomy and interrupt policy;
-- context is information, not permission;
-- available tools are capability metadata, not authorization;
-- `CollaborationUpdate` separates progress from actual human attention;
-- `attention_required` is permitted only for actionable handoff states;
-- bounded JSON and text limits prevent ambient whole-project context from entering a task unintentionally;
-- no collaborator can execute actions, change canon or become Core merely from this protocol.
+The provider prompt uses the bounded envelope as its complete task brief and explicitly states:
+context is information, available tools are metadata, and proposed output is not canon or a Core
+decision. The model is instructed to produce concrete, testable work rather than filler, but no live
+quality claim has been inferred from the adapter tests.
 
 Verification:
-- the first closure run exposed one validation-order defect for non-mapping context input;
-- the defect was corrected at the provider-neutral contract boundary without weakening the test requirement;
-- the branch was synchronized to remote checkpoint `e1ce281`;
+- complete Codespace closure suite: **737 passed, 59 subtests passed in 16.38s** at checkpoint `a6a1700`;
 - authoritative pre- and post-suite synchronization both reported `SYNC: GREEN`;
-- complete closure suite: **716 passed, 59 subtests passed in 18.54s**;
-- whitespace, working-tree and diff checks passed;
-- final checkpoint: `e1ce281`.
+- whitespace checks passed;
+- working tree and diff checks were clean;
+- no generated artifacts or secrets were introduced in the verified block.
 
-The branch also retains the previously documented harmless no-content-diff history marker
-`e1ce281` created by the sequential GitHub Contents API write; no history rewrite is warranted.
+A small stale-worktree incident was also reconciled during this block:
+a preserved local stash contained a mixture of obsolete Illo/Killo-era changes and a few useful
+current fixes. Only the compatible changes were selectively recovered; old `illo_primary` /
+`killo_reaction` claims and removal of the DecisionProvider application seam were discarded.
+The local stash remains preserved and unapplied.
 
-This block is therefore **CLOSED AND GREEN**.
+Current Gag 001 experiment tooling also gained a traceability improvement: Gemini experiment output
+now includes the observation statement and the frozen snapshot claim/evaluation summary. This does not
+change the evidence boundary or canon.
 
-Next implementation target: add the small orchestration seam that invokes an injected
-collaboration provider and returns an auditable handoff record. The seam must validate
-the returned `CollaborationUpdate`, preserve envelope identity, capture deterministic
-execution metadata/digests, and keep automatic action execution out of scope.
+This block is therefore **CLOSED AND GREEN** at `a6a1700`.
+
+### Next target
+
+Run the first real local collaboration experiment against an actual OpenAI-compatible Qwen runtime,
+using a bounded `WorkEnvelope` populated from the current semantic context and explicit prior/failure
+history. Capture the resulting `CollaborationExecutionRecord`, inspect the audit before interpreting
+the model output, and keep the result experimental evidence only. Do not promote model output into
+canon or Core decisions automatically.
