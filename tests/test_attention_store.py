@@ -70,8 +70,7 @@ class AttentionStoreTests(unittest.TestCase):
         self.assertEqual(self.store.list_pending(), ())
 
     def test_invalid_transitions_and_missing_events(self):
-        with self.assertRaises(KeyError):
-            self.store.get("missing")
+        self.assertIsNone(self.store.get("missing"))
         with self.assertRaises(KeyError):
             self.store.acknowledge("missing")
         self.store.save(event("event-001"))
