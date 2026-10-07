@@ -298,7 +298,6 @@ Verification:
 - `bash scripts/close_work_block.sh` completed successfully;
 - checkpoint: `20c9e68`;
 - whitespace, working-tree and diff checks were clean.
-
 ## Creative Direction — SUBVERSIÓN ELEGANTE / MAGNETISMO PUNK
 
 A recent artistic direction has been explicitly recognised as an important part of the Arsa & Pisha identity and must be documented as a compositional/behavioral grammar rather than as a requirement to sexualise the characters.
@@ -597,8 +596,7 @@ Codex execution:
 
 Human consolidation:
 - the application-boundary change was committed and pushed on `feature/semantic-model`;
-- current remote checkpoint: `fbfe982c8af7be092860b6ccbaef8189d595ec29`;
-- complete regression suite in the Codespace: **638 passed, 59 subtests passed**;
+- current remote checkpoint: `fbfe982c8af7be092860b6ccbaef8189d595ec29`;- complete regression suite in the Codespace: **638 passed, 59 subtests passed**;
 - the branch is green and the application-boundary block is closed;
 - the remote handoff was deliberately updated after the application commit so repository state and continuity documentation remain aligned.
 
@@ -846,10 +844,11 @@ Implementation verification:
 Next implementation target: execute the first live local benchmark against an OpenAI-compatible runtime. The live result remains benchmark evidence only and does not constitute provider adoption.
 
 
-## Current block — Collaborative Work Envelope + Local Collaboration Adapter / VERIFIED GREEN
+## Current block — Collaborative Work Envelope + Local Collaboration Adapter + Experiment Runner / VERIFIED GREEN
 
 The collaborative protocol has now advanced from a data-only envelope to a provider-neutral
-execution seam plus a local structured collaboration adapter, while preserving Core authority.
+execution seam, a local structured collaboration adapter, and a bounded experiment runner,
+while preserving Core authority.
 
 Implementation on branch `assistant/collaborative-work-envelope`:
 - `core/work_envelope.py` defines immutable, bounded `WorkEnvelope` and `CollaborationUpdate`;
@@ -859,41 +858,48 @@ Implementation on branch `assistant/collaborative-work-envelope`:
   the provider once, and records deterministic envelope/update digests plus provider/model metadata;
 - `core/local_collaboration_provider.py` implements a local OpenAI-compatible structured
   collaboration adapter with deterministic prompt construction and strict JSON-schema output;
-- the adapter is deliberately advisory/collaborative: it cannot execute tools, mutate canon,
-  or make Core decisions;
+- `scripts/run_local_collaboration.py` builds a bounded work envelope from the authoritative
+  loader/semantic-context path and performs one local collaboration pass, persisting the exact
+  `CollaborationExecutionRecord` JSON;
+- the runner is observational/experimental only: it does not execute tools, mutate canon, or make
+  Core decisions;
 - `data/capabilities.json` registers `collaboration.qwen_local` as a prototype capability;
 - `docs/COLLABORATIVE_WORK_ENVELOPE.md`, `docs/LOCAL_COLLABORATIVE_PROVIDER.md` and
   `docs/CAPABILITY_ROUTING.md` document the protocol, adapter boundary and routing semantics;
-- dedicated tests cover the envelope, execution seam, local provider contract and capability registry.
+- dedicated tests cover the envelope, execution seam, local provider contract, capability registry
+  and the new collaboration runner.
 
-The provider prompt uses the bounded envelope as its complete task brief and explicitly states:
-context is information, available tools are metadata, and proposed output is not canon or a Core
-decision. The model is instructed to produce concrete, testable work rather than filler, but no live
-quality claim has been inferred from the adapter tests.
+The runner's work envelope is populated from the current semantic context and carries the active
+Arsa & Pisha canon boundary plus explicit prior-work/known-failure context. Its default target is
+the local OpenAI-compatible Qwen runtime (`qwen3.8-27b` at `http://127.0.0.1:8080/v1`).
+The runtime is not assumed to be available in Codespace; the intended real inference environment is
+the local machine when the new equipment/runtime is available.
 
 Verification:
-- complete Codespace closure suite: **737 passed, 59 subtests passed in 16.38s** at checkpoint `a6a1700`;
-- authoritative pre- and post-suite synchronization both reported `SYNC: GREEN`;
+- after consuming runner checkpoint `468a86a`, the repository-configured closure gate completed
+  successfully with **739 passed, 59 subtests passed in 19.95s**;
+- authoritative pre- and post-suite synchronization both reported `SYNC: GREEN` at `468a86a`;
 - whitespace checks passed;
-- working tree and diff checks were clean;
-- no generated artifacts or secrets were introduced in the verified block.
+- working tree and diff checks were clean at the end of the gate;
+- no generated artifacts or secrets were introduced by the runner block;
+- the separate focused invocation `PYTHONPATH=. python -m pytest tests/test_local_collaboration_runner.py -q`
+  could not start because that Codespace session has no `pytest` module installed. This is an environment
+  limitation of the focused command, not a test-suite failure; the configured complete closure suite is
+  the verification gate used for this repository.
 
-A small stale-worktree incident was also reconciled during this block:
-a preserved local stash contained a mixture of obsolete Illo/Killo-era changes and a few useful
-current fixes. Only the compatible changes were selectively recovered; old `illo_primary` /
-`killo_reaction` claims and removal of the DecisionProvider application seam were discarded.
-The local stash remains preserved and unapplied.
+The runner was therefore **VERIFIED GREEN** at `468a86a`. No live Qwen model call has been made as part
+of this block, so there is still no model-quality, latency or hardware conclusion.
 
-Current Gag 001 experiment tooling also gained a traceability improvement: Gemini experiment output
-now includes the observation statement and the frozen snapshot claim/evaluation summary. This does not
-change the evidence boundary or canon.
+### Current stopping point
 
-This block is therefore **CLOSED AND GREEN** at `a6a1700`.
+The code path is prepared for the new equipment. Do not infer that the local Qwen runtime is installed
+or that the machine is available until it is actually tested.
 
 ### Next target
 
-Run the first real local collaboration experiment against an actual OpenAI-compatible Qwen runtime,
-using a bounded `WorkEnvelope` populated from the current semantic context and explicit prior/failure
-history. Capture the resulting `CollaborationExecutionRecord`, inspect the audit before interpreting
-the model output, and keep the result experimental evidence only. Do not promote model output into
-canon or Core decisions automatically.
+When the new local equipment/runtime is available, run one real local collaboration experiment using
+the prepared runner. Persist the resulting `CollaborationExecutionRecord` to a local temporary/output
+path, inspect its envelope/update/audit content before interpreting the model output, and record the
+result as experimental evidence only. Do not promote provider output into canon or Core decisions
+automatically.
+
