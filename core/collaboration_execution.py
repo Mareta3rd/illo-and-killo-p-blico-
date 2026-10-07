@@ -34,6 +34,15 @@ def _provider_id(provider: object) -> str:
     return value.strip()
 
 
+def _provider_model_id(provider: object) -> str | None:
+    value = getattr(provider, "model_id", None)
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise TypeError("provider model_id must be a non-empty string when present")
+    return value.strip()
+
+
 @dataclass(frozen=True)
 class CollaborationExecutionRecord:
     """Immutable audit record for one validated collaboration handoff."""
@@ -41,6 +50,7 @@ class CollaborationExecutionRecord:
     envelope: WorkEnvelope
     update: CollaborationUpdate
     provider_id: str
+    model_id: str | None
     envelope_digest: str
     update_digest: str
 
@@ -50,6 +60,7 @@ class CollaborationExecutionRecord:
             "envelope": self.envelope.to_dict(),
             "update": self.update.to_dict(),
             "provider_id": self.provider_id,
+            "model_id": self.model_id,
             "envelope_digest": self.envelope_digest,
             "update_digest": self.update_digest,
         }
@@ -73,6 +84,7 @@ def execute_collaboration(
         raise TypeError("envelope must be a WorkEnvelope")
 
     provider_id = _provider_id(provider)
+    model_id = _provider_model_id(provider)
     collaborate = getattr(provider, "collaborate", None)
     if not callable(collaborate):
         raise TypeError("provider must expose callable collaborate(envelope)")
@@ -86,6 +98,7 @@ def execute_collaboration(
         envelope=envelope,
         update=update,
         provider_id=provider_id,
+        model_id=model_id,
         envelope_digest=_digest(envelope.to_json()),
         update_digest=_digest(update.to_json()),
     )
