@@ -39,6 +39,23 @@ The protocol keeps three things distinct:
 
 See docs/COLLABORATIVE_WORK_ENVELOPE.md for the contract and boundaries.
 
+## Local collaborative provider prototype
+
+The first concrete implementation of the collaborative capability is
+`collaboration.qwen_local`.
+
+It consumes a bounded `WorkEnvelope` and returns a validated
+`CollaborationUpdate` through an injected OpenAI-compatible local runtime.
+The orchestration seam records the provider identifier, optional model identifier,
+the exact envelope/update digests and the validated handoff.
+
+This capability is registered as `prototype`, not adopted. The first live target
+is Qwen3.8-27B in the same local runtime family as the DecisionProvider prototype.
+Actual quality, latency and hardware feasibility remain empirical questions.
+
+The capability remains replaceable: the routing layer must reason about
+`collaboration`, not about Qwen as a special case.
+
 ## DecisionProvider contract
 
 The first concrete capability contract to implement is DecisionProvider.
