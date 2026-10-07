@@ -60,10 +60,22 @@ def test_executes_provider_once_and_returns_validated_audit_record():
     assert record.envelope == envelope
     assert record.update == make_update()
     assert record.provider_id == "test-collaborator"
+    assert record.model_id is None
     assert provider.calls == 1
     assert provider.received == envelope
     assert len(record.envelope_digest) == 64
     assert len(record.update_digest) == 64
+
+
+def test_optional_model_identity_is_captured():
+    class ModelProvider(RecordingProvider):
+        provider_id = "test-collaborator"
+        model_id = "model-a"
+
+    record = execute_collaboration(ModelProvider(make_update()), make_envelope())
+
+    assert record.model_id == "model-a"
+    assert '"model_id":"model-a"' in record.to_json()
 
 
 def test_record_is_immutable_and_serializable():
@@ -102,6 +114,15 @@ def test_rejects_provider_without_nonempty_provider_id():
 
     with pytest.raises(TypeError, match="non-empty provider_id"):
         execute_collaboration(MissingIdProvider(), make_envelope())
+
+
+def test_rejects_provider_with_invalid_model_identity():
+    class InvalidModelProvider(RecordingProvider):
+        provider_id = "invalid-model"
+        model_id = ""
+
+    with pytest.raises(TypeError, match="model_id must be a non-empty string"):
+        execute_collaboration(InvalidModelProvider(make_update()), make_envelope())
 
 
 def test_rejects_provider_without_callable_collaborate():
