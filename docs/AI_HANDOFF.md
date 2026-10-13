@@ -984,8 +984,8 @@ material, canon or a Core decision.
 
 The one-time trigger has since been removed from the experiment branch in commit
 `4b2bb5e6aa2bda04386de7b4c3eb2cc8045d0971`; its workflow is back to manual opt-in, so subsequent
-pushes will not run Qwen. The active branch remains `assistant/collaborative-work-envelope` at
-`60a83e8c4a9686e8a222cf183a4deb7899f6abe7`, with its cloud suite green and PR #5 still open. The
+pushes will not run Qwen. At the time of this cloud run, the active branch's code checkpoint was
+`60a83e8c4a9686e8a222cf183a4deb7899f6abe7`; its cloud suite passed, and PR #5 remains open. The
 latest local full suite also passed: **745 tests and 59 subtests in 13.45s**. The ASUS remains the
 control station and was not used for model inference. No weekly Arsa & Pisha model run is configured.
 
