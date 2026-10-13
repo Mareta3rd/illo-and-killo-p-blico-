@@ -17,10 +17,15 @@ def test_repository_capability_registry_loads_and_queries():
         "decision.qwen_local",
         "orchestration.openai_agents_api",
         "computer_use.anthropic_cowork",
+        "collaboration.qwen_local",
     }
     assert registry.get("decision.rules").status == "adopted"
     assert registry.get("decision.jev").status == "deferred_external_access"
     assert registry.get("decision.qwen_local").status == "prototype"
+    assert registry.get("collaboration.qwen_local").status == "prototype"
+    assert [record.id for record in registry.for_capability("collaboration")] == [
+        "collaboration.qwen_local",
+    ]
     assert [record.id for record in registry.for_capability("decision")] == [
         "decision.qwen_local",
         "decision.rules",

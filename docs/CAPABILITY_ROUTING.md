@@ -17,17 +17,48 @@ This keeps Core stable while allowing providers and runtimes to change.
 
 ## Initial capability classes
 
-- `decision` — bounded judgments such as route, classify, select, score or escalate;
-- `generation` — create text, code, image or other artifacts;
-- `execution` — modify files, run commands or operate a workspace;
-- `perception` — inspect images, documents or other external state;
-- `orchestration` — manage sessions, delegation, recovery and long-running work;
-- `computer_use` — operate desktop/browser interfaces;
-- `evaluation` — verify acceptance, regression, scope and policy compliance.
+- decision — bounded judgments such as route, classify, select, score or escalate;
+- generation — create text, code, image or other artifacts;
+- execution — modify files, run commands or operate a workspace;
+- perception — inspect images, documents or other external state;
+- orchestration — manage sessions, delegation, recovery and long-running work;
+- computer_use — operate desktop/browser interfaces;
+- evaluation — verify acceptance, regression, scope and policy compliance.
+
+## Collaborative work protocol
+
+The collaborative layer sits above individual provider capabilities and below Core authority.
+
+It uses a bounded WorkEnvelope to define one unit of work and a CollaborationUpdate to communicate progress or a handoff without requiring continuous human intervention.
+
+The protocol keeps three things distinct:
+
+- context is information, not permission;
+- available tools are capability metadata, not authorization;
+- a collaborator's proposed output is not a Core decision or executed action.
+
+See docs/COLLABORATIVE_WORK_ENVELOPE.md for the contract and boundaries.
+
+## Local collaborative provider prototype
+
+The first concrete implementation of the collaborative capability is
+`collaboration.qwen_local`.
+
+It consumes a bounded `WorkEnvelope` and returns a validated
+`CollaborationUpdate` through an injected OpenAI-compatible local runtime.
+The orchestration seam records the provider identifier, optional model identifier,
+the exact envelope/update digests and the validated handoff.
+
+This capability is registered as `prototype`, not adopted. The first live target
+is Qwen3.8-27B in the same local runtime family as the DecisionProvider prototype.
+Actual quality, latency and hardware feasibility remain empirical questions.
+
+The capability remains replaceable: the routing layer must reason about
+`collaboration`, not about Qwen as a special case.
 
 ## DecisionProvider contract
 
-The first concrete capability contract to implement is `DecisionProvider`.
+The first concrete capability contract to implement is DecisionProvider.
 
 A decision request should contain:
 - a stable question identifier;
@@ -54,8 +85,8 @@ must not care which one supplied the result.
 
 The first implementation therefore must not import Jev, OpenAI, Anthropic,
 Gemini, Qwen or any other provider. The machine-readable registry in
-`data/capabilities.json` is descriptive metadata and is validated independently by
-`core/capability_registry.py` without selecting a provider.
+data/capabilities.json is descriptive metadata and is validated independently by
+core/capability_registry.py without selecting a provider.
 
 ## Safety and determinism
 
@@ -82,8 +113,8 @@ comes only after the seam is green.
 ## Capability digestion
 
 The project does not seek permanent dependence on a provider. External systems are
-tested as implementations of capabilities that should remain expressible without
-the provider's brand.
+tested as implementations of capabilities that should remain expressible without the
+provider's brand.
 
 The lifecycle is:
 

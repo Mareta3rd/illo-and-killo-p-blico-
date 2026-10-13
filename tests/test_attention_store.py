@@ -14,7 +14,7 @@ from core.attention import (
 from core.attention_store import JsonAttentionStore
 
 
-def event(event_id, run_id="run-001", *, status=AttentionStatus.PENDING, claim_key="gag/001/composition/illo_primary", category=AttentionCategory.CORE_HUMAN_REVIEW):
+def event(event_id, run_id="run-001", *, status=AttentionStatus.PENDING, claim_key="gag/001/composition/arsa_primary", category=AttentionCategory.CORE_HUMAN_REVIEW):
     return AttentionEvent(
         event_id=event_id,
         run_id=run_id,
