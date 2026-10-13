@@ -73,6 +73,7 @@ def test_build_prompt_is_deterministic_and_uses_bounded_work():
     assert "previous output was vague" in first
     assert "available_tools" in first
     assert "Do not call, execute or imply authorization" in first
+    assert "each progress and blocker item below 450 characters" in first
     assert envelope.to_json() in first
 
 
@@ -124,6 +125,16 @@ def test_rejects_malformed_payloads(payload):
     )
 
     with pytest.raises((ValueError, TypeError)):
+        provider.collaborate(make_envelope())
+
+
+def test_rejects_progress_entry_over_protocol_limit():
+    provider = LocalStructuredCollaborationProvider(
+        FakeClient(json.dumps(valid_payload(progress=["x" * 601]))),
+        model="qwen3.8-27b",
+    )
+
+    with pytest.raises(ValueError, match="progress exceeds the maximum length of 600"):
         provider.collaborate(make_envelope())
 
 

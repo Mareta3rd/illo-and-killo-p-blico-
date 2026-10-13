@@ -80,6 +80,7 @@ def build_collaboration_prompt(envelope: WorkEnvelope) -> str:
         "Do not execute external actions, modify files, change canon, make Core decisions or issue routing commands.",
         "The output is a proposal or handoff for Core or a human reviewer, not an authorization.",
         "Use questions only for information that is genuinely required to continue.",
+        "Respect the envelope size limits: keep summary and needs_input below 1,800 characters, each progress and blocker item below 450 characters, and output compact enough to fit its 24 KB JSON limit.",
         "Use working when the task remains in progress, ready_for_review when a bounded result is ready for review, needs_input when a blocking human answer is required, blocked when progress cannot continue, and done only when the bounded objective is actually complete.",
         "Set attention_required true only when the selected status represents an actionable handoff.",
         "Keep proposals specific and testable. Avoid filler, repetition and unsupported certainty.",

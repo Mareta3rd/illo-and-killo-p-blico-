@@ -925,18 +925,29 @@ The working copy includes Windows-compatible test-fixture repairs in
 The latest complete Windows suite run passed: **739 tests and 59 subtests in 14.90s**;
 `git diff --check` was clean.
 
-### Next target — cloud verification first
+### First cloud Qwen pass (2026-10-13)
 
-`.github/workflows/ci.yml` adds full-suite runs on GitHub-hosted runners for pushes and pull requests.
-Its Qwen job is manual-only, requires an explicit `run_qwen` opt-in,
-downloads a pinned CPU runtime and
-model without caching the model, binds the server to loopback, caps context/output, and keeps evidence
-as a seven-day artifact. Because this repository is public, that opt-in job's artifact and logs are
-public while retained; review before using it for anything not intended for public project visibility.
-There is deliberately no weekly schedule.
+The active branch's `.github/workflows/ci.yml` runs the complete suite on pushes and pull requests.
+Its Qwen job remains manual-only with an explicit `run_qwen` opt-in. An isolated branch,
+`experiment/qwen-cpu-once-20261013` at `e8db23782f3c55b8c947d436fae1593a6fbfa64d`, was used to make
+one authorized cloud run possible without merging or changing the active PR.
 
-After the workflow is published to GitHub, let the cloud runner verify the full suite first. Only then
-manually dispatch one cloud Qwen experiment and inspect its artifact. Treat any output as experimental
-and human-reviewed; never promote it into canon or Core decisions automatically. The ASUS remains the
-control station, not the inference host.
+The cloud suite passed (**739 tests, 59 subtests**). The pinned Qwen 4B CPU runtime and model downloaded
+successfully, but the collaboration adapter correctly rejected the model's response because at least
+one `progress` item exceeded the protocol's 600-character limit. No valid
+`CollaborationExecutionRecord` was produced. GitHub retained the small public artifact
+`arsa-pisha-qwen-38443320769-1` until 2026-10-20; workflow run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38443320769.
+
+The protocol limit remains strict. The active-branch prompt now tells collaborators to keep each
+`progress`/`blocker` item below 450 characters, with a regression test for that instruction and the
+600-character rejection boundary. The local full suite after this fix passed: **740 tests, 59 subtests
+in 14.51s**.
+
+### Next target — one cloud verification of the prompt correction
+
+If the correction is committed, run one bounded Qwen pass from a fresh isolated experiment branch.
+Inspect the retained artifact for a valid record and human-reviewable creative output. Keep provider
+output experimental: do not promote it to canon or a Core decision. The ASUS remains the control
+station; there is deliberately no weekly schedule.
 
