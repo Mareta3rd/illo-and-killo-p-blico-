@@ -949,14 +949,26 @@ and passed the progress-length check. The adapter then correctly rejected the re
 `needs_input` status had an empty `needs_input` message. Again, no invalid record was written. Run:
 https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38444745562.
 
-The prompt now also requires a non-empty `needs_input` exactly for `needs_input` status, null otherwise,
-and the allowed mapping for `attention_required`. Regression tests cover these instructions and the
-empty-message rejection. The latest local full suite passed: **741 tests, 59 subtests in 13.62s**.
+The third run used isolated branch `experiment/qwen-cpu-final-20261013` at
+`639d9586b065e72b7c13fd55517f505daee52456`. The cloud suite and progress-length validation passed,
+but the model contradicted itself between `status` and `needs_input`; the adapter correctly rejected
+the response. No valid record was produced. Run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38446315932.
 
-### Next target — one cloud verification of the prompt correction
+The active-branch correction removes those redundant decisions from the model response. The model now
+returns only `status`, `summary`, `progress`, `blockers` and `output`; the adapter derives
+`needs_input` from the first non-empty output question when status is `needs_input`, and derives
+`attention_required` from the status. It rejects `needs_input` without a valid question. Regression
+tests cover the reduced response schema, derived fields, malformed question shape and protocol limits.
+The latest local full suite passed: **745 tests and 59 subtests in 13.45s**; the focused provider and
+runner checks passed **19 tests in 1.62s**.
 
-After the current prompt correction passes the full suite, run one final bounded Qwen pass from a fresh
-isolated experiment branch. Inspect the retained artifact for a valid record and human-reviewable
-creative output. Keep provider output experimental: do not promote it to canon or a Core decision. The
-ASUS remains the control station; there is deliberately no weekly schedule.
+### Next target — one final cloud verification of the structural correction
+
+Run one final bounded Qwen pass from a fresh isolated experiment branch after this correction is
+committed and its ordinary cloud suite passes. Inspect the retained artifact for a valid record and
+human-reviewable creative output. Keep provider output experimental: do not promote it to canon or a
+Core decision. Stop after this verification attempt and report any remaining model limitation. The
+ASUS remains the control station; the model and full test workload stay on public GitHub runners, and
+there is deliberately no weekly schedule.
 

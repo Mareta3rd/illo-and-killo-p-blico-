@@ -37,7 +37,6 @@ class FakeCompletions:
                                             "progress": [
                                                 "He usado el contexto semántico del gag y los invariantes actuales.",
                                             ],
-                                            "needs_input": None,
                                             "blockers": [],
                                             "output": {
                                                 "answer": "La propuesta principal convierte el jamón en el detonante de una escalada física concreta.",
@@ -48,7 +47,6 @@ class FakeCompletions:
                                                 ],
                                                 "questions": [],
                                             },
-                                            "attention_required": True,
                                         }
                                     )
                                 },

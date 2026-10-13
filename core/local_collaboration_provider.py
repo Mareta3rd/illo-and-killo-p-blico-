@@ -51,20 +51,10 @@ def _collaboration_output_schema() -> dict[str, Any]:
             },
             "summary": {"type": "string"},
             "progress": {"type": "array", "items": {"type": "string"}},
-            "needs_input": {"type": ["string", "null"]},
             "blockers": {"type": "array", "items": {"type": "string"}},
             "output": {"type": ["object", "null"], "additionalProperties": False, "properties": _OUTPUT_PROPERTIES, "required": _OUTPUT_REQUIRED},
-            "attention_required": {"type": "boolean"},
         },
-        "required": [
-            "status",
-            "summary",
-            "progress",
-            "needs_input",
-            "blockers",
-            "output",
-            "attention_required",
-        ],
+        "required": ["status", "summary", "progress", "blockers", "output"],
     }
 
 
@@ -80,9 +70,9 @@ def build_collaboration_prompt(envelope: WorkEnvelope) -> str:
         "Do not execute external actions, modify files, change canon, make Core decisions or issue routing commands.",
         "The output is a proposal or handoff for Core or a human reviewer, not an authorization.",
         "Use questions only for information that is genuinely required to continue.",
-        "Respect the envelope size limits: keep summary and needs_input below 1,800 characters, each progress and blocker item below 450 characters, and output compact enough to fit its 24 KB JSON limit.",
-        "Set needs_input to a concise, non-empty message if and only if status is needs_input; otherwise set it to null.",
-        "Set attention_required true for needs_input, ready_for_review, blocked, or done; set it false for available or working.",
+        "Respect the envelope size limits: keep summary and each question below 1,800 characters, each progress and blocker item below 450 characters, and output compact enough to fit its 24 KB JSON limit.",
+        "If status is needs_input, put the concise blocking question first in output.questions; do not use needs_input status without a question.",
+        "The adapter derives needs_input and attention_required from status and output.questions; these are not response fields.",
         "Use working when the task remains in progress, ready_for_review when a bounded result is ready for review, needs_input when a blocking human answer is required, blocked when progress cannot continue, and done only when the bounded objective is actually complete.",
         "Keep proposals specific and testable. Avoid filler, repetition and unsupported certainty.",
         "",
@@ -168,10 +158,8 @@ class LocalStructuredCollaborationProvider:
             "status",
             "summary",
             "progress",
-            "needs_input",
             "blockers",
             "output",
-            "attention_required",
         }
         if set(payload) != expected_keys:
             raise ValueError(
@@ -185,15 +173,40 @@ class LocalStructuredCollaborationProvider:
                     "local collaboration provider returned an invalid output object"
                 )
 
+        status = payload["status"]
+        needs_input = None
+        if status == "needs_input":
+            questions = output.get("questions") if output is not None else None
+            if not isinstance(questions, list) or any(
+                not isinstance(question, str) for question in questions
+            ):
+                raise ValueError(
+                    "local collaboration provider returned an invalid output object"
+                )
+            needs_input = next(
+                (question.strip() for question in questions if question.strip()),
+                None,
+            )
+            if needs_input is None:
+                raise ValueError(
+                    "needs_input status requires a non-empty output question"
+                )
+        attention_required = status in {
+            "needs_input",
+            "ready_for_review",
+            "blocked",
+            "done",
+        }
+
         update = CollaborationUpdate(
             envelope_id=envelope.envelope_id,
-            status=payload["status"],
+            status=status,
             summary=payload["summary"],
             progress=tuple(payload["progress"]),
-            needs_input=payload["needs_input"],
+            needs_input=needs_input,
             blockers=tuple(payload["blockers"]),
             output=dict(output) if output is not None else None,
-            attention_required=payload["attention_required"],
+            attention_required=attention_required,
         )
         update.validate_for(envelope)
         return update
