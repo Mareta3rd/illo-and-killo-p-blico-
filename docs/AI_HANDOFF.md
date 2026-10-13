@@ -890,16 +890,53 @@ Verification:
 The runner was therefore **VERIFIED GREEN** at `468a86a`. No live Qwen model call has been made as part
 of this block, so there is still no model-quality, latency or hardware conclusion.
 
-### Current stopping point
+### Update — ASUS hardware check and cloud-first direction (2026-10-13)
 
-The code path is prepared for the new equipment. Do not infer that the local Qwen runtime is installed
-or that the machine is available until it is actually tested.
+The user set the ASUS Vivobook as a lightweight control station. Keep code review and routine
+verification in GitHub's free standard runners wherever possible; do not run local models by default.
+Local inference is an optional, bounded fallback and must not become a background service.
 
-### Next target
+Repository and scheduling check:
+- active branch: `assistant/collaborative-work-envelope`;
+- local HEAD and authoritative `origin` HEAD both matched `98dcc3d899b9af36dbd7a0143751634f17e16376`;
+- repository visibility is public;
+- at the inspected checkpoint there was no `.github/workflows` directory, and no Arsa & Pisha / Sinergya weekly automation;
+- the unrelated MusicStudio weekly task was left untouched.
 
-When the new local equipment/runtime is available, run one real local collaboration experiment using
-the prepared runner. Persist the resulting `CollaborationExecutionRecord` to a local temporary/output
-path, inspect its envelope/update/audit content before interpreting the model output, and record the
-result as experimental evidence only. Do not promote provider output into canon or Core decisions
-automatically.
+Local CPU probe, evidence only:
+- model: `Qwen3-4B-Instruct-2507` Q4_K_M, pinned for later reproduction to Hugging Face revision
+  `ec85e0c4ae5c1d1e467dd98a0af99983358b4680`;
+- runtime: llama.cpp `b11583`, CPU-only, bound to `127.0.0.1`, authenticated with a local placeholder;
+- limits: 2 CPU threads, one request, 8,192 context, no GPU layers;
+- process working set was about 5.6 GB; generation speed was about 6 tokens/s;
+- two attempts (384-token and 768-token output ceilings) ran for 96.71 s and 168.29 s; both reached their
+  output ceiling and the adapter rejected the response as invalid JSON, so no valid
+  `CollaborationExecutionRecord` was written;
+- the llama.cpp process stopped after each attempt. Do not increase local limits or repeat the test on
+  this laptop. This is not a provider adoption, quality result, or canon proposal.
+
+The public repository can use standard GitHub-hosted runners for free. The current GitHub runner
+reference lists `ubuntu-latest` at 4 CPUs and 16 GB RAM for public repositories; standard runner usage
+is free there. Sources: [runner specifications](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+and [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+
+The working copy includes Windows-compatible test-fixture repairs in
+`tests/test_groq_qwen_candidate_executor.py` and `tests/test_groq_qwen_real_experiment.py`.
+The latest complete Windows suite run passed: **739 tests and 59 subtests in 14.90s**;
+`git diff --check` was clean.
+
+### Next target — cloud verification first
+
+`.github/workflows/ci.yml` adds full-suite runs on GitHub-hosted runners for pushes and pull requests.
+Its Qwen job is manual-only, requires an explicit `run_qwen` opt-in,
+downloads a pinned CPU runtime and
+model without caching the model, binds the server to loopback, caps context/output, and keeps evidence
+as a seven-day artifact. Because this repository is public, that opt-in job's artifact and logs are
+public while retained; review before using it for anything not intended for public project visibility.
+There is deliberately no weekly schedule.
+
+After the workflow is published to GitHub, let the cloud runner verify the full suite first. Only then
+manually dispatch one cloud Qwen experiment and inspect its artifact. Treat any output as experimental
+and human-reviewed; never promote it into canon or Core decisions automatically. The ASUS remains the
+control station, not the inference host.
 
