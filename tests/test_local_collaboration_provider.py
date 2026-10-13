@@ -74,6 +74,8 @@ def test_build_prompt_is_deterministic_and_uses_bounded_work():
     assert "available_tools" in first
     assert "Do not call, execute or imply authorization" in first
     assert "each progress and blocker item below 450 characters" in first
+    assert "non-empty message if and only if status is needs_input" in first
+    assert "otherwise set it to null" in first
     assert envelope.to_json() in first
 
 
@@ -135,6 +137,17 @@ def test_rejects_progress_entry_over_protocol_limit():
     )
 
     with pytest.raises(ValueError, match="progress exceeds the maximum length of 600"):
+        provider.collaborate(make_envelope())
+
+
+def test_rejects_needs_input_without_non_empty_message():
+    payload = valid_payload(status="needs_input", needs_input="", attention_required=True)
+    provider = LocalStructuredCollaborationProvider(
+        FakeClient(json.dumps(payload)),
+        model="qwen3.8-27b",
+    )
+
+    with pytest.raises(ValueError, match="needs_input must be a non-empty string"):
         provider.collaborate(make_envelope())
 
 

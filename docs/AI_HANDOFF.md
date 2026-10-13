@@ -939,15 +939,24 @@ one `progress` item exceeded the protocol's 600-character limit. No valid
 `arsa-pisha-qwen-38443320769-1` until 2026-10-20; workflow run:
 https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38443320769.
 
-The protocol limit remains strict. The active-branch prompt now tells collaborators to keep each
-`progress`/`blocker` item below 450 characters, with a regression test for that instruction and the
-600-character rejection boundary. The local full suite after this fix passed: **740 tests, 59 subtests
-in 14.51s**.
+The protocol limits remain strict. The active-branch prompt now tells collaborators to keep each
+`progress`/`blocker` item below 450 characters, with tests for that instruction and the 600-character
+rejection boundary. The local full suite after this fix passed: **740 tests, 59 subtests in 14.51s**.
+
+A second run from isolated branch `experiment/qwen-cpu-retry-20261013` at
+`a470efe46b35e31daa0ac5133479b65707378e05` passed the cloud suite, downloaded the same pinned model,
+and passed the progress-length check. The adapter then correctly rejected the response because
+`needs_input` status had an empty `needs_input` message. Again, no invalid record was written. Run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38444745562.
+
+The prompt now also requires a non-empty `needs_input` exactly for `needs_input` status, null otherwise,
+and the allowed mapping for `attention_required`. Regression tests cover these instructions and the
+empty-message rejection. The latest local full suite passed: **741 tests, 59 subtests in 13.62s**.
 
 ### Next target — one cloud verification of the prompt correction
 
-If the correction is committed, run one bounded Qwen pass from a fresh isolated experiment branch.
-Inspect the retained artifact for a valid record and human-reviewable creative output. Keep provider
-output experimental: do not promote it to canon or a Core decision. The ASUS remains the control
-station; there is deliberately no weekly schedule.
+After the current prompt correction passes the full suite, run one final bounded Qwen pass from a fresh
+isolated experiment branch. Inspect the retained artifact for a valid record and human-reviewable
+creative output. Keep provider output experimental: do not promote it to canon or a Core decision. The
+ASUS remains the control station; there is deliberately no weekly schedule.
 
