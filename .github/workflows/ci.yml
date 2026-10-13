@@ -43,7 +43,7 @@ jobs:
 
   qwen-collaboration:
     name: Optional bounded Qwen collaboration run
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_qwen }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_qwen) || (github.event_name == 'push' && github.ref == 'refs/heads/experiment/qwen-cpu-final2-20261013' && github.event.created) }}
     needs: tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
