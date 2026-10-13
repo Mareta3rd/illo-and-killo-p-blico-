@@ -963,12 +963,35 @@ tests cover the reduced response schema, derived fields, malformed question shap
 The latest local full suite passed: **745 tests and 59 subtests in 13.45s**; the focused provider and
 runner checks passed **19 tests in 1.62s**.
 
-### Next target — one final cloud verification of the structural correction
+### First structurally valid cloud Qwen collaboration record (2026-10-13)
 
-Run one final bounded Qwen pass from a fresh isolated experiment branch after this correction is
-committed and its ordinary cloud suite passes. Inspect the retained artifact for a valid record and
-human-reviewable creative output. Keep provider output experimental: do not promote it to canon or a
-Core decision. Stop after this verification attempt and report any remaining model limitation. The
-ASUS remains the control station; the model and full test workload stay on public GitHub runners, and
-there is deliberately no weekly schedule.
+After active-branch commit `60a83e8c4a9686e8a222cf183a4deb7899f6abe7` passed its ordinary cloud suite,
+one isolated branch, `experiment/qwen-cpu-final2-20261013`, enabled the Qwen job only on that branch's
+creation event. Run `38451805911` completed successfully: the cloud suite passed **745 tests and 59
+subtests in 9.67s**, and the bounded CPU Qwen job downloaded the pinned model and produced a valid
+`CollaborationExecutionRecord`. Run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38451805911.
+
+The record reports provider `local-qwen-collaboration`, model `qwen3-4b-cloud`, status
+`ready_for_review`, no blockers, and `attention_required: true`. Its public artifact is
+`arsa-pisha-qwen-38451805911-1` (7,127 bytes; SHA-256
+`35ac4c7def92f4774838091a3f8393d385d16580811daa0a05a062b113d6203e`), available until **2026-10-20**.
+The result proves the CPU cloud runtime, structured response adapter and audit-record path can work
+together. It does not establish creative quality: the bounded request asked for a gag around a
+jamón, but the model centered its answer on a botijo and a colored wave in the air. That is a clear
+task-adherence miss. Keep this record as experimental evidence only; it is not accepted creative
+material, canon or a Core decision.
+
+The one-time trigger has since been removed from the experiment branch in commit
+`4b2bb5e6aa2bda04386de7b4c3eb2cc8045d0971`; its workflow is back to manual opt-in, so subsequent
+pushes will not run Qwen. The active branch remains `assistant/collaborative-work-envelope` at
+`60a83e8c4a9686e8a222cf183a4deb7899f6abe7`, with its cloud suite green and PR #5 still open. The
+latest local full suite also passed: **745 tests and 59 subtests in 13.45s**. The ASUS remains the
+control station and was not used for model inference. No weekly Arsa & Pisha model run is configured.
+
+### Next step
+
+Review the valid record as an engineering milestone and decide whether to improve task adherence
+before any later optional inference. Do not launch another generation or promote this output until a
+human accepts the creative direction. MusicStudio is a separate project and was not touched.
 
