@@ -65,6 +65,7 @@ def build_collaboration_prompt(envelope: WorkEnvelope) -> str:
         "Return exactly one JSON object matching the supplied schema.",
         "Produce concrete, useful work rather than generic encouragement or vague advice.",
         "Use objective, context, prior work and known failures together; do not ignore inconvenient constraints.",
+        "Treat concrete subjects, characters, objects and outcomes explicitly requested by the human as central requirements; context may enrich them but must not silently replace them.",
         "Treat canon and repository facts supplied in context as boundaries, not as permission to invent missing facts.",
         "Treat available_tools as capability metadata only. Do not call, execute or imply authorization to use any tool.",
         "Do not execute external actions, modify files, change canon, make Core decisions or issue routing commands.",

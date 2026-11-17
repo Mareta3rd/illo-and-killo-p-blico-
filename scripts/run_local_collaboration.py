@@ -27,7 +27,7 @@ from core.loader import load_repository
 from core.semantic_context import build_semantic_context
 from core.work_envelope import WorkEnvelope
 
-DEFAULT_MODEL = os.environ.get("LOCAL_QWEN_MODEL", "qwen3.8-27b")
+DEFAULT_MODEL = "qwen3-4b"
 DEFAULT_BASE_URL = os.environ.get("LOCAL_QWEN_BASE_URL", "http://127.0.0.1:8080/v1")
 
 DEFAULT_IDEA = (
@@ -62,12 +62,14 @@ def build_work_envelope(*, run_id: str, idea: str) -> WorkEnvelope:
         state="available",
         context={
             "route": "gag",
+            "requested_idea": idea,
             "semantic_context": list(semantic_context.entries),
             "canon_boundary": "Arsa & Pisha are current canon; Illo & Killo and earlier Xoxo material are historical only.",
             "evidence_boundary": "Provider output is experimental collaboration evidence, not canon and not a Core decision.",
         },
         constraints=(
             "Preservar la identidad y los invariantes actuales de Arsa y Pisha.",
+            "Respetar el encargo concreto: mantener centrales los personajes, objetos y resultados que pida la persona; el contexto semántico puede enriquecerlos, pero no sustituirlos.",
             "Un solo gag principal por ilustración; la lectura inicial debe ser inmediata.",
             "La escalada absurda debe nacer de una lógica reconocible, no de ruido aleatorio.",
             "La novedad no puede ser solo sustituir un objeto manteniendo el mismo mecanismo causal del gag 001.",
@@ -82,6 +84,7 @@ def build_work_envelope(*, run_id: str, idea: str) -> WorkEnvelope:
         ),
         known_failures=(
             "Salida vaga o genérica que no usa el contexto suministrado.",
+            "Sustituir el elemento concreto solicitado por otro objeto tomado del contexto semántico.",
             "Repetición del mecanismo causal del gag 001 disfrazada como novedad.",
             "Salida estructurada incompleta o ambigua.",
             "Intentos de atribuir al colaborador autoridad sobre canon, decisiones Core o ejecución.",
@@ -98,7 +101,11 @@ def build_argument_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--run-id", required=True, help="Unique experiment/run identifier.")
     parser.add_argument("--idea", default=DEFAULT_IDEA, help="Concrete creative objective.")
-    parser.add_argument("--model", default=DEFAULT_MODEL, help="Model ID exposed by the local server.")
+    parser.add_argument(
+        "--model",
+        default=os.environ.get("LOCAL_QWEN_MODEL", DEFAULT_MODEL),
+        help="Model ID exposed by the local server.",
+    )
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL, help="OpenAI-compatible base URL.")
     parser.add_argument(
         "--api-key",

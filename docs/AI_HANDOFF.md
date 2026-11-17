@@ -989,9 +989,47 @@ pushes will not run Qwen. At the time of this cloud run, the active branch's cod
 latest local full suite also passed: **745 tests and 59 subtests in 13.45s**. The ASUS remains the
 control station and was not used for model inference. No weekly Arsa & Pisha model run is configured.
 
-### Next step
+### Update — Explicit brief propagation and lightweight default (2026-11-17)
 
-Review the valid record as an engineering milestone and decide whether to improve task adherence
-before any later optional inference. Do not launch another generation or promote this output until a
-human accepts the creative direction. MusicStudio is a separate project and was not touched.
+Review of the successful-but-misaligned cloud record found that `run_local_collaboration.py`
+used the requested idea only to retrieve semantic context; the original idea itself was not
+serialized into the `WorkEnvelope`. The provider therefore saw the retrieved context without an
+explicit copy of the user's concrete brief. The runner now includes `requested_idea` verbatim in the
+bounded envelope, and its instructions state that explicitly requested subjects and outcomes remain
+central while semantic context may enrich them. The known-failure list now captures the observed
+failure mode: replacing the requested object with an object from context. This preserves canon as a
+boundary and does not make any generated output canonical.
+
+The collaboration runner's model default changed from `qwen3.8-27b` to `qwen3-4b`; an explicit
+`LOCAL_QWEN_MODEL` or `--model` still overrides it for a runtime that exposes a different model ID.
+The local adapter does not install runtimes or download models. On the new ASUS, no Ollama/LM Studio
+CLI or model cache was found in the standard install/cache locations checked. Do not repeat the
+earlier local CPU probe: it used about 5.6 GB working set, generated about 6 tokens/s, and failed
+structured-output validation twice. No local model was launched or downloaded in this block.
+
+The project's free GitHub-hosted CPU workflow remains the practical execution path: it already
+produced a structurally valid record using pinned Qwen3-4B, though that result missed the requested
+jamón. The next model run should remain manual and should use the corrected brief propagation only
+after the ordinary test gate passes. No weekly Arsa & Pisha schedule is defined in repository
+workflows; the unrelated MusicStudio schedule remains outside this project and untouched.
+
+Changes in this block: `scripts/run_local_collaboration.py`,
+`core/local_collaboration_provider.py`, their regression tests, and
+`docs/LOCAL_COLLABORATIVE_PROVIDER.md`.
+
+Verification in the Windows workspace:
+- complete suite: **746 passed, 59 subtests passed in 16.99s**;
+- `git diff --check`: clean;
+- regression coverage includes a custom brief reaching the provider and persisted record verbatim,
+  plus the 4B model default and both explicit override paths;
+- the run used the existing `.venv` and writable workspace scratch space for test temporaries.
+
+Base checkpoint: `9436de4e5cc65330e7bb710ec913c4880ee30b83`. Its GitHub gate was green before
+this update. Use the [checks on PR #5](https://github.com/Mareta3rd/illo-and-killo-p-blico-/pull/5/checks)
+to verify the current change. The Windows shell has no Bash executable, so the full pytest suite
+and whitespace check were run directly.
+
+Next validation: after the new cloud test gate is green, generate one Qwen3-4B record in GitHub
+using the public jamón brief. Compare the recorded brief and proposal for concrete adherence and
+distinct comic causality. Preserve the result as experimental evidence for human review.
 

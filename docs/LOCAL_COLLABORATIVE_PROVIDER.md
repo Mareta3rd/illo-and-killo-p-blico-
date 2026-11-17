@@ -50,8 +50,10 @@ only what Core places in the envelope.
 The adapter requires an injected OpenAI-compatible client. No concrete runtime or SDK
 is imported by the provider itself.
 
-The first live target remains the local Qwen3.8-27B runtime. Actual live inference belongs
-in a later experiment after the adapter passes the repository closure gate.
+The bounded collaboration runner defaults to the smaller `qwen3-4b` model ID and
+accepts `LOCAL_QWEN_MODEL` or `--model` when a local server exposes a different name.
+It does not install a runtime or download a model. Actual inference is optional and
+should only use a model already available through the explicitly started local server.
 
 ## Safety boundary
 
@@ -60,16 +62,11 @@ available_tools describes metadata only. It does not grant permission.
 The adapter returns a CollaborationUpdate. Core remains responsible for any later
 evaluation, human handoff, routing decision or action authorization.
 
-## Next experiment
+## Verifying a result
 
-After the complete suite is green, run one real local collaboration using a deliberately
-constructed WorkEnvelope with:
-- a concrete objective;
-- selected current semantic context;
-- prior failed or vague output;
-- explicit expected output;
-- no implied tool execution.
-
-Capture the resulting CollaborationExecutionRecord and inspect the output for specificity,
-context use, non-intrusiveness and compliance with the envelope before considering any
-further provider changes.
+Use the optional GitHub Actions job for the pinned Qwen3-4B CPU experiment. Review the
+resulting CollaborationExecutionRecord against the original brief saved as
+`envelope.context.requested_idea`. A valid record demonstrates that the response fits
+the protocol. Review creative adherence separately, including whether the requested
+object drives the gag and whether the comic mechanism differs from Gag 001.
+The first cloud result and its limitations are recorded in [AI_HANDOFF.md](AI_HANDOFF.md).

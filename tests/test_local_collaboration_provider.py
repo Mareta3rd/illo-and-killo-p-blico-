@@ -69,6 +69,7 @@ def test_build_prompt_is_deterministic_and_uses_bounded_work():
 
     assert first == build_collaboration_prompt(envelope)
     assert "previous output was vague" in first
+    assert "Treat concrete subjects, characters, objects and outcomes explicitly requested" in first
     assert "available_tools" in first
     assert "Do not call, execute or imply authorization" in first
     assert "each progress and blocker item below 450 characters" in first
@@ -79,7 +80,7 @@ def test_build_prompt_is_deterministic_and_uses_bounded_work():
 
 def test_collaborates_with_structured_output_and_returns_valid_update():
     client = FakeClient(json.dumps(valid_payload()))
-    provider = LocalStructuredCollaborationProvider(client, model="qwen3.8-27b")
+    provider = LocalStructuredCollaborationProvider(client, model="qwen3-4b")
     envelope = make_envelope()
 
     update = provider.collaborate(envelope)
@@ -93,7 +94,7 @@ def test_collaborates_with_structured_output_and_returns_valid_update():
     ]
 
     request = client.completions.calls[0]
-    assert request["model"] == "qwen3.8-27b"
+    assert request["model"] == "qwen3-4b"
     assert request["temperature"] == 0.0
     assert request["response_format"]["type"] == "json_schema"
     response_schema = request["response_format"]["json_schema"]
@@ -110,11 +111,11 @@ def test_collaborates_with_structured_output_and_returns_valid_update():
 def test_provider_exposes_identity_for_the_orchestration_seam():
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(valid_payload())),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     assert provider.provider_id == "local-qwen-collaboration"
-    assert provider.model_id == "qwen3.8-27b"
+    assert provider.model_id == "qwen3-4b"
 
 
 @pytest.mark.parametrize(
@@ -129,7 +130,7 @@ def test_provider_exposes_identity_for_the_orchestration_seam():
 def test_rejects_malformed_payloads(payload):
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(payload)),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     with pytest.raises((ValueError, TypeError)):
@@ -139,7 +140,7 @@ def test_rejects_malformed_payloads(payload):
 def test_rejects_progress_entry_over_protocol_limit():
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(valid_payload(progress=["x" * 601]))),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     with pytest.raises(ValueError, match="progress exceeds the maximum length of 600"):
@@ -150,7 +151,7 @@ def test_rejects_needs_input_without_non_empty_output_question():
     payload = valid_payload(status="needs_input")
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(payload)),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     with pytest.raises(
@@ -167,7 +168,7 @@ def test_rejects_invalid_needs_input_question_shape():
     )
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(payload)),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     with pytest.raises(ValueError, match="invalid output object"):
@@ -182,7 +183,7 @@ def test_derives_needs_input_and_attention_from_status_and_question():
     )
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(payload)),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     update = provider.collaborate(make_envelope())
@@ -198,7 +199,7 @@ def test_derives_needs_input_and_attention_from_status_and_question():
 def test_derives_attention_required_from_status(status, attention_required):
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(valid_payload(status=status))),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     update = provider.collaborate(make_envelope())
@@ -216,7 +217,7 @@ def test_rejects_invalid_transport_response():
             return MissingChoices()
 
     client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
-    provider = LocalStructuredCollaborationProvider(client, model="qwen3.8-27b")
+    provider = LocalStructuredCollaborationProvider(client, model="qwen3-4b")
 
     with pytest.raises(ValueError, match="no choices"):
         provider.collaborate(make_envelope())
@@ -225,7 +226,7 @@ def test_rejects_invalid_transport_response():
 def test_rejects_invalid_json_response():
     provider = LocalStructuredCollaborationProvider(
         FakeClient("not-json"),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     with pytest.raises(ValueError, match="invalid JSON"):
@@ -234,12 +235,12 @@ def test_rejects_invalid_json_response():
 
 def test_provider_crosses_auditable_orchestration_seam():
     client = FakeClient(json.dumps(valid_payload()))
-    provider = LocalStructuredCollaborationProvider(client, model="qwen3.8-27b")
+    provider = LocalStructuredCollaborationProvider(client, model="qwen3-4b")
 
     record = execute_collaboration(provider, make_envelope())
 
     assert record.provider_id == "local-qwen-collaboration"
-    assert record.model_id == "qwen3.8-27b"
+    assert record.model_id == "qwen3-4b"
     assert record.update.status == "ready_for_review"
     assert record.update.output["answer"] == "The proposal needs a clearer next action."
     assert len(record.envelope_digest) == 64
@@ -249,7 +250,7 @@ def test_provider_crosses_auditable_orchestration_seam():
 def test_provider_rejects_non_envelope():
     provider = LocalStructuredCollaborationProvider(
         FakeClient(json.dumps(valid_payload())),
-        model="qwen3.8-27b",
+        model="qwen3-4b",
     )
 
     with pytest.raises(TypeError, match="envelope must be a WorkEnvelope"):
