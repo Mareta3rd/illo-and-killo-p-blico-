@@ -15,9 +15,9 @@ Build a deterministic semantic/evidence architecture for the **Arsa & Pisha** pr
 - Record major technical and artistic decisions here so future sessions do not depend on conversation memory.
 
 ## Current branch and checkpoint
-Active branch: `assistant/local-qwen-decision-prototype` (prototype work).
+Active branch: `assistant/collaborative-work-envelope` (collaborative-protocol work).
 Green consolidated branch: `feature/semantic-model` at `d06612c`.
-Current prototype branch checkpoint is the latest commit on this branch.
+Previous green prototype checkpoint: `assistant/local-qwen-decision-prototype` at `2d49b7c`.
 
 ### Verified closure status
 The historical-corpus cleanup block is **CLOSED and GREEN**.
@@ -298,7 +298,6 @@ Verification:
 - `bash scripts/close_work_block.sh` completed successfully;
 - checkpoint: `20c9e68`;
 - whitespace, working-tree and diff checks were clean.
-
 ## Creative Direction — SUBVERSIÓN ELEGANTE / MAGNETISMO PUNK
 
 A recent artistic direction has been explicitly recognised as an important part of the Arsa & Pisha identity and must be documented as a compositional/behavioral grammar rather than as a requirement to sexualise the characters.
@@ -597,8 +596,7 @@ Codex execution:
 
 Human consolidation:
 - the application-boundary change was committed and pushed on `feature/semantic-model`;
-- current remote checkpoint: `fbfe982c8af7be092860b6ccbaef8189d595ec29`;
-- complete regression suite in the Codespace: **638 passed, 59 subtests passed**;
+- current remote checkpoint: `fbfe982c8af7be092860b6ccbaef8189d595ec29`;- complete regression suite in the Codespace: **638 passed, 59 subtests passed**;
 - the branch is green and the application-boundary block is closed;
 - the remote handoff was deliberately updated after the application commit so repository state and continuity documentation remain aligned.
 
@@ -844,3 +842,248 @@ Implementation verification:
 - no quality, latency or hardware conclusion is implied yet.
 
 Next implementation target: execute the first live local benchmark against an OpenAI-compatible runtime. The live result remains benchmark evidence only and does not constitute provider adoption.
+
+
+## Current block — Collaborative Work Envelope + Local Collaboration Adapter + Experiment Runner / VERIFIED GREEN
+
+The collaborative protocol has now advanced from a data-only envelope to a provider-neutral
+execution seam, a local structured collaboration adapter, and a bounded experiment runner,
+while preserving Core authority.
+
+Implementation on branch `assistant/collaborative-work-envelope`:
+- `core/work_envelope.py` defines immutable, bounded `WorkEnvelope` and `CollaborationUpdate`;
+- `core/collaboration_execution.py` defines `CollaborationProvider`,
+  `execute_collaboration()` and immutable `CollaborationExecutionRecord`;
+- the execution seam validates the returned update, preserves envelope identity, invokes
+  the provider once, and records deterministic envelope/update digests plus provider/model metadata;
+- `core/local_collaboration_provider.py` implements a local OpenAI-compatible structured
+  collaboration adapter with deterministic prompt construction and strict JSON-schema output;
+- `scripts/run_local_collaboration.py` builds a bounded work envelope from the authoritative
+  loader/semantic-context path and performs one local collaboration pass, persisting the exact
+  `CollaborationExecutionRecord` JSON;
+- the runner is observational/experimental only: it does not execute tools, mutate canon, or make
+  Core decisions;
+- `data/capabilities.json` registers `collaboration.qwen_local` as a prototype capability;
+- `docs/COLLABORATIVE_WORK_ENVELOPE.md`, `docs/LOCAL_COLLABORATIVE_PROVIDER.md` and
+  `docs/CAPABILITY_ROUTING.md` document the protocol, adapter boundary and routing semantics;
+- dedicated tests cover the envelope, execution seam, local provider contract, capability registry
+  and the new collaboration runner.
+
+The runner's work envelope is populated from the current semantic context and carries the active
+Arsa & Pisha canon boundary plus explicit prior-work/known-failure context. Its default target is
+the local OpenAI-compatible Qwen runtime (`qwen3.8-27b` at `http://127.0.0.1:8080/v1`).
+The runtime is not assumed to be available in Codespace; the intended real inference environment is
+the local machine when the new equipment/runtime is available.
+
+Verification:
+- after consuming runner checkpoint `468a86a`, the repository-configured closure gate completed
+  successfully with **739 passed, 59 subtests passed in 19.95s**;
+- authoritative pre- and post-suite synchronization both reported `SYNC: GREEN` at `468a86a`;
+- whitespace checks passed;
+- working tree and diff checks were clean at the end of the gate;
+- no generated artifacts or secrets were introduced by the runner block;
+- the separate focused invocation `PYTHONPATH=. python -m pytest tests/test_local_collaboration_runner.py -q`
+  could not start because that Codespace session has no `pytest` module installed. This is an environment
+  limitation of the focused command, not a test-suite failure; the configured complete closure suite is
+  the verification gate used for this repository.
+
+The runner was therefore **VERIFIED GREEN** at `468a86a`. No live Qwen model call has been made as part
+of this block, so there is still no model-quality, latency or hardware conclusion.
+
+### Update — ASUS hardware check and cloud-first direction (2026-10-13)
+
+The user set the ASUS Vivobook as a lightweight control station. Keep code review and routine
+verification in GitHub's free standard runners wherever possible; do not run local models by default.
+Local inference is an optional, bounded fallback and must not become a background service.
+
+Repository and scheduling check:
+- active branch: `assistant/collaborative-work-envelope`;
+- local HEAD and authoritative `origin` HEAD both matched `98dcc3d899b9af36dbd7a0143751634f17e16376`;
+- repository visibility is public;
+- at the inspected checkpoint there was no `.github/workflows` directory, and no Arsa & Pisha / Sinergya weekly automation;
+- the unrelated MusicStudio weekly task was left untouched.
+
+Local CPU probe, evidence only:
+- model: `Qwen3-4B-Instruct-2507` Q4_K_M, pinned for later reproduction to Hugging Face revision
+  `ec85e0c4ae5c1d1e467dd98a0af99983358b4680`;
+- runtime: llama.cpp `b11583`, CPU-only, bound to `127.0.0.1`, authenticated with a local placeholder;
+- limits: 2 CPU threads, one request, 8,192 context, no GPU layers;
+- process working set was about 5.6 GB; generation speed was about 6 tokens/s;
+- two attempts (384-token and 768-token output ceilings) ran for 96.71 s and 168.29 s; both reached their
+  output ceiling and the adapter rejected the response as invalid JSON, so no valid
+  `CollaborationExecutionRecord` was written;
+- the llama.cpp process stopped after each attempt. Do not increase local limits or repeat the test on
+  this laptop. This is not a provider adoption, quality result, or canon proposal.
+
+The public repository can use standard GitHub-hosted runners for free. The current GitHub runner
+reference lists `ubuntu-latest` at 4 CPUs and 16 GB RAM for public repositories; standard runner usage
+is free there. Sources: [runner specifications](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+and [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+
+The working copy includes Windows-compatible test-fixture repairs in
+`tests/test_groq_qwen_candidate_executor.py` and `tests/test_groq_qwen_real_experiment.py`.
+The latest complete Windows suite run passed: **739 tests and 59 subtests in 14.90s**;
+`git diff --check` was clean.
+
+### First cloud Qwen pass (2026-10-13)
+
+The active branch's `.github/workflows/ci.yml` runs the complete suite on pushes and pull requests.
+Its Qwen job remains manual-only with an explicit `run_qwen` opt-in. An isolated branch,
+`experiment/qwen-cpu-once-20261013` at `e8db23782f3c55b8c947d436fae1593a6fbfa64d`, was used to make
+one authorized cloud run possible without merging or changing the active PR.
+
+The cloud suite passed (**739 tests, 59 subtests**). The pinned Qwen 4B CPU runtime and model downloaded
+successfully, but the collaboration adapter correctly rejected the model's response because at least
+one `progress` item exceeded the protocol's 600-character limit. No valid
+`CollaborationExecutionRecord` was produced. GitHub retained the small public artifact
+`arsa-pisha-qwen-38443320769-1` until 2026-10-20; workflow run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38443320769.
+
+The protocol limits remain strict. The active-branch prompt now tells collaborators to keep each
+`progress`/`blocker` item below 450 characters, with tests for that instruction and the 600-character
+rejection boundary. The local full suite after this fix passed: **740 tests, 59 subtests in 14.51s**.
+
+A second run from isolated branch `experiment/qwen-cpu-retry-20261013` at
+`a470efe46b35e31daa0ac5133479b65707378e05` passed the cloud suite, downloaded the same pinned model,
+and passed the progress-length check. The adapter then correctly rejected the response because
+`needs_input` status had an empty `needs_input` message. Again, no invalid record was written. Run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38444745562.
+
+The third run used isolated branch `experiment/qwen-cpu-final-20261013` at
+`639d9586b065e72b7c13fd55517f505daee52456`. The cloud suite and progress-length validation passed,
+but the model contradicted itself between `status` and `needs_input`; the adapter correctly rejected
+the response. No valid record was produced. Run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38446315932.
+
+The active-branch correction removes those redundant decisions from the model response. The model now
+returns only `status`, `summary`, `progress`, `blockers` and `output`; the adapter derives
+`needs_input` from the first non-empty output question when status is `needs_input`, and derives
+`attention_required` from the status. It rejects `needs_input` without a valid question. Regression
+tests cover the reduced response schema, derived fields, malformed question shape and protocol limits.
+The latest local full suite passed: **745 tests and 59 subtests in 13.45s**; the focused provider and
+runner checks passed **19 tests in 1.62s**.
+
+### First structurally valid cloud Qwen collaboration record (2026-10-13)
+
+After active-branch commit `60a83e8c4a9686e8a222cf183a4deb7899f6abe7` passed its ordinary cloud suite,
+one isolated branch, `experiment/qwen-cpu-final2-20261013`, enabled the Qwen job only on that branch's
+creation event. Run `38451805911` completed successfully: the cloud suite passed **745 tests and 59
+subtests in 9.67s**, and the bounded CPU Qwen job downloaded the pinned model and produced a valid
+`CollaborationExecutionRecord`. Run:
+https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/38451805911.
+
+The record reports provider `local-qwen-collaboration`, model `qwen3-4b-cloud`, status
+`ready_for_review`, no blockers, and `attention_required: true`. Its public artifact is
+`arsa-pisha-qwen-38451805911-1` (7,127 bytes; SHA-256
+`35ac4c7def92f4774838091a3f8393d385d16580811daa0a05a062b113d6203e`), available until **2026-10-20**.
+The result proves the CPU cloud runtime, structured response adapter and audit-record path can work
+together. It does not establish creative quality: the bounded request asked for a gag around a
+jamón, but the model centered its answer on a botijo and a colored wave in the air. That is a clear
+task-adherence miss. Keep this record as experimental evidence only; it is not accepted creative
+material, canon or a Core decision.
+
+The one-time trigger has since been removed from the experiment branch in commit
+`4b2bb5e6aa2bda04386de7b4c3eb2cc8045d0971`; its workflow is back to manual opt-in, so subsequent
+pushes will not run Qwen. At the time of this cloud run, the active branch's code checkpoint was
+`60a83e8c4a9686e8a222cf183a4deb7899f6abe7`; its cloud suite passed, and PR #5 remains open. The
+latest local full suite also passed: **745 tests and 59 subtests in 13.45s**. The ASUS remains the
+control station and was not used for model inference. No weekly Arsa & Pisha model run is configured.
+
+### Update — Explicit brief propagation and lightweight default (2026-11-17)
+
+Review of the successful-but-misaligned cloud record found that `run_local_collaboration.py`
+used the requested idea only to retrieve semantic context; the original idea itself was not
+serialized into the `WorkEnvelope`. The provider therefore saw the retrieved context without an
+explicit copy of the user's concrete brief. The runner now includes `requested_idea` verbatim in the
+bounded envelope, and its instructions state that explicitly requested subjects and outcomes remain
+central while semantic context may enrich them. The known-failure list now captures the observed
+failure mode: replacing the requested object with an object from context. This preserves canon as a
+boundary and does not make any generated output canonical.
+
+The collaboration runner's model default changed from `qwen3.8-27b` to `qwen3-4b`; an explicit
+`LOCAL_QWEN_MODEL` or `--model` still overrides it for a runtime that exposes a different model ID.
+The local adapter does not install runtimes or download models. On the new ASUS, no Ollama/LM Studio
+CLI or model cache was found in the standard install/cache locations checked. Do not repeat the
+earlier local CPU probe: it used about 5.6 GB working set, generated about 6 tokens/s, and failed
+structured-output validation twice. No local model was launched or downloaded in this block.
+
+The project's free GitHub-hosted CPU workflow remains the practical execution path: it already
+produced a structurally valid record using pinned Qwen3-4B, though that result missed the requested
+jamón. The next model run should remain manual and should use the corrected brief propagation only
+after the ordinary test gate passes. No weekly Arsa & Pisha schedule is defined in repository
+workflows; the unrelated MusicStudio schedule remains outside this project and untouched.
+
+Changes in this block: `scripts/run_local_collaboration.py`,
+`core/local_collaboration_provider.py`, their regression tests, and
+`docs/LOCAL_COLLABORATIVE_PROVIDER.md`.
+
+Verification in the Windows workspace:
+- complete suite: **746 passed, 59 subtests passed in 16.99s**;
+- `git diff --check`: clean;
+- regression coverage includes a custom brief reaching the provider and persisted record verbatim,
+  plus the 4B model default and both explicit override paths;
+- the run used the existing `.venv` and writable workspace scratch space for test temporaries.
+
+Base checkpoint: `9436de4e5cc65330e7bb710ec913c4880ee30b83`. Its GitHub gate was green before
+this update. Use the [checks on PR #5](https://github.com/Mareta3rd/illo-and-killo-p-blico-/pull/5/checks)
+to verify the current change. The Windows shell has no Bash executable, so the full pytest suite
+and whitespace check were run directly.
+
+Next validation: after the new cloud test gate is green, generate one Qwen3-4B record in GitHub
+using the public jamón brief. Compare the recorded brief and proposal for concrete adherence and
+distinct comic causality. Preserve the result as experimental evidence for human review.
+
+### Corrected brief verified with Qwen3-4B in GitHub (2026-11-17)
+
+Code checkpoint `94b36c0a164432acf76f5835a22624d7322fa5d1` passed the [GitHub test gate](https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/44158696259):
+**746 tests and 59 subtests**. A branch dedicated to one cloud trial ran the same application code
+at experiment commit `f837b318eb1059e4c4ae262bb77dc17354bb2ab9`. Its workflow was triggered on that branch's
+creation and used the standard Ubuntu CPU runner and the same pinned model. The active branch keeps
+the explicit opt-in; the experiment did not require a change to `main`.
+
+[Cloud experiment 44158941986](https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/44158941986)
+produced a valid `CollaborationExecutionRecord` with `ready_for_review`, no blockers, and no
+questions. The envelope SHA-256 recorded by GitHub,
+`56dae3fda309cfcfe10fa9ca3c94e2c730a8aff1ff3c9024b3ca196349294ce5`, matches the independently rebuilt
+envelope containing the original jamón brief. The result artifact `arsa-pisha-qwen-44158941986-1`
+is available until **2026-11-24**. Its archive SHA-256 is
+`245a156277c12c8271264b30e8bf43e43371868e7a9f8ffe80432ad7a465e396`.
+
+Creative review: the jamón now drives the main action and both proposals. The output replaces the
+training setup with a cutting action, but the jump from light to movement to a small horse does
+not establish a clear visual cause. The alternate leans on dialogue and the response gives only
+one clearly labeled alternate where two were requested. Keep this as evidence that brief propagation
+works for this trial and that proposal quality still needs human review. No candidate was adopted
+into canon.
+
+Next implementation block: provide a lightweight review view for a downloaded collaboration
+record. Show the original brief alongside the proposal and its provenance. Let a reviewer
+assess visual clarity and whether the escalation follows from the requested object. Start with
+the existing record format and an offline sample. Generation remains in GitHub and review on
+the ASUS, with no model runtime needed for review. This is the first usable control flow toward
+the lightweight suite.
+
+### Offline review desk (2026-11-17)
+
+The first control surface is [`tools/revision-colaboracion.html`](../tools/revision-colaboracion.html).
+Open the single file in a desktop browser to see the built-in example or select a downloaded
+`collaboration-record.json` from GitHub. The view shows the original brief alongside the
+proposal, alternatives, and any questions or blockers. Its provenance section shows the
+provider, model, declared digests, and the indicated GitHub run when the identifier fits the
+repository's workflow convention. Older version 1 records fall back to their recorded objective.
+
+The reviewer can assess brief adherence, visual clarity and causal escalation and save those
+judgments and notes in a separate JSON. The app can restore them when the review points to the
+same record ID and both declared digests. The app is offline, keeps unsaved drafts only until the
+page closes, and leaves the source record and canon intact. No inference runs on the ASUS.
+
+Verification: Windows Chromium browser checks passed offline, including file selection,
+the real record from run `44158941986` after verifying its artifact archive SHA-256, legacy
+records, malformed input, rendering input as plain text, the review download, and the narrow
+layout. Review restoration checks covered a matching record and rejection of a mismatched record.
+The full Python suite passed locally (**746 tests and 59 subtests**). The ordinary
+GitHub checks are recorded on [PR #5](https://github.com/Mareta3rd/illo-and-killo-p-blico-/pull/5/checks).
+
+Next block: complete a human review of the existing Qwen result and turn the feedback into a
+revised public brief for a later cloud pilot. Keep the review independent of Core and compare
+the two trial records without promoting either proposal to canon.

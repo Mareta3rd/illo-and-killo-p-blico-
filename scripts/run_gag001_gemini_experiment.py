@@ -139,12 +139,25 @@ def main() -> int:
                 "records": [
                     {
                         "claim_key": record.claim_key,
+                        "statement": record.statement,
                         "state": record.state.value,
                         "supporting_sources": list(record.supporting_sources),
                         "contradicting_sources": list(record.contradicting_sources),
                     }
                     for record in observation.records
                 ],
+                "snapshot": {
+                    "claim_keys": list(snapshot.claims),
+                    "contract_evaluations": [
+                        {
+                            "catalog": evaluation.catalog,
+                            "entry": evaluation.entry,
+                            "invariant": evaluation.invariant,
+                            "decision": evaluation.evaluation.decision,
+                        }
+                        for evaluation in snapshot.canonical_evaluations
+                    ],
+                },
             },
             ensure_ascii=False,
             indent=2,

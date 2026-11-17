@@ -239,7 +239,7 @@ class GroqQwenCandidateExecutorTests(unittest.TestCase):
 
     def test_client_uses_correct_groq_endpoint(self):
         """Client should default to https://api.groq.com/openai/v1."""
-        client = build_groq_qwen_candidate_client(api_key=None)
+        client = build_groq_qwen_candidate_client(api_key="local-test-placeholder")
         # OpenAI client stores base_url; we can't inspect it directly without
         # accessing internals, but from_client delegates to build_groq_qwen_responses_transport
         # which is verified separately

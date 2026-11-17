@@ -1,8 +1,48 @@
 {
   "version": 1,
-  "reviewed": "2026-09-27",
+  "reviewed": "2026-10-08",
   "principle": "stable_core_replaceable_capabilities",
   "capabilities": [
+    {
+      "id": "collaboration.qwen_local",
+      "capability": "collaboration",
+      "provider": "qwen",
+      "product_or_runtime": "qwen3.8-27b_local",
+      "status": "prototype",
+      "integration": "local_openai_compatible",
+      "cost_model": "no_api_billing_local_compute",
+      "latency_character": "hardware_dependent",
+      "strengths": [
+        "bounded WorkEnvelope input",
+        "structured CollaborationUpdate output",
+        "uses prior work and known failures explicitly",
+        "replaceable model/runtime boundary",
+        "no external API dependency"
+      ],
+      "limitations": [
+        "actual collaborative quality not yet measured on project fixtures",
+        "27B local resource requirement",
+        "local inference depends on available hardware/runtime",
+        "not an autonomous action executor"
+      ],
+      "dependencies": [
+        "LocalStructuredCollaborationProvider",
+        "WorkEnvelope",
+        "OpenAI-compatible local server",
+        "Qwen3.8-27B GGUF"
+      ],
+      "security_boundary": "WorkEnvelope bounds + provider contract + Core update validation + orchestration audit",
+      "replaceable_by": [
+        "collaboration.other_local_llm",
+        "collaboration.rules",
+        "collaboration.human"
+      ],
+      "last_reviewed": "2026-10-08",
+      "evidence": [
+        "local_collaboration_provider_contract_tests_pending_closure",
+        "bounded_collaboration_orchestration_seam_green_724_tests"
+      ]
+    },
     {
       "id": "decision.qwen_local",
       "capability": "decision",

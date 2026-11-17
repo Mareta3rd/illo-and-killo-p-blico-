@@ -69,14 +69,18 @@ class GroqQwenRealExperimentTests(unittest.TestCase):
         FakeClient.instances.clear()
 
     def run_cli(self, *extra_args, key="test-groq-secret"):
-        with tempfile.NamedTemporaryFile(suffix=".png") as image:
+        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as image:
             image.write(IMAGE_BYTES)
             image.flush()
-            argv = ["run_groq_qwen_real_experiment.py", image.name, KEY, "--run-id", "run-001", *extra_args]
+            image_path = Path(image.name)
+        try:
+            argv = ["run_groq_qwen_real_experiment.py", str(image_path), KEY, "--run-id", "run-001", *extra_args]
             output = io.StringIO()
             with patch.object(sys, "argv", argv), patch.dict(os.environ, {"GROQ_API_KEY": key}, clear=False), redirect_stdout(output):
                 result = runner.main()
-        return result, json.loads(output.getvalue()), image.name
+            return result, json.loads(output.getvalue()), str(image_path)
+        finally:
+            image_path.unlink(missing_ok=True)
 
     @patch.object(runner, "OpenAI", FakeClient)
     def test_cli_reads_image_and_outputs_one_structured_observation(self):
