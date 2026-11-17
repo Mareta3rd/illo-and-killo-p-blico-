@@ -1033,3 +1033,32 @@ Next validation: after the new cloud test gate is green, generate one Qwen3-4B r
 using the public jamón brief. Compare the recorded brief and proposal for concrete adherence and
 distinct comic causality. Preserve the result as experimental evidence for human review.
 
+### Corrected brief verified with Qwen3-4B in GitHub (2026-11-17)
+
+Code checkpoint `94b36c0a164432acf76f5835a22624d7322fa5d1` passed the [GitHub test gate](https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/44158696259):
+**746 tests and 59 subtests**. A branch dedicated to one cloud trial ran the same application code
+at experiment commit `f837b318eb1059e4c4ae262bb77dc17354bb2ab9`. Its workflow was triggered on that branch's
+creation and used the standard Ubuntu CPU runner and the same pinned model. The active branch keeps
+the explicit opt-in; the experiment did not require a change to `main`.
+
+[Cloud experiment 44158941986](https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/44158941986)
+produced a valid `CollaborationExecutionRecord` with `ready_for_review`, no blockers, and no
+questions. The envelope SHA-256 recorded by GitHub,
+`56dae3fda309cfcfe10fa9ca3c94e2c730a8aff1ff3c9024b3ca196349294ce5`, matches the independently rebuilt
+envelope containing the original jamón brief. The result artifact `arsa-pisha-qwen-44158941986-1`
+is available until **2026-11-24**. Its archive SHA-256 is
+`245a156277c12c8271264b30e8bf43e43371868e7a9f8ffe80432ad7a465e396`.
+
+Creative review: the jamón now drives the main action and both proposals. The output replaces the
+training setup with a cutting action, but the jump from light to movement to a small horse does
+not establish a clear visual cause. The alternate leans on dialogue and the response gives only
+one clearly labeled alternate where two were requested. Keep this as evidence that brief propagation
+works for this trial and that proposal quality still needs human review. No candidate was adopted
+into canon.
+
+Next implementation block: provide a lightweight review view for a downloaded collaboration
+record. Show the original brief alongside the proposal and its provenance. Let a reviewer
+assess visual clarity and whether the escalation follows from the requested object. Start with
+the existing record format and an offline sample. Generation remains in GitHub and review on
+the ASUS, with no model runtime needed for review. This is the first usable control flow toward
+the lightweight suite.
