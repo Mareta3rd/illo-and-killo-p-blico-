@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <title>Mesa de revisión · Arsa &amp; Pisha</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202821;
+      --muted: #576159;
+      --page: #f2efe8;
+      --paper: #fffdfa;
+      --line: #d9d7cb;
+      --green: #224939;
+      --accent: #944127;
+      --serif: Georgia, "Times New Roman", serif;
+      font: 16px/1.55 system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; color: var(--ink); background: var(--page); }
+    button, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--green); text-underline-offset: .2em; }
+    :focus-visible { outline: 3px solid #a24c24; outline-offset: 4px; }
+    h1, h2, h3, p { margin: 0; }
+    ul, ol { margin: .5rem 0 0; padding-left: 1.4rem; }
+    li + li { margin-top: .5rem; }
+    .page { max-width: 1150px; margin: auto; padding: 0 clamp(16px, 4vw, 48px) 48px; }
+    .masthead {
+      display: flex; flex-wrap: wrap; gap: 14px 24px; justify-content: space-between;
+      align-items: flex-end; border-bottom: 1px solid var(--line); padding: 28px 0 22px;
+    }
+    .project { color: var(--accent); font-size: .83rem; font-weight: 750; margin-bottom: .3rem; }
+    h1 { font: 500 clamp(2.25rem, 6vw, 3.6rem)/1.06 var(--serif); letter-spacing: -.045em; }
+    h2 { font: 500 clamp(1.5rem, 4vw, 2rem)/1.15 var(--serif); letter-spacing: -.025em; }
+    h3 { font-size: .88rem; line-height: 1.4; }
+    .actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .button {
+      min-height: 44px; padding: .55rem .95rem; border: 1px solid var(--green);
+      border-radius: 7px; color: var(--green); background: transparent; font-weight: 670;
+    }
+    .button:hover { background: #e4e8df; }
+    .primary { color: #fff; background: var(--green); }
+    .primary:hover { background: #32614b; }
+    .notice { margin-top: 12px; color: var(--muted); font-size: .88rem; overflow-wrap: anywhere; }
+    .error {
+      margin-top: 12px; padding: .55rem .8rem; background: #fae7df;
+      border: 1px solid #d9a391; border-radius: 6px; color: #772e19; overflow-wrap: anywhere;
+    }
+    .record-title {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px 18px;
+      flex-wrap: wrap; margin: 22px 0 12px; font-size: .87rem; color: var(--muted);
+    }
+    .record-title p { min-width: 0; overflow-wrap: anywhere; }
+    .badge { border-radius: 99px; padding: .22rem .65rem; background: #e2eade; color: var(--green); font-weight: 720; }
+    .badge.action { background: #f7e7d4; color: #713c1c; }
+    .spread { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 16px; align-items: start; }
+    .card {
+      border: 1px solid var(--line); border-radius: 10px; background: var(--paper);
+      padding: clamp(16px, 3vw, 29px); overflow-wrap: anywhere;
+    }
+    .brief { border-top: 4px solid #b45e40; }
+    .proposal { border-top: 4px solid var(--green); }
+    .card > h2 { margin-bottom: .7rem; }
+    .lead { white-space: pre-wrap; font-size: 1.03rem; }
+    .subsection { margin-top: 1rem; }
+    .subsection > p, .subsection li { white-space: pre-wrap; }
+    .meta-text, .help { color: var(--muted); font-size: .88rem; }
+    .help { margin-top: .55rem; }
+    details { margin-top: 1rem; }
+    summary { cursor: pointer; font-size: .9rem; font-weight: 640; color: var(--green); }
+    details dl { display: grid; gap: .45rem; margin: .6rem 0; }
+    dt { color: var(--muted); font-size: .8rem; font-weight: 650; }
+    dd { margin: 0; }
+    code { font-size: .8rem; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; background: var(--page); border-radius: 5px; }
+    .review { margin-top: 16px; }
+    .criteria {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+      margin: .8rem 0 1rem;
+    }
+    .criteria label, .notes-label { display: block; font-size: .88rem; font-weight: 650; }
+    select, textarea {
+      width: 100%; margin-top: .3rem; border: 1px solid #8d968d; border-radius: 6px;
+      padding: .52rem .6rem; color: var(--ink); background: #fff;
+    }
+    select { min-height: 44px; }
+    textarea { resize: vertical; min-height: 90px; }
+    .export-row { display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; margin-top: .6rem; }
+    .source { margin-top: 16px; border-top: 1px solid var(--line); padding: 0 2px; overflow-wrap: anywhere; }
+    .source dl { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem 1rem; }
+    @media (max-width: 700px) {
+      .spread, .criteria, .source dl { grid-template-columns: 1fr; }
+      .masthead { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div>
+        <p class="project">Arsa &amp; Pisha · SinergYa</p>
+        <h1>Mesa de revisión</h1>
+      </div>
+      <div class="actions">
+        <button class="button primary" id="open-file" type="button">Abrir registro JSON</button>
+        <button class="button" id="open-example" type="button">Ver ejemplo</button>
+        <input id="record-file" type="file" accept=".json,application/json" hidden>
+      </div>
+    </header>
+
+    <noscript>Activa JavaScript en el navegador para abrir un registro local.</noscript>
+    <p id="notice" class="notice" role="status"></p>
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <div id="workspace" hidden>
+      <div class="record-title">
+        <p id="record-project"></p>
+        <span class="badge" id="record-status"></span>
+      </div>
+
+      <div class="spread">
+        <section class="card brief" aria-labelledby="brief-title">
+          <h2 id="brief-title">Encargo</h2>
+          <p id="brief-text" class="lead"></p>
+          <p id="brief-legacy" class="help" hidden>Este registro anterior conserva el objetivo general. El encargo literal no está disponible.</p>
+          <div id="expected" class="subsection">
+            <h3>Qué se pidió entregar</h3>
+            <p class="meta-text" id="expected-text"></p>
+          </div>
+          <details id="constraints">
+            <summary>Condiciones del encargo</summary>
+            <ul id="constraints-list"></ul>
+          </details>
+        </section>
+
+        <section class="card proposal" aria-labelledby="proposal-title">
+          <h2 id="proposal-title">Propuesta</h2>
+          <p id="proposal-text" class="lead"></p>
+          <p id="proposal-summary" class="help" hidden></p>
+          <div id="rationale" class="subsection" hidden>
+            <h3>Explicación del colaborador</h3>
+            <p class="meta-text" id="rationale-text"></p>
+          </div>
+          <div id="alternatives" class="subsection" hidden>
+            <h3>Otras propuestas</h3>
+            <ol id="alternatives-list"></ol>
+          </div>
+          <div id="needs-input" class="subsection" hidden>
+            <h3>Información necesaria</h3>
+            <p id="needs-input-text"></p>
+          </div>
+          <div id="questions" class="subsection" hidden>
+            <h3>Preguntas</h3>
+            <ul id="questions-list"></ul>
+          </div>
+          <div id="blockers" class="subsection" hidden>
+            <h3>Bloqueos</h3>
+            <ul id="blockers-list"></ul>
+          </div>
+          <details id="progress" hidden>
+            <summary>Progreso registrado</summary>
+            <ul id="progress-list"></ul>
+          </details>
+          <details id="raw-output" hidden>
+            <summary>Salida original</summary>
+            <pre id="raw-output-text"></pre>
+          </details>
+        </section>
+      </div>
+
+      <section class="card review" aria-labelledby="review-title">
+        <h2 id="review-title">Tu revisión</h2>
+        <div class="criteria">
+          <label for="adherence">¿Respeta el encargo?
+            <select id="adherence"></select>
+          </label>
+          <label for="clarity">¿Se entiende de un vistazo?
+            <select id="clarity"></select>
+          </label>
+          <label for="cause">¿Se entiende por qué escala?
+            <select id="cause"></select>
+          </label>
+        </div>
+        <label class="notes-label" for="notes">Notas</label>
+        <textarea id="notes" rows="3" maxlength="2000"></textarea>
+        <div class="export-row">
+          <button class="button" id="export-review" type="button">Guardar revisión</button>
+          <button class="button" id="open-review" type="button">Recuperar revisión</button>
+          <input id="review-file" type="file" accept=".json,application/json" hidden>
+        </div>
+        <p class="help">Guarda tus observaciones para retomarlas después. El borrador temporal se pierde al cerrar esta página.</p>
+        <p class="help" id="review-notice" role="status"></p>
+        <p class="error" id="review-error" role="alert" hidden></p>
+      </section>
+
+      <details class="source">
+        <summary>Procedencia del registro</summary>
+        <dl>
+          <div><dt>Archivo</dt><dd id="source-file"></dd></div>
+          <div><dt>Ejecución</dt><dd id="source-run"></dd></div>
+          <div><dt>Colaborador</dt><dd id="source-provider"></dd></div>
+          <div><dt>Modelo</dt><dd id="source-model"></dd></div>
+          <div><dt>Huella del encargo (declarada)</dt><dd><code id="source-envelope-digest"></code></dd></div>
+          <div><dt>Huella de la respuesta (declarada)</dt><dd><code id="source-update-digest"></code></dd></div>
+        </dl>
+        <a id="source-link" target="_blank" rel="noopener noreferrer" hidden>Ver ejecución indicada en GitHub</a>
+      </details>
+    </div>
+  </main>
+
+  <script type="application/json" id="example-record">{"envelope":{"autonomy":"advisory","available_tools":[],"constraints":["Una acción principal.","La escena se entiende sin diálogo."],"context":{"requested_idea":"Crear un gag nuevo alrededor de un jamón. La acción debe entenderse de un vistazo y la escalada absurda debe nacer de una causa reconocible. Mantener la complicidad del dúo."},"envelope_id":"ejemplo-jamon","expected_output":"Una propuesta principal y dos alternativas breves.","interrupt_policy":"state_change_or_input","known_failures":[],"objective":"Preparar un gag visual de Arsa y Pisha.","prior_work":[],"project":"SinergYa / Arsa & Pisha","schema_version":1,"state":"available"},"envelope_digest":"7d9cce2feefa26fc4527752d9c650e3956965515041368046b51c61d6b21c1e5","model_id":null,"provider_id":"ejemplo-local","schema_version":1,"update":{"attention_required":true,"blockers":[],"envelope_id":"ejemplo-jamon","needs_input":null,"output":{"answer":"Arsa cuelga el jamón de un extremo de un balancín y se sienta en el otro con un plato vacío. Pisha va cortando lonchas y se las pasa. Con cada loncha cambia el peso, hasta que Arsa queda con el plato a la altura exacta de la mano de Pisha. Los dos se miran: ya tienen mesa.","proposals":["Pisha devuelve una loncha al extremo del jamón para subir el plato al nivel exacto.","Arsa apoya un dedo en el extremo del balancín hasta que el plato queda a la altura de los dos."],"questions":[],"rationale":"El cambio de peso explica la escalada. Las miradas de los dos cierran el gag sin diálogo."},"progress":[],"schema_version":1,"status":"ready_for_review","summary":"Un balancín improvisado convierte el reparto del jamón en el centro de la escena."},"update_digest":"e739f0b45e7b7bbff83cf5e17de172353ab0e75e07d93e3eaf8eda837c589c73"}</script>
+  <script>
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+    const statuses = new Map([
+      ["available", "Disponible"], ["working", "En curso"], ["needs_input", "Requiere respuesta"],
+      ["ready_for_review", "Listo para revisión"], ["blocked", "Bloqueado"], ["done", "Finalizado"],
+    ]);
+    const maxFileSize = 256 * 1024;
+    const digest = /^[a-f0-9]{64}$/;
+    const recordCriteria = { adherence: "brief_adherence", clarity: "visual_clarity", cause: "causal_escalation" };
+    const ratings = new Map([["", "Sin valorar"], ["yes", "Sí"], ["partial", "En parte"], ["no", "No"]]);
+    const drafts = new Map();
+    let selection = 0;
+    let reviewSelection = 0;
+    let current = null;
+
+    function isObject(value) {
+      return value !== null && typeof value === "object" && !Array.isArray(value);
+    }
+
+    function hasText(value) {
+      return typeof value === "string" && value.trim() !== "";
+    }
+
+    function isTextList(value) {
+      return Array.isArray(value) && value.every(hasText);
+    }
+
+    function parseRecord(source) {
+      let record;
+      try {
+        record = JSON.parse(source.replace(/^\uFEFF/, ""));
+      } catch {
+        throw new Error("El archivo no contiene un JSON válido.");
+      }
+      if (!isObject(record) || record.schema_version !== 1) {
+        throw new Error("El archivo debe ser un registro de colaboración de versión 1.");
+      }
+      const { envelope, update } = record;
+      if (!isObject(envelope) || envelope.schema_version !== 1 ||
+          !isObject(update) || update.schema_version !== 1 ||
+          !hasText(envelope.envelope_id) || !hasText(envelope.project) || !hasText(envelope.objective) ||
+          !isObject(envelope.context) || !isTextList(envelope.constraints) ||
+          typeof envelope.expected_output !== "string" ||
+          !statuses.has(update.status) || !hasText(update.summary) ||
+          !isTextList(update.blockers) || !isTextList(update.progress) ||
+          !(update.output === null || isObject(update.output)) ||
+          !(update.needs_input === null || hasText(update.needs_input)) ||
+          typeof update.attention_required !== "boolean" ||
+          !hasText(record.provider_id) || !(record.model_id === null || hasText(record.model_id)) ||
+          typeof record.envelope_digest !== "string" || !digest.test(record.envelope_digest) ||
+          typeof record.update_digest !== "string" || !digest.test(record.update_digest)) {
+        throw new Error("El registro está incompleto o sus campos no tienen el formato esperado.");
+      }
+      if (envelope.envelope_id !== update.envelope_id) {
+        throw new Error("El encargo y la respuesta pertenecen a ejecuciones distintas.");
+      }
+      return record;
+    }
+
+    function setText(id, value) {
+      $(id).textContent = value;
+    }
+
+    function showText(section, value) {
+      $(section).hidden = !hasText(value);
+      setText(section + "-text", hasText(value) ? value : "");
+    }
+
+    function showList(section, values) {
+      const list = $(section + "-list");
+      list.replaceChildren();
+      const items = isTextList(values) ? values : [];
+      $(section).hidden = items.length === 0;
+      for (const value of items) {
+        const item = document.createElement("li");
+        item.textContent = value;
+        list.append(item);
+      }
+    }
+
+    function captureReview() {
+      return {
+        criteria: Object.fromEntries(Object.entries(recordCriteria).map(([id, key]) => [key, $(id).value || null])),
+        notes: $("notes").value,
+      };
+    }
+
+    function restoreReview(draft) {
+      for (const [id, key] of Object.entries(recordCriteria)) $(id).value = draft?.criteria[key] ?? "";
+      $("notes").value = draft?.notes ?? "";
+    }
+
+    function parseReview(source, target) {
+      let review;
+      try {
+        review = JSON.parse(source.replace(/^\uFEFF/, ""));
+      } catch {
+        throw new Error("El archivo no contiene un JSON válido.");
+      }
+      if (!isObject(review) || review.schema_version !== 1 ||
+          review.kind !== "arsa_pisha_human_review" || !isObject(review.record) ||
+          !isObject(review.criteria) || typeof review.notes !== "string" || review.notes.length > 2000) {
+        throw new Error("Selecciona un archivo guardado con «Guardar revisión».");
+      }
+      const { record, isExample } = target;
+      const reference = review.record;
+      if (reference.envelope_id !== record.envelope.envelope_id ||
+          reference.envelope_digest !== record.envelope_digest ||
+          reference.update_digest !== record.update_digest ||
+          reference.example !== isExample) {
+        throw new Error("La revisión pertenece a otro registro. Abre primero su registro de colaboración.");
+      }
+      const criteria = {};
+      for (const key of Object.values(recordCriteria)) {
+        const value = review.criteria[key];
+        if (value !== null && (!value || !ratings.has(value))) {
+          throw new Error("La revisión contiene una valoración desconocida.");
+        }
+        criteria[key] = value;
+      }
+      return { criteria, notes: review.notes };
+    }
+
+    function render(record, name, isExample) {
+      const { envelope, update } = record;
+      const output = update.output;
+      let outputText = "";
+      try {
+        if (output !== null) outputText = JSON.stringify(output, null, 2);
+      } catch {
+        throw new Error("La salida del registro contiene demasiados niveles.");
+      }
+      if (current) drafts.set(current.key, captureReview());
+      const key = JSON.stringify([isExample, envelope.envelope_id, record.envelope_digest, record.update_digest]);
+      current = { record, name, isExample, key };
+
+      const requested = envelope.context.requested_idea;
+      setText("record-project", envelope.project);
+      setText("record-status", statuses.get(update.status));
+      $("record-status").classList.toggle("action", ["needs_input", "blocked"].includes(update.status));
+      setText("brief-text", hasText(requested) ? requested : envelope.objective);
+      $("brief-legacy").hidden = hasText(requested);
+      showText("expected", envelope.expected_output);
+      showList("constraints", envelope.constraints);
+
+      const answer = output?.answer;
+      setText("proposal-text", hasText(answer) ? answer : update.summary);
+      $("proposal-summary").hidden = !hasText(answer) || answer.trim() === update.summary.trim();
+      setText("proposal-summary", update.summary);
+      showText("rationale", output?.rationale);
+      showList("alternatives", output?.proposals);
+      showText("needs-input", update.needs_input);
+      const questions = isTextList(output?.questions) ? output.questions : [];
+      showList("questions", questions.filter(question => question.trim() !== update.needs_input?.trim()));
+      showList("blockers", update.blockers);
+      showList("progress", update.progress);
+      $("raw-output").hidden = output === null;
+      $("raw-output").open = false;
+      setText("raw-output-text", outputText);
+
+      setText("source-file", name);
+      setText("source-run", envelope.envelope_id);
+      setText("source-provider", record.provider_id);
+      setText("source-model", record.model_id ?? "Sin modelo indicado");
+      setText("source-envelope-digest", record.envelope_digest);
+      setText("source-update-digest", record.update_digest);
+      const run = !isExample && /^gha-([1-9][0-9]{0,19})-[1-9][0-9]{0,9}$/.exec(envelope.envelope_id);
+      const link = $("source-link");
+      link.hidden = !run;
+      if (run) link.href = "https://github.com/Mareta3rd/illo-and-killo-p-blico-/actions/runs/" + run[1];
+      else link.removeAttribute("href");
+
+      restoreReview(drafts.get(key));
+      setText("review-notice", "");
+      $("review-error").hidden = true;
+      $("workspace").hidden = false;
+      $("error").hidden = true;
+      setText("notice", isExample ? "Ejemplo integrado · sin conexión" : "Registro abierto · " + name);
+    }
+
+    $("open-file").addEventListener("click", () => $("record-file").click());
+
+    $("record-file").addEventListener("change", async event => {
+      const file = event.target.files[0];
+      event.target.value = "";
+      if (!file) return;
+      const attempt = ++selection;
+      $("error").hidden = true;
+      try {
+        if (file.size > maxFileSize) throw new Error("El registro supera el máximo de 256 KB.");
+        if (/\.zip$/i.test(file.name)) throw new Error("Extrae el ZIP y selecciona collaboration-record.json.");
+        const source = await file.text();
+        if (attempt === selection) render(parseRecord(source), file.name, false);
+      } catch (error) {
+        if (attempt !== selection) return;
+        setText("error", error.message + (current ? " El registro anterior sigue abierto." : ""));
+        $("error").hidden = false;
+      }
+    });
+
+    function openExample() {
+      ++selection;
+      render(parseRecord($("example-record").textContent), "Ejemplo integrado", true);
+    }
+
+    for (const id of Object.keys(recordCriteria)) {
+      for (const [value, label] of ratings) $(id).add(new Option(label, value));
+    }
+
+    $("open-review").addEventListener("click", () => $("review-file").click());
+
+    $("review-file").addEventListener("change", async event => {
+      const file = event.target.files[0];
+      event.target.value = "";
+      if (!file || !current) return;
+      const target = current;
+      const attempt = ++reviewSelection;
+      $("review-error").hidden = true;
+      setText("review-notice", "");
+      try {
+        if (file.size > maxFileSize) throw new Error("La revisión supera el máximo de 256 KB.");
+        const source = await file.text();
+        if (attempt !== reviewSelection || target !== current) return;
+        const draft = parseReview(source, target);
+        const existing = captureReview();
+        const changed = JSON.stringify(existing) !== JSON.stringify(draft);
+        const hasDraft = existing.notes !== "" || Object.values(existing.criteria).some(value => value !== null);
+        if (changed && hasDraft && !window.confirm("¿Sustituir el borrador abierto por la revisión guardada?")) return;
+        restoreReview(draft);
+        setText("review-notice", "Revisión recuperada · " + file.name);
+      } catch (error) {
+        if (attempt !== reviewSelection || target !== current) return;
+        setText("review-error", error.message + " Se conservan tus observaciones actuales.");
+        $("review-error").hidden = false;
+      }
+    });
+
+    $("export-review").addEventListener("click", () => {
+      if (!current) return;
+      const { name, isExample, record } = current;
+      const review = {
+        schema_version: 1,
+        kind: "arsa_pisha_human_review",
+        reviewed_at: new Date().toISOString(),
+        record: {
+          envelope_id: record.envelope.envelope_id,
+          envelope_digest: record.envelope_digest,
+          update_digest: record.update_digest,
+          provider_id: record.provider_id,
+          model_id: record.model_id,
+          filename: name,
+          example: isExample,
+        },
+        ...captureReview(),
+      };
+      const filename = record.envelope.envelope_id.replace(/[^A-Za-z0-9_-]/g, "-").slice(0, 90);
+      const url = URL.createObjectURL(new Blob([JSON.stringify(review, null, 2) + "\n"], { type: "application/json" }));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "revision-" + filename + ".json";
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      $("review-error").hidden = true;
+      setText("review-notice", "Revisión preparada para descargar · " + name);
+    });
+
+    $("open-example").addEventListener("click", openExample);
+    openExample();
+  </script>
+</body>
+</html>

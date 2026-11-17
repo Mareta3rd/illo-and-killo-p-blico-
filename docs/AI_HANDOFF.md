@@ -1062,3 +1062,28 @@ assess visual clarity and whether the escalation follows from the requested obje
 the existing record format and an offline sample. Generation remains in GitHub and review on
 the ASUS, with no model runtime needed for review. This is the first usable control flow toward
 the lightweight suite.
+
+### Offline review desk (2026-11-17)
+
+The first control surface is [`tools/revision-colaboracion.html`](../tools/revision-colaboracion.html).
+Open the single file in a desktop browser to see the built-in example or select a downloaded
+`collaboration-record.json` from GitHub. The view shows the original brief alongside the
+proposal, alternatives, and any questions or blockers. Its provenance section shows the
+provider, model, declared digests, and the indicated GitHub run when the identifier fits the
+repository's workflow convention. Older version 1 records fall back to their recorded objective.
+
+The reviewer can assess brief adherence, visual clarity and causal escalation and save those
+judgments and notes in a separate JSON. The app can restore them when the review points to the
+same record ID and both declared digests. The app is offline, keeps unsaved drafts only until the
+page closes, and leaves the source record and canon intact. No inference runs on the ASUS.
+
+Verification: Windows Chromium browser checks passed offline, including file selection,
+the real record from run `44158941986` after verifying its artifact archive SHA-256, legacy
+records, malformed input, rendering input as plain text, the review download, and the narrow
+layout. Review restoration checks covered a matching record and rejection of a mismatched record.
+The full Python suite passed locally (**746 tests and 59 subtests**). The ordinary
+GitHub checks are recorded on [PR #5](https://github.com/Mareta3rd/illo-and-killo-p-blico-/pull/5/checks).
+
+Next block: complete a human review of the existing Qwen result and turn the feedback into a
+revised public brief for a later cloud pilot. Keep the review independent of Core and compare
+the two trial records without promoting either proposal to canon.

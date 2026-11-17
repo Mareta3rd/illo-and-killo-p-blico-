@@ -46,6 +46,17 @@ La arquitectura validada incluye la frontera:
 
 Los generadores de candidatos no deben devolver decisiones de Core ni convertir evidencia externa en canon por sí mismos.
 
+## Mesa de revisión local
+
+1. Abre [`tools/revision-colaboracion.html`](tools/revision-colaboracion.html) desde tu copia del repositorio con el navegador. El ejemplo incluido funciona sin conexión.
+2. Para revisar una ejecución de GitHub, descarga su artefacto, extrae el ZIP y abre `collaboration-record.json` desde **Abrir registro JSON**.
+3. Compara el encargo con la propuesta y guarda tus observaciones en **Guardar revisión**. El navegador descarga un JSON independiente. Puedes retomarlo con **Recuperar revisión** cuando esté abierto su registro.
+
+La mesa admite registros de colaboración de versión 1. Para los registros antiguos sin el
+encargo literal, muestra el objetivo que se conservó. La procedencia incluye las huellas
+declaradas por el archivo y, si la ejecución sigue el formato de GitHub, un enlace para
+consultarla. La revisión es humana y las notas permanecen en memoria hasta su descarga.
+
 ## Siguiente trabajo
 1. Consolidar la documentación vigente de Arsa & Pisha.
 2. Completar el contexto semántico que reciben los ejecutores de candidatos.
